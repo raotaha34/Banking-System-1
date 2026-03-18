@@ -1,0 +1,1451 @@
+﻿@model BankingSystemweb.ViewModels.CreateUserAccountVM
+
+@functions {
+    public string GetInitials(string fullName)
+    {
+        if (string.IsNullOrWhiteSpace(fullName)) return "A";
+        var words = fullName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        char first = words.Length > 0 ? words[0][0] : 'A';
+        char second = words.Length > 1 ? words[1][0] : ' ';
+        return second == ' ' ? $"{char.ToUpper(first)}" : $"{char.ToUpper(first)}{char.ToUpper(second)}";
+    }
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureBank — Admin Dashboard</title>
+    <link rel="stylesheet" href="~/css/Admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --blue-950: #05112a;
+            --blue-900: #0a1f4e;
+            --blue-800: #0f2d6e;
+            --blue-700: #1240a0;
+            --blue-600: #1a55c8;
+            --blue-500: #2168f0;
+            --blue-400: #4f87f5;
+            --blue-300: #84aff9;
+            --blue-200: #bdd3fd;
+            --blue-100: #deeaff;
+            --blue-50: #f0f6ff;
+            --white: #ffffff;
+            --slate-50: #f8fafc;
+            --slate-100: #f0f4f9;
+            --slate-200: #e2eaf4;
+            --slate-300: #c8d6e8;
+            --slate-400: #94a8c4;
+            --slate-500: #647899;
+            --slate-600: #4a5c78;
+            --sidebar-w: 260px;
+            --sidebar-collapsed: 72px;
+            --topbar-h: 64px;
+            --transition: 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--slate-100);
+            color: var(--blue-950);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ===================== SIDEBAR ===================== */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: var(--sidebar-w);
+            background: var(--blue-950);
+            display: flex;
+            flex-direction: column;
+            z-index: 200;
+            transition: width var(--transition);
+            overflow: hidden;
+            box-shadow: 4px 0 32px rgba(5,17,42,0.18);
+        }
+
+            .sidebar.collapsed {
+                width: var(--sidebar-collapsed);
+            }
+
+        /* Brand */
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 18px;
+            height: var(--topbar-h);
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+            flex-shrink: 0;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .brand-mark {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--blue-500), var(--blue-400));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 4px 14px rgba(33,104,240,0.4);
+        }
+
+        .brand-text {
+            font-family: 'Syne', sans-serif;
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--white);
+            letter-spacing: -0.3px;
+            opacity: 1;
+            transition: opacity var(--transition);
+        }
+
+        .sidebar.collapsed .brand-text {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Toggle button */
+        .sidebar-toggle {
+            position: absolute;
+            top: 50%;
+            right: -14px;
+            transform: translateY(-50%);
+            width: 28px;
+            height: 28px;
+            background: var(--blue-500);
+            border: 2px solid var(--blue-300);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 300;
+            transition: background var(--transition), transform var(--transition);
+            box-shadow: 0 2px 8px rgba(33,104,240,0.35);
+        }
+
+            .sidebar-toggle:hover {
+                background: var(--blue-400);
+            }
+
+            .sidebar-toggle svg {
+                transition: transform var(--transition);
+                flex-shrink: 0;
+            }
+
+        .sidebar.collapsed .sidebar-toggle svg {
+            transform: rotate(180deg);
+        }
+
+        /* Nav */
+        .sidebar-nav {
+            flex: 1;
+            padding: 18px 10px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            scrollbar-width: none;
+        }
+
+            .sidebar-nav::-webkit-scrollbar {
+                display: none;
+            }
+
+        .nav-section-label {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            color: var(--slate-400);
+            padding: 14px 10px 6px;
+            white-space: nowrap;
+            overflow: hidden;
+            opacity: 1;
+            transition: opacity var(--transition);
+        }
+
+        .sidebar.collapsed .nav-section-label {
+            opacity: 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 10px;
+            border-radius: 10px;
+            color: var(--slate-400);
+            text-decoration: none;
+            font-size: 13.5px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            transition: background 0.18s, color 0.18s;
+            cursor: pointer;
+            position: relative;
+            margin-bottom: 2px;
+        }
+
+            .nav-item:hover {
+                background: rgba(255,255,255,0.07);
+                color: var(--white);
+            }
+
+            .nav-item.active {
+                background: linear-gradient(135deg, var(--blue-600), var(--blue-500));
+                color: var(--white);
+                box-shadow: 0 4px 14px rgba(33,104,240,0.3);
+            }
+
+        .nav-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            background: rgba(255,255,255,0.06);
+        }
+
+        .nav-item.active .nav-icon {
+            background: rgba(255,255,255,0.15);
+        }
+
+        .nav-label {
+            font-size: 13.5px;
+            opacity: 1;
+            transition: opacity var(--transition);
+        }
+
+        .sidebar.collapsed .nav-label {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Tooltip on collapsed */
+        .nav-item .tooltip {
+            position: absolute;
+            left: calc(var(--sidebar-collapsed) + 8px);
+            background: var(--blue-900);
+            color: var(--white);
+            font-size: 12px;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 7px;
+            white-space: nowrap;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.15s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 999;
+        }
+
+        .sidebar.collapsed .nav-item:hover .tooltip {
+            opacity: 1;
+        }
+
+        /* Footer */
+        .sidebar-footer {
+            padding: 12px 10px;
+            border-top: 1px solid rgba(255,255,255,0.07);
+            flex-shrink: 0;
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            padding: 10px 10px;
+            border-radius: 10px;
+            background: rgba(229,72,77,0.12);
+            border: 1px solid rgba(229,72,77,0.2);
+            color: #f87171;
+            font-size: 13.5px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.18s;
+            font-family: 'DM Sans', sans-serif;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+            .logout-btn:hover {
+                background: rgba(229,72,77,0.22);
+            }
+
+        .logout-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            background: rgba(229,72,77,0.15);
+        }
+
+        .logout-label {
+            opacity: 1;
+            transition: opacity var(--transition);
+        }
+
+        .sidebar.collapsed .logout-label {
+            opacity: 0;
+        }
+
+        /* ===================== MAIN LAYOUT ===================== */
+        .main-wrapper {
+            margin-left: var(--sidebar-w);
+            transition: margin-left var(--transition);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+            .main-wrapper.collapsed {
+                margin-left: var(--sidebar-collapsed);
+            }
+
+        /* ===================== TOPBAR ===================== */
+        .topbar {
+            position: sticky;
+            top: 0;
+            height: var(--topbar-h);
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--slate-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            z-index: 100;
+        }
+
+        .topbar-left {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--blue-950);
+            letter-spacing: -0.4px;
+        }
+
+        .topbar-sub {
+            font-size: 12px;
+            color: var(--slate-500);
+            margin-top: 1px;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .topbar-date {
+            font-size: 12px;
+            color: var(--slate-500);
+            background: var(--slate-100);
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--slate-200);
+        }
+
+        .admin-pill {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 6px 14px 6px 6px;
+            background: var(--blue-50);
+            border: 1px solid var(--blue-200);
+            border-radius: 40px;
+        }
+
+        .admin-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--blue-600), var(--blue-400));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Syne', sans-serif;
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--white);
+            letter-spacing: 0.5px;
+        }
+
+        .admin-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--blue-800);
+        }
+
+        /* ===================== CONTENT ===================== */
+        .page-content {
+            flex: 1;
+            padding: 32px;
+            max-width: 1400px;
+            width: 100%;
+        }
+
+        /* ===================== STATS GRID ===================== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 22px 24px;
+            border: 1px solid var(--slate-200);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+            animation: fadeUp 0.5s ease both;
+        }
+
+            .stat-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 12px 32px rgba(33,104,240,0.10);
+            }
+
+            .stat-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                right: 0;
+                width: 100px;
+                height: 100px;
+                border-radius: 50%;
+                opacity: 0.06;
+                transform: translate(30px, -30px);
+            }
+
+            .stat-card.blue::before {
+                background: var(--blue-500);
+                opacity: 0.08;
+            }
+
+            .stat-card.green::before {
+                background: #16a34a;
+            }
+
+            .stat-card.purple::before {
+                background: #7c3aed;
+            }
+
+            .stat-card.orange::before {
+                background: #ea580c;
+            }
+
+        .stat-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .stat-icon-wrap {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-card.blue .stat-icon-wrap {
+            background: #eff6ff;
+        }
+
+        .stat-card.green .stat-icon-wrap {
+            background: #f0fdf4;
+        }
+
+        .stat-card.purple .stat-icon-wrap {
+            background: #f5f3ff;
+        }
+
+        .stat-card.orange .stat-icon-wrap {
+            background: #fff7ed;
+        }
+
+        .stat-badge {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 20px;
+            letter-spacing: 0.3px;
+        }
+
+        .badge-up {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .badge-down {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .stat-value {
+            font-family: 'Syne', sans-serif;
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--blue-950);
+            letter-spacing: -1px;
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12.5px;
+            color: var(--slate-500);
+            font-weight: 400;
+        }
+
+        /* ===================== LOWER GRID ===================== */
+        .lower-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 28px;
+        }
+
+        .panel {
+            background: var(--white);
+            border-radius: 16px;
+            border: 1px solid var(--slate-200);
+            overflow: hidden;
+            animation: fadeUp 0.5s 0.15s ease both;
+        }
+
+        .panel-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px 16px;
+            border-bottom: 1px solid var(--slate-100);
+        }
+
+        .panel-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--blue-950);
+            letter-spacing: -0.3px;
+        }
+
+        .panel-sub {
+            font-size: 12px;
+            color: var(--slate-400);
+            margin-top: 2px;
+        }
+
+        .view-all {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--blue-500);
+            text-decoration: none;
+            padding: 5px 12px;
+            background: var(--blue-50);
+            border-radius: 20px;
+            border: 1px solid var(--blue-200);
+            transition: background 0.15s;
+        }
+
+            .view-all:hover {
+                background: var(--blue-100);
+            }
+
+        /* Quick Actions */
+        .actions-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            padding: 18px;
+        }
+
+        .action-tile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 12px;
+            background: var(--slate-50);
+            border: 1px solid var(--slate-200);
+            text-decoration: none;
+            color: var(--blue-950);
+            transition: background 0.18s, border-color 0.18s, transform 0.18s;
+        }
+
+            .action-tile:hover {
+                background: var(--blue-50);
+                border-color: var(--blue-300);
+                transform: translateY(-2px);
+            }
+
+        .action-tile-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 16px;
+        }
+
+        .tile-blue {
+            background: #eff6ff;
+        }
+
+        .tile-green {
+            background: #f0fdf4;
+        }
+
+        .tile-purple {
+            background: #f5f3ff;
+        }
+
+        .tile-orange {
+            background: #fff7ed;
+        }
+
+        .tile-teal {
+            background: #f0fdfa;
+        }
+
+        .tile-red {
+            background: #fff1f2;
+        }
+
+        .action-tile h4 {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--blue-900);
+            margin-bottom: 2px;
+        }
+
+        .action-tile p {
+            font-size: 11px;
+            color: var(--slate-500);
+        }
+
+        /* Activity Feed */
+        .activity-list {
+            padding: 6px 0;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 14px 24px;
+            border-bottom: 1px solid var(--slate-100);
+            transition: background 0.15s;
+        }
+
+            .activity-item:last-child {
+                border-bottom: none;
+            }
+
+            .activity-item:hover {
+                background: var(--slate-50);
+            }
+
+        .activity-dot {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Syne', sans-serif;
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--white);
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .dot-blue {
+            background: linear-gradient(135deg, var(--blue-600), var(--blue-400));
+        }
+
+        .dot-green {
+            background: linear-gradient(135deg, #16a34a, #4ade80);
+        }
+
+        .dot-purple {
+            background: linear-gradient(135deg, #7c3aed, #a78bfa);
+        }
+
+        .dot-orange {
+            background: linear-gradient(135deg, #ea580c, #fb923c);
+        }
+
+        .activity-info h4 {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--blue-950);
+            margin-bottom: 3px;
+        }
+
+        .activity-info p {
+            font-size: 12px;
+            color: var(--slate-500);
+            margin-bottom: 4px;
+        }
+
+        .activity-time {
+            font-size: 11px;
+            color: var(--slate-400);
+            background: var(--slate-100);
+            padding: 2px 8px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        /* ===================== BOTTOM BANNER ===================== */
+        .bottom-banner {
+            background: linear-gradient(135deg, var(--blue-900) 0%, var(--blue-700) 50%, var(--blue-500) 100%);
+            border-radius: 16px;
+            padding: 28px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+            position: relative;
+            overflow: hidden;
+            animation: fadeUp 0.5s 0.2s ease both;
+        }
+
+            .bottom-banner::before {
+                content: '';
+                position: absolute;
+                top: -40px;
+                right: -40px;
+                width: 200px;
+                height: 200px;
+                background: rgba(255,255,255,0.05);
+                border-radius: 50%;
+            }
+
+            .bottom-banner::after {
+                content: '';
+                position: absolute;
+                bottom: -60px;
+                right: 120px;
+                width: 160px;
+                height: 160px;
+                background: rgba(255,255,255,0.04);
+                border-radius: 50%;
+            }
+
+        .banner-text h3 {
+            font-family: 'Syne', sans-serif;
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--white);
+            margin-bottom: 6px;
+            letter-spacing: -0.4px;
+        }
+
+        .banner-text p {
+            font-size: 13px;
+            color: rgba(255,255,255,0.65);
+        }
+
+        .banner-actions {
+            display: flex;
+            gap: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .banner-btn {
+            padding: 10px 22px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            font-family: 'DM Sans', sans-serif;
+            transition: opacity 0.18s, transform 0.18s;
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+            .banner-btn:hover {
+                opacity: 0.88;
+                transform: translateY(-1px);
+            }
+
+            .banner-btn.solid {
+                background: var(--white);
+                color: var(--blue-700);
+                border: none;
+            }
+
+            .banner-btn.outline {
+                background: rgba(255,255,255,0.12);
+                color: var(--white);
+                border: 1px solid rgba(255,255,255,0.25);
+            }
+
+       
+    </style>
+</head>
+<body>
+
+    <!-- ===================== SIDEBAR ===================== -->
+    <aside class="sidebar" id="sidebar">
+
+        <!-- Toggle -->
+        <div class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path d="M7.5 2L3.5 6L7.5 10" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </div>
+
+        <!-- Brand -->
+        <div class="sidebar-brand">
+            <div class="brand-mark">
+                <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+                    <rect x="2" y="6" width="16" height="11" rx="2" fill="white" fill-opacity="0.9" />
+                    <path d="M6 6V5a4 4 0 018 0v1" fill="white" fill-opacity="0.5" />
+                    <rect x="9" y="10" width="2" height="3" rx="1" fill="#2168f0" />
+                </svg>
+            </div>
+            <span class="brand-text">SecureBank</span>
+        </div>
+
+        <!-- Nav -->
+        <nav class="sidebar-nav">
+
+            <div class="nav-section-label">Overview</div>
+            <a class="nav-item active" asp-controller="Admin" asp-action="Index">
+                <span class="nav-icon">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <rect x="1" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5" />
+                        <rect x="9" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5" />
+                        <rect x="1" y="9" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5" />
+                        <rect x="9" y="9" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5" />
+                    </svg>
+                </span>
+                <span class="nav-label">Dashboard</span>
+                <span class="tooltip">Dashboard</span>
+            </a>
+
+            <div class="nav-section-label">Users</div>
+            <a class="nav-item" asp-controller="Admin" asp-action="CreateUserAccount">
+                <span class="nav-icon">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <circle cx="7" cy="5" r="3" stroke="currentColor" stroke-width="1.5" />
+                        <path d="M1 13c0-3 2.686-4.5 6-4.5s6 1.5 6 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                        <path d="M12 7v4M10 9h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                    </svg>
+                </span>
+                <span class="nav-label">Create User</span>
+                <span class="tooltip">Create User</span>
+            </a>
+            <a class="nav-item" asp-controller="Admin" asp-action="ManageUser">
+                <span class="nav-icon">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M1 13c0-3 2.686-4.5 6-4.5s6 1.5 6 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                        <circle cx="6" cy="5" r="3" stroke="currentColor" stroke-width="1.5" />
+                        <path d="M13 7a2 2 0 010 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                    </svg>
+                </span>
+                <span class="nav-label">Manage Users</span>
+                <span class="tooltip">Manage Users</span>
+            </a>
+
+            <div class="nav-section-label">Finance</div>
+            <a class="nav-item" asp-controller="Admin" asp-action="transaction">
+                <span class="nav-icon">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M2 8h12M10 5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </span>
+                <span class="nav-label">Transactions</span>
+                <span class="tooltip">Transactions</span>
+            </a>
+            <a class="nav-item" href="#">
+                <span class="nav-icon">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <rect x="1" y="4" width="14" height="9" rx="1.5" stroke="currentColor" stroke-width="1.5" />
+                        <path d="M4 8h2M7 8h1M10 8h2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" />
+                    </svg>
+                </span>
+                <span class="nav-label">Accounts</span>
+                <span class="tooltip">Accounts</span>
+            </a>
+
+            <div class="nav-section-label">System</div>
+            <a class="nav-item" href="#">
+                <span class="nav-icon">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.5" />
+                        <path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.22 3.22l1.42 1.42M11.36 11.36l1.42 1.42M3.22 12.78l1.42-1.42M11.36 4.64l1.42-1.42" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                    </svg>
+                </span>
+                <span class="nav-label">Settings</span>
+                <span class="tooltip">Settings</span>
+            </a>
+            <a class="nav-item" href="#">
+                <span class="nav-icon">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M2 3h12v8H2zM5 14h6M8 11v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </span>
+                <span class="nav-label">Reports</span>
+                <span class="tooltip">Reports</span>
+            </a>
+
+        </nav>
+
+        <!-- Footer -->
+        <div class="sidebar-footer">
+            <form asp-controller="Login" asp-action="Logout" method="post" style="margin:0;">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="logout-btn">
+                    <span class="logout-icon">
+                        <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
+                            <path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3M11 11l3-3-3-3M14 8H6" stroke="#f87171" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </span>
+                    <span class="logout-label">Logout</span>
+                </button>
+            </form>
+        </div>
+
+    </aside>
+
+    <!-- ===================== MAIN ===================== -->
+    <div class="main-wrapper" id="mainWrapper">
+
+        <!-- Topbar -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <div class="topbar-title">Dashboard Overview</div>
+                <div class="topbar-sub">Welcome back, @ViewData["AdminName"]</div>
+            </div>
+            <div class="topbar-right">
+                <div class="topbar-date" id="currentDate"></div>
+                <div class="admin-pill">
+                    <div class="admin-avatar">
+                        @(ViewData["AdminName"]?.ToString() is string name ? GetInitials(name) : "A")
+                    </div>
+                    <span class="admin-name">@ViewData["AdminName"]</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <div class="page-content">
+
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card blue">
+                    <div class="stat-top">
+                        <div class="stat-icon-wrap">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M17 19v-2a4 4 0 00-4-4H7a4 4 0 00-4 4v2" stroke="#2168f0" stroke-width="1.6" stroke-linecap="round" />
+                                <circle cx="10" cy="7" r="4" stroke="#2168f0" stroke-width="1.6" />
+                            </svg>
+                        </div>
+                        <span class="stat-badge badge-up">↑ 12%</span>
+                    </div>
+                    <div class="stat-value">@ViewData["TotalUsers"]</div>
+                    <div class="stat-label">Total Users</div>
+                </div>
+
+                <div class="stat-card green">
+                    <div class="stat-top">
+                        <div class="stat-icon-wrap">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M18 10.08V11a8 8 0 11-4.74-7.31" stroke="#16a34a" stroke-width="1.6" stroke-linecap="round" />
+                                <polyline points="18 4 10 12.01 7.5 9.51" stroke="#16a34a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </div>
+                        <span class="stat-badge badge-up">↑ 8%</span>
+                    </div>
+                    <div class="stat-value">@ViewData["TotalActiveUsers"]</div>
+                    <div class="stat-label">Active Accounts</div>
+                </div>
+
+                <div class="stat-card purple">
+                    <div class="stat-top">
+                        <div class="stat-icon-wrap">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <path d="M2 10h16M12 5l5 5-5 5" stroke="#7c3aed" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </div>
+                        <span class="stat-badge badge-up">↑ 5%</span>
+                    </div>
+                    <div class="stat-value">@ViewData["TotalTransactions"]</div>
+                    <div class="stat-label">Transactions Today</div>
+                </div>
+
+                <div class="stat-card orange">
+                    <div class="stat-top">
+                        <div class="stat-icon-wrap">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <circle cx="10" cy="10" r="8" stroke="#ea580c" stroke-width="1.6" />
+                                <path d="M10 6v4l2.5 2.5" stroke="#ea580c" stroke-width="1.6" stroke-linecap="round" />
+                            </svg>
+                        </div>
+                        <span class="stat-badge badge-up">↑ 3%</span>
+                    </div>
+                    <div class="stat-value">$@ViewData["AdminBalance"]</div>
+                    <div class="stat-label">Total Balance</div>
+                </div>
+            </div>
+
+            <!-- Banner -->
+            <div class="bottom-banner">
+                <div class="banner-text">
+                    <h3>🚀 Everything looks great today</h3>
+                    <p>All systems operational. @ViewData["TotalActiveUsers"] active users across the platform.</p>
+                </div>
+                <div class="banner-actions">
+                    <a class="banner-btn solid" asp-controller="Admin" asp-action="ManageUser">
+                        <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                            <path d="M1 13c0-3 2.686-4.5 6-4.5s6 1.5 6 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                            <circle cx="6" cy="5" r="3" stroke="currentColor" stroke-width="1.5" />
+                        </svg>
+                        Manage Users
+                    </a>
+                    <a class="banner-btn outline" asp-controller="Admin" asp-action="transaction">
+                        <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                            <path d="M2 8h12M10 5l3 3-3 3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        Transactions
+                    </a>
+                </div>
+            </div>
+
+            <!-- Lower Grid -->
+            <div class="lower-grid">
+
+                <!-- Quick Actions -->
+                <div class="panel">
+                    <div class="panel-head">
+                        <div>
+                            <div class="panel-title">Quick Actions</div>
+                            <div class="panel-sub">Navigate to key features</div>
+                        </div>
+                    </div>
+                    <div class="actions-grid">
+                        <a class="action-tile" asp-controller="Admin" asp-action="CreateUserAccount">
+                            <div class="action-tile-icon tile-blue">➕</div>
+                            <div><h4>Create User</h4><p>Add new user</p></div>
+                        </a>
+                        <a class="action-tile" asp-controller="Admin" asp-action="CreateUserAccount">
+                            <div class="action-tile-icon tile-green">📊</div>
+                            <div><h4>Create Account</h4><p>Open bank account</p></div>
+                        </a>
+                        <a class="action-tile" asp-controller="Admin" asp-action="transaction">
+                            <div class="action-tile-icon tile-purple">🔄</div>
+                            <div><h4>Transaction</h4><p>Process transfer</p></div>
+                        </a>
+                        <a class="action-tile" asp-controller="Admin" asp-action="ManageUser">
+                            <div class="action-tile-icon tile-orange">⚙️</div>
+                            <div><h4>Manage Users</h4><p>View & edit users</p></div>
+                        </a>
+                        <a class="action-tile" href="#">
+                            <div class="action-tile-icon tile-teal">💼</div>
+                            <div><h4>Accounts</h4><p>View all accounts</p></div>
+                        </a>
+                        <a class="action-tile" href="#">
+                            <div class="action-tile-icon tile-red">📈</div>
+                            <div><h4>Reports</h4><p>Analytics & data</p></div>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="panel">
+                    <div class="panel-head">
+                        <div>
+                            <div class="panel-title">Recent Activity</div>
+                            <div class="panel-sub">Latest system events</div>
+                        </div>
+                        <a href="#" class="view-all">View all</a>
+                    </div>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <div class="activity-dot dot-blue">U</div>
+                            <div class="activity-info">
+                                <h4>User Account Created</h4>
+                                <p>John Doe — john.doe@securebank.com</p>
+                                <span class="activity-time">5 minutes ago</span>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-dot dot-green">A</div>
+                            <div class="activity-info">
+                                <h4>Savings Account Opened</h4>
+                                <p>Account #1234567890 — Initial deposit</p>
+                                <span class="activity-time">22 minutes ago</span>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-dot dot-purple">T</div>
+                            <div class="activity-info">
+                                <h4>Transfer Completed</h4>
+                                <p>$5,000.00 — Account #9876543210</p>
+                                <span class="activity-time">1 hour ago</span>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-dot dot-orange">E</div>
+                            <div class="activity-info">
+                                <h4>Profile Updated</h4>
+                                <p>Jane Smith — Contact details modified</p>
+                                <span class="activity-time">2 hours ago</span>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-dot dot-blue">D</div>
+                            <div class="activity-info">
+                                <h4>Deposit Received</h4>
+                                <p>$10,000.00 — Account #5678901234</p>
+                                <span class="activity-time">4 hours ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sidebar toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const wrapper = document.getElementById('mainWrapper');
+            sidebar.classList.toggle('collapsed');
+            wrapper.classList.toggle('collapsed');
+            localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+        }
+
+        // Restore sidebar state
+        window.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('sidebarCollapsed') === 'true') {
+                document.getElementById('sidebar').classList.add('collapsed');
+                document.getElementById('mainWrapper').classList.add('collapsed');
+            }
+
+            const d = new Date();
+            document.getElementById('currentDate').textContent = d.toLocaleDateString('en-US', {
+                weekday: 'short', month: 'short', day: 'numeric', year: 'numeric'
+            });
+        });
+    </script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@* @model BankingSystemweb.ViewModels.CreateUserAccountVM
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banking Admin Dashboard</title>
+    <link rel="stylesheet" href="~/css/Admin.css">
+
+</head>
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>🏦 Banking System</h2>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a class="nav-item active" href="login.html" data-page="dashboard">
+                    <span class="nav-icon">📊</span>
+                    <span>Dashboard</span>
+                </a>
+
+                <div class="nav-section">
+                    <h3>User Management</h3>
+                    <a class="nav-item" asp-controller="Admin" asp-action="CreateUserAccount">
+                        <span class="nav-icon">➕</span>
+                        <span>Create User</span>
+                    </a>
+                    <a class="nav-item" asp-controller="Admin" asp-action="ManageUser">
+                        <span class="nav-icon">👥</span>
+                        <span>Manage Users</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <h3>Account Management</h3>
+                    <a class="nav-item" asp-controller="Admin" asp-action="CreateUserAccount">
+                        <span class="nav-icon">📊</span>
+                        <span>Create Account</span>
+                    </a>
+                    <a class="nav-item" href="manage-accounts.html" data-page="manage-accounts">
+                        <span class="nav-icon">💼</span>
+                        <span>Manage Accounts</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <h3>Transactions</h3>
+                    <a class="nav-item" asp-controller="Admin" asp-action="transaction">
+                        <span class="nav-icon">💸</span>
+                        <span>Make Transaction</span>
+                    </a>
+                </div>
+                <div class="nav-section">
+                    <h3>Settings</h3>
+                    <a class="nav-item" href="User dashboard.html" data-page="settings">
+                        <span class="nav-icon">⚙️</span>
+                        <span>Settings</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <form asp-controller="Login"
+                      asp-action="Logout"
+                      method="post"
+                      class="w-100">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="logout-btn">
+                        <span class="nav-icon">🚪</span>
+                        <span>Logout</span>
+                    </button>
+
+                </form>
+            </div>
+
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Header -->
+            <div class="dashboard-header">
+                <div>
+                    <h1>Dashboard</h1>
+                </div>
+                <div class="admin-info">
+                    <span class="admin-name">@ViewData["AdminName"]</span>
+                    <div class="admin-avatar">
+                        @(ViewData["AdminName"]?.ToString() is string name ? GetInitials(name) : "")
+                    </div>
+                </div>
+            </div>
+            <!-- Statistics Cards -->
+            <div class="stats-grid">
+                <div class="stat-card card-blue">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-content">
+                        <h3>Total Users</h3> 
+                        <p class="stat-number">@ViewData["TotalUsers"]</p>
+                    </div>
+                </div>
+
+                <div class="stat-card card-green">
+                    <div class="stat-icon">💼</div>
+                    <div class="stat-content">
+                        <h3>Active Accounts</h3>
+                        <p class="stat-number">@ViewData["TotalActiveUsers"]</p>
+                        <span class="stat-change positive"></span>
+                    </div>
+                </div>
+
+                <div class="stat-card card-purple">
+                    <div class="stat-icon">💸</div>
+                    <div class="stat-content">
+                        <h3>Transactions (Today)</h3>
+                        <p class="stat-number">@ViewData["TotalTransactions"]</p>
+                        <span class="stat-change positive"></span>
+                    </div>
+                </div>
+
+                <div class="stat-card card-orange">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-content">
+                        <h3>Total Balance</h3>
+                        <p class="stat-number">@ViewData["AdminBalance"]</p>
+                        <span class="stat-change positive"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <h2>Quick Actions</h2>
+                <div class="action-grid">
+                    <a class="action-card" asp-controller="Admin" asp-action="CreateUserAccount">
+                        <div class="action-icon blue">➕</div>
+                        <h3>Create User</h3>
+                        <p>Add new user to system</p>
+                    </a>
+
+                    <a class="action-card active " asp-controller="Admin" asp-action="CreateUserAccount">
+                        <div class="action-icon green">📊</div>
+                        <h3>Create Account</h3>
+                        <p>Open new bank account</p>
+                    </a>
+
+                    <a class="action-card active " asp-controller="Admin" asp-action="transaction">
+                        <div class="action-icon purple">🔄</div>
+                        <h3>Make Transaction</h3>
+                        <p>Process fund transfer</p>
+                    </a>
+
+                    <a class="action-card" asp-controller="Admin" asp-action="ManageUser">
+                        <div class="action-icon orange">⚙️</div>
+                        <h3>Manage Users</h3>
+                        <p>View and edit users</p>
+                    </a>
+
+                    <a class="action-card" href="manage-accounts.html">
+                        <div class="action-icon teal">📋</div>
+                        <h3>Manage Accounts</h3>
+                        <p>View all accounts</p>
+                    </a>
+
+                    <a class="action-card" href="report.html">
+                        <div class="action-icon red">📈</div>
+                        <h3>Reports</h3>
+                        <p>View analytics & reports</p>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="recent-activity">
+                <h2>Recent Activity</h2>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-icon blue">U</div>
+                        <div class="activity-details">
+                            <h4>User Account Created</h4>
+                            <p>John Doe - john.doe@securebank.com</p>
+                            <span class="activity-time">5 minutes ago</span>
+                        </div>
+                    </div>
+
+                    <div class="activity-item">
+                        <div class="activity-icon green">A</div>
+                        <div class="activity-details">
+                            <h4>Savings Account Opened</h4>
+                            <p>Account #1234567890 - Initial deposit processed</p>
+                            <span class="activity-time">22 minutes ago</span>
+                        </div>
+                    </div>
+
+                    <div class="activity-item">
+                        <div class="activity-icon purple">T</div>
+                        <div class="activity-details">
+                            <h4>Transfer Completed</h4>
+                            <p>$5,000.00 - Account #9876543210</p>
+                            <span class="activity-time">1 hour ago</span>
+                        </div>
+                    </div>
+
+                    <div class="activity-item">
+                        <div class="activity-icon orange">E</div>
+                        <div class="activity-details">
+                            <h4>Profile Information Updated</h4>
+                            <p>Jane Smith - Contact details modified</p>
+                            <span class="activity-time">2 hours 15 minutes ago</span>
+                        </div>
+                    </div>
+
+                    <div class="activity-item">
+                        <div class="activity-icon blue">D</div>
+                        <div class="activity-details">
+                            <h4>Deposit Received</h4>
+                            <p>$10,000.00 - Account #5678901234</p>
+                            <span class="activity-time">4 hours 30 minutes ago</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script>
+        function setActiveNav() {
+            const current = window.location.pathname.split("/").pop() || "index.html";
+            document.querySelectorAll(".nav-item").forEach(el => {
+                el.classList.toggle("active", el.getAttribute("href") === current);
+            });
+        }
+        document.addEventListener("DOMContentLoaded", setActiveNav);
+        document.querySelectorAll(".nav-item").forEach(el => {
+            el.addEventListener("click", setActiveNav);
+        });
+
+               @functions {
+                public string GetInitials(string fullName)
+                {
+                        if (string.IsNullOrWhiteSpace(fullName))
+                                return "";
+
+                        var words = fullName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                        char first = words.Length > 0 ? words[0][0] : ' ';
+                        char second = words.Length > 1 ? words[1][0] : ' ';
+                        return $"{char.ToUpper(first)}{char.ToUpper(second)}";
+                }
+        }}
+
+    </script>
+</body>
+</html> *@

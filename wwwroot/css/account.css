@@ -1,0 +1,43 @@
+﻿
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 860px) {
+    .main-content {
+        padding: 28px 20px 52px;
+    }
+
+    .topbar {
+        padding: 0 20px;
+    }
+
+    .form-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .heading-title {
+        font-size: 22px;
+    }
+
+    .steps-bar {
+        display: none;
+    }
+
+    .fields-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .field-group.span-2 {
+        grid-column: 1;
+    }
+}
+
+@media (max-width: 520px) {
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .btn-reset, .btn-submit {
+        width: 100%;
+        justify-content: center;
+    }
+}

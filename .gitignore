@@ -1,0 +1,15 @@
+# Visual Studio files
+.vs/
+*.user
+*.suo
+*.sln.docstates
+
+# Build output
+bin/
+obj/
+
+# NuGet packages (restore via package references)
+packages/
+
+# Logs and temp files
+*.log
