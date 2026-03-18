@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SecureBank — Admin Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --blue-700: #1240a0;
+      --blue-600: #1a55c8;
+      --blue-500: #2168f0;
+      --blue-400: #4f87f5;
+      --blue-300: #84aff9;
+      --blue-200: #bdd3fd;
+      --blue-100: #deeaff;
+      --blue-50:  #f0f6ff;
+      --white:    #ffffff;
+      --slate-50: #f8fafc;
+      --slate-100:#f1f5f9;
+      --slate-200:#e2e8f0;
+      --slate-300:#cbd5e1;
+      --slate-400:#94a3b8;
+      --slate-500:#64748b;
+      --slate-600:#475569;
+      --sidebar-w: 240px;
+      --sidebar-c: 66px;
+      --topbar-h: 60px;
+      --tr: 0.28s cubic-bezier(.4,0,.2,1);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: #f1f5f9;
+      color: #1e293b;
+      min-height: 100vh;
+    }
+
+    /* ══ SIDEBAR — fully white/light ══ */
+    .sidebar {
+      position: fixed; top:0; left:0; bottom:0;
+      width: var(--sidebar-w);
+      background: var(--white);
+      border-right: 1.5px solid var(--slate-200);
+      display: flex; flex-direction: column;
+      z-index: 200;
+      transition: width var(--tr);
+      overflow: hidden;
+      box-shadow: 2px 0 16px rgba(0,0,0,.04);
+    }
+    .sidebar.col { width: var(--sidebar-c); }
+
+    .sb-brand {
+      display: flex; align-items: center; gap: 10px;
+      padding: 0 14px; height: var(--topbar-h);
+      border-bottom: 1.5px solid var(--slate-100);
+      flex-shrink: 0; overflow: hidden; white-space: nowrap;
+    }
+    .brand-mark {
+      width: 34px; height: 34px; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--blue-500), var(--blue-400));
+      border-radius: 9px; display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 12px rgba(33,104,240,.28);
+    }
+    .brand-text {
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 15.5px; font-weight: 800;
+      color: #1e293b; letter-spacing: -.4px;
+      opacity:1; transition: opacity var(--tr);
+    }
+    .sidebar.col .brand-text { opacity:0; pointer-events:none; }
+
+    .sb-toggle {
+      position: absolute; top: 30px; right: -12px;
+      width: 24px; height: 24px;
+      background: var(--white); border: 1.5px solid var(--slate-200);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; z-index: 300;
+      box-shadow: 0 2px 8px rgba(0,0,0,.09);
+      transition: background var(--tr), border-color var(--tr);
+    }
+    .sb-toggle:hover { background: var(--blue-50); border-color: var(--blue-300); }
+    .sb-toggle svg { transition: transform var(--tr); }
+    .sidebar.col .sb-toggle svg { transform: rotate(180deg); }
+
+    .sb-nav {
+      flex:1; padding: 14px 8px;
+      overflow-y: auto; overflow-x: hidden; scrollbar-width: none;
+    }
+    .sb-nav::-webkit-scrollbar { display:none; }
+
+    .nav-sec {
+      font-size: 9px; font-weight: 700; letter-spacing: 1.1px;
+      text-transform: uppercase; color: var(--slate-400);
+      padding: 14px 10px 5px;
+      white-space: nowrap; overflow: hidden;
+      opacity:1; transition: opacity var(--tr);
+    }
+    .sidebar.col .nav-sec { opacity:0; }
+
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 10px; border-radius: 9px;
+      color: var(--slate-500); text-decoration: none;
+      font-size: 13px; font-weight: 500;
+      white-space: nowrap; overflow: hidden;
+      transition: background .15s, color .15s;
+      cursor: pointer; position: relative; margin-bottom: 1px;
+    }
+    .nav-item:hover { background: var(--blue-50); color: var(--blue-600); }
+    .nav-item.active {
+      background: var(--blue-50);
+      color: var(--blue-600);
+      font-weight: 600;
+    }
+    .nav-item.active::before {
+      content:''; position: absolute; left:0; top:7px; bottom:7px;
+      width: 3px; background: var(--blue-500); border-radius: 0 2px 2px 0;
+    }
+
+    .ni-icon {
+      width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: background .15s;
+    }
+    .nav-item:hover .ni-icon,
+    .nav-item.active .ni-icon { background: var(--blue-100); }
+
+    .ni-label { opacity:1; transition: opacity var(--tr); }
+    .sidebar.col .ni-label { opacity:0; pointer-events:none; }
+
+    .ni-tip {
+      position: absolute; left: calc(var(--sidebar-c) + 10px);
+      background: #1e293b; color: #fff;
+      font-size: 11.5px; font-weight: 500;
+      padding: 5px 11px; border-radius: 7px;
+      white-space: nowrap; pointer-events: none;
+      opacity:0; transition: opacity .13s;
+      box-shadow: 0 4px 12px rgba(0,0,0,.18); z-index: 999;
+    }
+    .sidebar.col .nav-item:hover .ni-tip { opacity:1; }
+
+    .sb-footer {
+      padding: 10px 8px; border-top: 1.5px solid var(--slate-100); flex-shrink:0;
+    }
+    .logout-btn {
+      display: flex; align-items: center; gap: 10px; width: 100%;
+      padding: 9px 10px; border-radius: 9px;
+      background: #fff1f2; border: 1px solid #fecdd3;
+      color: #e11d48; font-size: 13px; font-weight: 500;
+      cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif;
+      white-space: nowrap; overflow: hidden; transition: background .15s;
+    }
+    .logout-btn:hover { background: #ffe4e6; }
+    .lo-icon {
+      width: 32px; height: 32px; border-radius: 8px; flex-shrink:0;
+      display: flex; align-items: center; justify-content: center;
+      background: #ffe4e6;
+    }
+    .lo-label { opacity:1; transition: opacity var(--tr); }
+    .sidebar.col .lo-label { opacity:0; }
+
+    /* ══ MAIN ══ */
+    .main {
+      margin-left: var(--sidebar-w);
+      transition: margin-left var(--tr);
+      min-height: 100vh; display: flex; flex-direction: column;
+    }
+    .main.col { margin-left: var(--sidebar-c); }
+
+    /* ══ TOPBAR ══ */
+    .topbar {
+      position: sticky; top:0; height: var(--topbar-h);
+      background: var(--white);
+      border-bottom: 1.5px solid var(--slate-200);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 28px; z-index: 100;
+    }
+    .tb-title {
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 16px; font-weight: 700;
+      color: #1e293b; letter-spacing: -.3px;
+    }
+    .tb-sub { font-size: 11.5px; color: var(--slate-400); margin-top: 1px; }
+    .tb-right { display: flex; align-items: center; gap: 10px; }
+    .tb-date {
+      font-size: 11.5px; color: var(--slate-500);
+      background: var(--slate-100); padding: 5px 13px;
+      border-radius: 20px; border: 1px solid var(--slate-200);
+    }
+    .tb-notif {
+      width: 34px; height: 34px; border-radius: 9px;
+      background: var(--slate-50); border: 1px solid var(--slate-200);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; position: relative; transition: background .15s;
+    }
+    .tb-notif:hover { background: var(--blue-50); border-color: var(--blue-200); }
+    .notif-dot {
+      position: absolute; top:7px; right:7px;
+      width:6px; height:6px; background:#e11d48;
+      border-radius:50%; border:1.5px solid #fff;
+    }
+    .admin-pill {
+      display: flex; align-items: center; gap: 9px;
+      padding: 5px 13px 5px 5px;
+      background: var(--blue-50); border: 1px solid var(--blue-200);
+      border-radius: 40px; cursor: pointer; transition: background .15s;
+    }
+    .admin-pill:hover { background: var(--blue-100); }
+    .admin-av {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue-600), var(--blue-400));
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 10px; font-weight: 800; color: #fff;
+    }
+    .admin-name { font-size: 12.5px; font-weight: 600; color: var(--blue-700); }
+
+    /* ══ CONTENT ══ */
+    .content { flex:1; padding: 24px 28px; }
+
+    /* ══ STATS ══ */
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(4,1fr);
+      gap: 14px; margin-bottom: 20px;
+    }
+    .stat-card {
+      background: var(--white); border-radius: 14px;
+      padding: 20px 22px; border: 1.5px solid var(--slate-200);
+      position: relative; overflow: hidden;
+      transition: transform .2s, box-shadow .2s;
+      animation: fadeUp .45s ease both;
+    }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(0,0,0,.07); }
+    .stat-card::after {
+      content:''; position:absolute; right:-18px; top:-18px;
+      width:80px; height:80px; border-radius:50%; pointer-events:none;
+    }
+    .sc-blue::after   { background:var(--blue-500); opacity:.06; }
+    .sc-green::after  { background:#16a34a; opacity:.07; }
+    .sc-purple::after { background:#7c3aed; opacity:.07; }
+    .sc-orange::after { background:#ea580c; opacity:.07; }
+
+    .st-top { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:14px; }
+    .st-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .sc-blue   .st-icon { background:#eff6ff; }
+    .sc-green  .st-icon { background:#f0fdf4; }
+    .sc-purple .st-icon { background:#f5f3ff; }
+    .sc-orange .st-icon { background:#fff7ed; }
+
+    .st-badge { font-size:10px; font-weight:700; padding:3px 8px; border-radius:20px; }
+    .b-up   { background:#dcfce7; color:#16a34a; }
+    .b-down { background:#fee2e2; color:#dc2626; }
+
+    .st-val {
+      font-family:'Syne',sans-serif; font-size:26px; font-weight:800;
+      color:#1e293b; letter-spacing:-1px; line-height:1; margin-bottom:3px;
+    }
+    .st-lbl { font-size:12px; color:var(--slate-500); }
+
+    /* ══ USER DIRECTORY ══ */
+    .dir-section {
+      background:var(--white); border-radius:14px;
+      border:1.5px solid var(--slate-200); margin-bottom:20px;
+      animation: fadeUp .45s .08s ease both;
+    }
+    .dir-head {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:18px 22px 14px; border-bottom:1.5px solid var(--slate-100);
+    }
+    .dir-title {
+      font-family:'Syne',sans-serif; font-size:14.5px; font-weight:700;
+      color:#1e293b; letter-spacing:-.2px;
+    }
+    .dir-sub { font-size:11.5px; color:var(--slate-400); margin-top:2px; }
+    .btn-create {
+      display:inline-flex; align-items:center; gap:7px;
+      padding:8px 16px; border-radius:9px;
+      background:var(--blue-500); color:#fff;
+      font-size:12.5px; font-weight:600; text-decoration:none;
+      border:none; cursor:pointer; font-family:'DM Sans',sans-serif;
+      transition:background .15s, transform .15s;
+      box-shadow:0 3px 10px rgba(33,104,240,.22);
+    }
+    .btn-create:hover { background:var(--blue-600); transform:translateY(-1px); }
+
+    .dir-filters {
+      display:flex; align-items:center; gap:10px;
+      padding:14px 22px; border-bottom:1.5px solid var(--slate-100);
+    }
+    .search-wrap { flex:1; position:relative; }
+    .search-wrap svg { position:absolute; left:12px; top:50%; transform:translateY(-50%); }
+    .search-wrap input {
+      width:100%; padding:9px 13px 9px 36px;
+      border:1.5px solid var(--slate-200); border-radius:9px;
+      font-family:'DM Sans',sans-serif; font-size:12.5px;
+      color:#1e293b; background:var(--slate-50); outline:none;
+      transition:border-color .15s, background .15s;
+    }
+    .search-wrap input:focus { border-color:var(--blue-400); background:#fff; box-shadow:0 0 0 3px rgba(33,104,240,.08); }
+    .filter-sel {
+      padding:9px 13px; border:1.5px solid var(--slate-200); border-radius:9px;
+      font-family:'DM Sans',sans-serif; font-size:12.5px;
+      color:var(--slate-600); background:var(--slate-50); outline:none; cursor:pointer;
+    }
+    .filter-sel:focus { border-color:var(--blue-400); }
+
+    .dir-table { width:100%; border-collapse:collapse; }
+    .dir-table thead tr { background:var(--slate-50); }
+    .dir-table th {
+      padding:10px 22px; text-align:left;
+      font-size:10px; font-weight:700; letter-spacing:.8px;
+      text-transform:uppercase; color:var(--slate-400);
+      border-bottom:1.5px solid var(--slate-100);
+    }
+    .dir-table td {
+      padding:13px 22px; font-size:12.5px;
+      border-bottom:1px solid var(--slate-100); vertical-align:middle;
+    }
+    .dir-table tbody tr:last-child td { border-bottom:none; }
+    .dir-table tbody tr:hover { background:#fafbfc; }
+
+    .user-cell { display:flex; align-items:center; gap:10px; }
+    .user-av {
+      width:32px; height:32px; border-radius:50%; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center;
+      font-family:'Syne',sans-serif; font-size:11px; font-weight:800; color:#fff;
+    }
+    .av-blue   { background:linear-gradient(135deg,#1a55c8,#4f87f5); }
+    .av-green  { background:linear-gradient(135deg,#16a34a,#4ade80); }
+    .av-purple { background:linear-gradient(135deg,#7c3aed,#a78bfa); }
+    .av-orange { background:linear-gradient(135deg,#ea580c,#fb923c); }
+    .av-teal   { background:linear-gradient(135deg,#0d9488,#2dd4bf); }
+
+    .user-name  { font-size:13px; font-weight:600; color:#1e293b; }
+    .user-email { font-size:11px; color:var(--slate-400); margin-top:1px; }
+
+    .role-badge {
+      display:inline-block; padding:3px 10px; border-radius:20px;
+      font-size:10.5px; font-weight:700;
+    }
+    .role-admin    { background:#eff6ff; color:var(--blue-600); }
+    .role-customer { background:#fff7ed; color:#c2410c; }
+    .role-user     { background:#f5f3ff; color:#6d28d9; }
+
+    .status-cell { display:inline-flex; align-items:center; gap:6px; font-size:12.5px; font-weight:500; }
+    .dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+    .dot-on  { background:#16a34a; box-shadow:0 0 0 2.5px #dcfce7; }
+    .dot-off { background:var(--slate-300); box-shadow:0 0 0 2.5px var(--slate-100); }
+    .s-active   { color:#16a34a; }
+    .s-inactive { color:var(--slate-400); }
+
+    .action-btns { display:flex; gap:7px; }
+    .btn-edit, .btn-del {
+      display:inline-flex; align-items:center; gap:4px;
+      padding:5px 11px; border-radius:7px;
+      font-size:11.5px; font-weight:600; cursor:pointer;
+      border:none; font-family:'DM Sans',sans-serif;
+      transition:background .13s, transform .13s;
+    }
+    .btn-edit { background:var(--blue-50); color:var(--blue-600); border:1px solid var(--blue-200); }
+    .btn-edit:hover { background:var(--blue-100); transform:translateY(-1px); }
+    .btn-del  { background:#fff1f2; color:#e11d48; border:1px solid #fecdd3; }
+    .btn-del:hover  { background:#ffe4e6; transform:translateY(-1px); }
+
+    .dir-foot {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:13px 22px; border-top:1.5px solid var(--slate-100);
+    }
+    .foot-label { font-size:12px; color:var(--slate-400); }
+    .pagination { display:flex; gap:4px; }
+    .pg-btn {
+      width:28px; height:28px; border-radius:7px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:12px; font-weight:600; cursor:pointer;
+      border:1.5px solid var(--slate-200); background:#fff; color:var(--slate-500);
+      transition:background .13s, border-color .13s;
+    }
+    .pg-btn:hover { background:var(--blue-50); border-color:var(--blue-200); color:var(--blue-600); }
+    .pg-btn.active { background:var(--blue-500); border-color:var(--blue-500); color:#fff; }
+
+    /* ══ LOWER GRID ══ */
+    .lower-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px; }
+
+    .panel {
+      background:var(--white); border-radius:14px;
+      border:1.5px solid var(--slate-200); overflow:hidden;
+      animation: fadeUp .45s .14s ease both;
+    }
+    .panel-head {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:16px 20px 13px; border-bottom:1.5px solid var(--slate-100);
+    }
+    .panel-title {
+      font-family:'Syne',sans-serif; font-size:14px; font-weight:700;
+      color:#1e293b; letter-spacing:-.2px;
+    }
+    .panel-sub { font-size:11.5px; color:var(--slate-400); margin-top:2px; }
+    .view-all {
+      font-size:11.5px; font-weight:600; color:var(--blue-500);
+      text-decoration:none; padding:4px 11px;
+      background:var(--blue-50); border-radius:20px;
+      border:1px solid var(--blue-200); transition:background .13s;
+    }
+    .view-all:hover { background:var(--blue-100); }
+
+    .actions-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; padding:14px; }
+    .act-tile {
+      display:flex; align-items:center; gap:10px;
+      padding:12px 13px; border-radius:10px;
+      background:var(--slate-50); border:1.5px solid var(--slate-200);
+      text-decoration:none; color:#1e293b;
+      transition:background .15s, border-color .15s, transform .15s;
+    }
+    .act-tile:hover { background:var(--blue-50); border-color:var(--blue-200); transform:translateY(-2px); }
+    .act-icon {
+      width:34px; height:34px; border-radius:9px; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center; font-size:14px;
+    }
+    .ti-blue   { background:#eff6ff; }
+    .ti-green  { background:#f0fdf4; }
+    .ti-purple { background:#f5f3ff; }
+    .ti-orange { background:#fff7ed; }
+    .ti-teal   { background:#f0fdfa; }
+    .ti-red    { background:#fff1f2; }
+    .act-tile h4 { font-size:12.5px; font-weight:600; color:#1e293b; margin-bottom:1px; }
+    .act-tile p  { font-size:11px; color:var(--slate-400); }
+
+    /* Recent Activity */
+    .act-list { padding:3px 0; }
+    .act-item {
+      display:flex; align-items:flex-start; gap:12px;
+      padding:12px 20px; border-bottom:1px solid var(--slate-100);
+      transition:background .13s;
+    }
+    .act-item:last-child { border-bottom:none; }
+    .act-item:hover { background:var(--slate-50); }
+    .act-av {
+      width:32px; height:32px; border-radius:9px; flex-shrink:0;
+      display:flex; align-items:center; justify-content:center;
+      font-family:'Syne',sans-serif; font-size:11px; font-weight:800; color:#fff; margin-top:1px;
+    }
+    .act-info h4 { font-size:12.5px; font-weight:600; color:#1e293b; margin-bottom:2px; }
+    .act-info p  { font-size:11.5px; color:var(--slate-400); margin-bottom:4px; }
+    .act-time {
+      font-size:10.5px; color:var(--slate-400);
+      background:var(--slate-100); padding:2px 8px;
+      border-radius:10px; display:inline-block;
+    }
+
+    /* ══ BANNER ══ */
+    .banner {
+      background:linear-gradient(130deg,#0f2d6e 0%,#1a55c8 55%,#4f87f5 100%);
+      border-radius:14px; padding:24px 28px;
+      display:flex; align-items:center; justify-content:space-between;
+      position:relative; overflow:hidden;
+      animation: fadeUp .45s .18s ease both;
+    }
+    .banner::before { content:''; position:absolute; top:-50px; right:-50px; width:200px; height:200px; background:rgba(255,255,255,.06); border-radius:50%; }
+    .banner::after  { content:''; position:absolute; bottom:-60px; right:140px; width:150px; height:150px; background:rgba(255,255,255,.04); border-radius:50%; }
+    .banner-text h3 { font-family:'Syne',sans-serif; font-size:16px; font-weight:800; color:#fff; margin-bottom:5px; }
+    .banner-text p  { font-size:12.5px; color:rgba(255,255,255,.65); }
+    .banner-actions { display:flex; gap:9px; position:relative; z-index:1; }
+    .bb-btn {
+      padding:9px 18px; border-radius:9px; font-size:12.5px; font-weight:600;
+      cursor:pointer; text-decoration:none; font-family:'DM Sans',sans-serif;
+      display:inline-flex; align-items:center; gap:6px;
+      transition:opacity .15s, transform .15s;
+    }
+    .bb-btn:hover { opacity:.88; transform:translateY(-1px); }
+    .bb-solid   { background:#fff; color:var(--blue-700); border:none; }
+    .bb-outline { background:rgba(255,255,255,.13); color:#fff; border:1px solid rgba(255,255,255,.3); }
+
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(16px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    .stat-card:nth-child(1){animation-delay:.04s}
+    .stat-card:nth-child(2){animation-delay:.09s}
+    .stat-card:nth-child(3){animation-delay:.14s}
+    .stat-card:nth-child(4){animation-delay:.19s}
+  </style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-toggle" onclick="toggleSB()">
+    <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
+      <path d="M7.5 2L3.5 6L7.5 10" stroke="#64748b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+
+  <div class="sb-brand">
+    <div class="brand-mark">
+      <svg width="17" height="17" viewBox="0 0 20 20" fill="none">
+        <rect x="2" y="6" width="16" height="11" rx="2" fill="white" fill-opacity=".95"/>
+        <path d="M6 6V5a4 4 0 018 0v1" fill="white" fill-opacity=".5"/>
+        <rect x="9" y="10" width="2" height="3" rx="1" fill="#2168f0"/>
+      </svg>
+    </div>
+    <span class="brand-text">SecureBank</span>
+  </div>
+
+  <nav class="sb-nav">
+    <div class="nav-sec">Overview</div>
+    <a class="nav-item active" href="#">
+      <span class="ni-icon"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="9" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="1" y="9" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="9" y="9" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/></svg></span>
+      <span class="ni-label">Dashboard</span><span class="ni-tip">Dashboard</span>
+    </a>
+
+    <div class="nav-sec">Users</div>
+    <a class="nav-item" href="#">
+      <span class="ni-icon"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="5" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M1 13c0-3 2.686-4.5 6-4.5s6 1.5 6 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M12 7v4M10 9h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+      <span class="ni-label">Create User</span><span class="ni-tip">Create User</span>
+    </a>
+    <a class="nav-item" href="#">
+      <span class="ni-icon"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M1 13c0-3 2.686-4.5 6-4.5s6 1.5 6 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="6" cy="5" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M13 7a2 2 0 010 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+      <span class="ni-label">Manage Users</span><span class="ni-tip">Manage Users</span>
+    </a>
+
+    <div class="nav-sec">Finance</div>
+    <a class="nav-item" href="#">
+      <span class="ni-icon"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M2 8h12M10 5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <span class="ni-label">Transactions</span><span class="ni-tip">Transactions</span>
+    </a>
+    <a class="nav-item" href="#">
+      <span class="ni-icon"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="1" y="4" width="14" height="9" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M4 8h2M7 8h1M10 8h2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></span>
+      <span class="ni-label">Accounts</span><span class="ni-tip">Accounts</span>
+    </a>
+
+    <div class="nav-sec">System</div>
+    <a class="nav-item" href="#">
+      <span class="ni-icon"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.22 3.22l1.42 1.42M11.36 11.36l1.42 1.42M3.22 12.78l1.42-1.42M11.36 4.64l1.42-1.42" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+      <span class="ni-label">Settings</span><span class="ni-tip">Settings</span>
+    </a>
+    <a class="nav-item" href="#">
+      <span class="ni-icon"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M2 3h12v8H2zM5 14h6M8 11v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <span class="ni-label">Reports</span><span class="ni-tip">Reports</span>
+    </a>
+  </nav>
+
+  <div class="sb-footer">
+    <button class="logout-btn">
+      <span class="lo-icon"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3M11 11l3-3-3-3M14 8H6" stroke="#e11d48" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <span class="lo-label">Logout</span>
+    </button>
+  </div>
+</aside>
+
+<!-- ══ MAIN ══ -->
+<div class="main" id="main">
+
+  <header class="topbar">
+    <div>
+      <div class="tb-title">Dashboard Overview</div>
+      <div class="tb-sub">Welcome back, Admin Rao Taha</div>
+    </div>
+    <div class="tb-right">
+      <div class="tb-date" id="tbDate"></div>
+      <div class="tb-notif">
+        <svg width="15" height="15" viewBox="0 0 20 20" fill="none"><path d="M10 2a6 6 0 00-6 6v3l-2 2v1h16v-1l-2-2V8a6 6 0 00-6-6z" stroke="#94a3b8" stroke-width="1.5"/><path d="M8 17a2 2 0 004 0" stroke="#94a3b8" stroke-width="1.5"/></svg>
+        <div class="notif-dot"></div>
+      </div>
+      <div class="admin-pill">
+        <div class="admin-av">RT</div>
+        <span class="admin-name">Rao Taha</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card sc-blue">
+        <div class="st-top">
+          <div class="st-icon"><svg width="19" height="19" viewBox="0 0 20 20" fill="none"><path d="M17 19v-2a4 4 0 00-4-4H7a4 4 0 00-4 4v2" stroke="#2168f0" stroke-width="1.6" stroke-linecap="round"/><circle cx="10" cy="7" r="4" stroke="#2168f0" stroke-width="1.6"/></svg></div>
+          <span class="st-badge b-up">↑ 12%</span>
+        </div>
+        <div class="st-val">7</div>
+        <div class="st-lbl">Total Users</div>
+      </div>
+      <div class="stat-card sc-green">
+        <div class="st-top">
+          <div class="st-icon"><svg width="19" height="19" viewBox="0 0 20 20" fill="none"><path d="M18 10.08V11a8 8 0 11-4.74-7.31" stroke="#16a34a" stroke-width="1.6" stroke-linecap="round"/><polyline points="18 4 10 12.01 7.5 9.51" stroke="#16a34a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="st-badge b-up">↑ 8%</span>
+        </div>
+        <div class="st-val">5</div>
+        <div class="st-lbl">Active Accounts</div>
+      </div>
+      <div class="stat-card sc-purple">
+        <div class="st-top">
+          <div class="st-icon"><svg width="19" height="19" viewBox="0 0 20 20" fill="none"><path d="M2 10h16M12 5l5 5-5 5" stroke="#7c3aed" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <span class="st-badge b-up">↑ 5%</span>
+        </div>
+        <div class="st-val">24</div>
+        <div class="st-lbl">Transactions Today</div>
+      </div>
+      <div class="stat-card sc-orange">
+        <div class="st-top">
+          <div class="st-icon"><svg width="19" height="19" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#ea580c" stroke-width="1.6"/><path d="M10 6v4l2.5 2.5" stroke="#ea580c" stroke-width="1.6" stroke-linecap="round"/></svg></div>
+          <span class="st-badge b-up">↑ 3%</span>
+        </div>
+        <div class="st-val">$84,200</div>
+        <div class="st-lbl">Total Balance</div>
+      </div>
+    </div>
+
+    <!-- User Directory -->
+    <div class="dir-section">
+      <div class="dir-head">
+        <div>
+          <div class="dir-title">User Directory</div>
+          <div class="dir-sub">Manage all registered system users</div>
+        </div>
+        <button class="btn-create">
+          <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>
+          Create User
+        </button>
+      </div>
+
+      <div class="dir-filters">
+        <div class="search-wrap">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="#94a3b8" stroke-width="1.5"/><path d="M11 11l3 3" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <input type="text" placeholder="Search by name or email…" id="searchInput" oninput="filterTable()"/>
+        </div>
+        <select class="filter-sel" id="statusFilter" onchange="filterTable()">
+          <option value="">All Status</option>
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+        <select class="filter-sel" id="roleFilter" onchange="filterTable()">
+          <option value="">All Roles</option>
+          <option value="admin">Admin</option>
+          <option value="customer">Customer</option>
+          <option value="user">User</option>
+        </select>
+      </div>
+
+      <table class="dir-table">
+        <thead><tr><th>User</th><th>Role</th><th>Email</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="tableBody">
+          <tr data-status="active" data-role="admin">
+            <td><div class="user-cell"><div class="user-av av-blue">RT</div><div><div class="user-name">Rao Taha</div><div class="user-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="87f5e6e8f3e6efe6b4b2c7e0eae6eeeba9e4e8ea">[email&#160;protected]</a></div></div></div></td>
+            <td><span class="role-badge role-admin">Admin</span></td>
+            <td><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e597848a91848d84d6d0a58288848c89cb868a88">[email&#160;protected]</a></td>
+            <td><span class="status-cell"><span class="dot dot-on"></span><span class="s-active">Active</span></span></td>
+            <td><div class="action-btns"><button class="btn-edit">✏ Edit</button><button class="btn-del">🗑 Delete</button></div></td>
+          </tr>
+          <tr data-status="active" data-role="customer">
+            <td><div class="user-cell"><div class="user-av av-blue">RT</div><div><div class="user-name">Rao Taha</div><div class="user-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="91e3f0fee5f0f9f0a2a2d1f6fcf0f8fdbff2fefc">[email&#160;protected]</a></div></div></div></td>
+            <td><span class="role-badge role-customer">Customer</span></td>
+            <td><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6113000e15000900525221060c00080d4f020e0c">[email&#160;protected]</a></td>
+            <td><span class="status-cell"><span class="dot dot-on"></span><span class="s-active">Active</span></span></td>
+            <td><div class="action-btns"><button class="btn-edit">✏ Edit</button><button class="btn-del">🗑 Delete</button></div></td>
+          </tr>
+          <tr data-status="inactive" data-role="admin">
+            <td><div class="user-cell"><div class="user-av av-purple">HB</div><div><div class="user-name">Huzaifa Baig</div><div class="user-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="b1f9c4cbd0d8d7d0808382f1d6dcd0d8dd9fd2dedc">[email&#160;protected]</a></div></div></div></td>
+            <td><span class="role-badge role-admin">Admin</span></td>
+            <td><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="1f576a657e76797e2e2d2c5f78727e7673317c7072">[email&#160;protected]</a></td>
+            <td><span class="status-cell"><span class="dot dot-off"></span><span class="s-inactive">Inactive</span></span></td>
+            <td><div class="action-btns"><button class="btn-edit">✏ Edit</button><button class="btn-del">🗑 Delete</button></div></td>
+          </tr>
+          <tr data-status="inactive" data-role="user">
+            <td><div class="user-cell"><div class="user-av av-orange">F</div><div><div class="user-name">Farhan</div><div class="user-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="571136253f363917303a363e3b7934383a">[email&#160;protected]</a></div></div></div></td>
+            <td><span class="role-badge role-user">User</span></td>
+            <td><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="783e190a101916381f15191114561b1715">[email&#160;protected]</a></td>
+            <td><span class="status-cell"><span class="dot dot-off"></span><span class="s-inactive">Inactive</span></span></td>
+            <td><div class="action-btns"><button class="btn-edit">✏ Edit</button><button class="btn-del">🗑 Delete</button></div></td>
+          </tr>
+          <tr data-status="active" data-role="customer">
+            <td><div class="user-cell"><div class="user-av av-green">A</div><div><div class="user-name">Ahmed</div><div class="user-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c180a9aca4a5f0f3f281a6aca0a8adefa2aeac">[email&#160;protected]</a></div></div></div></td>
+            <td><span class="role-badge role-customer">Customer</span></td>
+            <td><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="8fcee7e2eaebbebdbccfe8e2eee6e3a1ece0e2">[email&#160;protected]</a></td>
+            <td><span class="status-cell"><span class="dot dot-on"></span><span class="s-active">Active</span></span></td>
+            <td><div class="action-btns"><button class="btn-edit">✏ Edit</button><button class="btn-del">🗑 Delete</button></div></td>
+          </tr>
+          <tr data-status="active" data-role="admin">
+            <td><div class="user-cell"><div class="user-av av-teal">R</div><div><div class="user-name">Rafay</div><div class="user-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="37655651564e06050477505a565e5b1954585a">[email&#160;protected]</a></div></div></div></td>
+            <td><span class="role-badge role-admin">Admin</span></td>
+            <td><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="27754641465e16151467404a464e4b0944484a">[email&#160;protected]</a></td>
+            <td><span class="status-cell"><span class="dot dot-on"></span><span class="s-active">Active</span></span></td>
+            <td><div class="action-btns"><button class="btn-edit">✏ Edit</button><button class="btn-del">🗑 Delete</button></div></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="dir-foot">
+        <span class="foot-label" id="showLabel">Showing 1–6 of 7 users</span>
+        <div class="pagination">
+          <button class="pg-btn active">1</button>
+          <button class="pg-btn">2</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lower Grid -->
+    <div class="lower-grid">
+      <div class="panel">
+        <div class="panel-head">
+          <div><div class="panel-title">Quick Actions</div><div class="panel-sub">Navigate to key features</div></div>
+        </div>
+        <div class="actions-grid">
+          <a class="act-tile" href="#"><div class="act-icon ti-blue">➕</div><div><h4>Create User</h4><p>Add new user</p></div></a>
+          <a class="act-tile" href="#"><div class="act-icon ti-green">📊</div><div><h4>Create Account</h4><p>Open bank account</p></div></a>
+          <a class="act-tile" href="#"><div class="act-icon ti-purple">🔄</div><div><h4>Transaction</h4><p>Process transfer</p></div></a>
+          <a class="act-tile" href="#"><div class="act-icon ti-orange">⚙️</div><div><h4>Manage Users</h4><p>View & edit users</p></div></a>
+          <a class="act-tile" href="#"><div class="act-icon ti-teal">💼</div><div><h4>Accounts</h4><p>View all accounts</p></div></a>
+          <a class="act-tile" href="#"><div class="act-icon ti-red">📈</div><div><h4>Reports</h4><p>Analytics & data</p></div></a>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <div><div class="panel-title">Recent Activity</div><div class="panel-sub">Latest system events</div></div>
+          <a href="#" class="view-all">View all</a>
+        </div>
+        <div class="act-list">
+          <div class="act-item"><div class="act-av av-blue">U</div><div class="act-info"><h4>User Account Created</h4><p>John Doe — <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="412b2e292f6f252e240132242234332423202f2a6f222e2c">[email&#160;protected]</a></p><span class="act-time">5 minutes ago</span></div></div>
+          <div class="act-item"><div class="act-av av-green">A</div><div class="act-info"><h4>Savings Account Opened</h4><p>Account #1234567890 — Initial deposit</p><span class="act-time">22 minutes ago</span></div></div>
+          <div class="act-item"><div class="act-av av-purple">T</div><div class="act-info"><h4>Transfer Completed</h4><p>$5,000.00 → Account #9876543210</p><span class="act-time">1 hour ago</span></div></div>
+          <div class="act-item"><div class="act-av av-orange">E</div><div class="act-info"><h4>Profile Updated</h4><p>Jane Smith — Contact details modified</p><span class="act-time">2 hours ago</span></div></div>
+          <div class="act-item"><div class="act-av av-teal">D</div><div class="act-info"><h4>Deposit Received</h4><p>$10,000.00 — Account #5678901234</p><span class="act-time">4 hours ago</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Banner -->
+    <div class="banner">
+      <div class="banner-text">
+        <h3>🚀 Everything looks great today</h3>
+        <p>All systems operational. 5 active users across the platform.</p>
+      </div>
+      <div class="banner-actions">
+        <a class="bb-btn bb-solid" href="#">
+          <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M1 13c0-3 2.686-4.5 6-4.5s6 1.5 6
