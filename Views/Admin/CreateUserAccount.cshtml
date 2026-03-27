@@ -62,251 +62,377 @@
             overflow-x: hidden;
         }
 
-        /* ===================== SIDEBAR ===================== */
+        /:root {
+            --sidebar-w: 260px;
+            --sidebar-collapsed: 70px;
+            --topbar-h: 66px;
+            /* Blues */
+            --blue-50: #eff6ff;
+            --blue-100: #dbeafe;
+            --blue-200: #bfdbfe;
+            --blue-400: #60a5fa;
+            --blue-500: #3b82f6;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-900: #1e3a8a;
+            /* Accent colours (light tints only) */
+            --green: #16a34a;
+            --green-50: #f0fdf4;
+            --green-100: #dcfce7;
+            --purple: #7c3aed;
+            --purple-50: #faf5ff;
+            --purple-100: #ede9fe;
+            --orange: #ea580c;
+            --orange-50: #fff7ed;
+            --orange-100: #ffedd5;
+            --teal: #0891b2;
+            --teal-50: #ecfeff;
+            --teal-100: #cffafe;
+            --red: #dc2626;
+            --red-50: #fef2f2;
+            --red-100: #fee2e2;
+            --amber: #d97706;
+            --amber-50: #fffbeb;
+            /* Neutrals — all light */
+            --bg: #f8fafc;
+            --bg2: #f1f5f9;
+            --surface: #ffffff;
+            --surface2: #f8fafc;
+            --surface3: #f1f5f9;
+            --border: #e2e8f0;
+            --border-2: #cbd5e1;
+            --text1: #0f172a;
+            --text2: #334155;
+            --text3: #64748b;
+            --text4: #94a3b8;
+            /* Sidebar — crisp white */
+            --sb-bg: #ffffff;
+            --sb-border: #e2e8f0;
+            --sb-text: #64748b;
+            --sb-text-h: #0f172a;
+            --sb-hover: #f1f5f9;
+            --sb-active-bg: #eff6ff;
+            --sb-active-c: var(--blue-600);
+            /* Shadows */
+            --shadow-xs: 0 1px 2px rgba(15,23,42,.04);
+            --shadow-sm: 0 1px 4px rgba(15,23,42,.06), 0 1px 2px rgba(15,23,42,.03);
+            --shadow-md: 0 4px 16px rgba(15,23,42,.07), 0 2px 4px rgba(15,23,42,.04);
+            --shadow-lg: 0 12px 32px rgba(15,23,42,.10), 0 4px 8px rgba(15,23,42,.05);
+            --shadow-blue: 0 4px 14px rgba(37,99,235,.18);
+            --r: 14px;
+            --r-s: 10px;
+            --r-x: 7px;
+            --ease: .22s cubic-bezier(.4,0,.2,1);
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text1);
+            min-height: 100vh;
+            font-size: 14px;
+            line-height: 1.55;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        /* ══════════════════════════════
+           LAYOUT
+        ══════════════════════════════ */
+        .admin-layout {
+            min-height: 100vh;
+        }
+
+        /* ══════════════════════════════
+           SIDEBAR
+        ══════════════════════════════ */
         .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            bottom: 0;
             width: var(--sidebar-w);
-            background: var(--blue-950);
+            background: var(--sb-bg);
+            border-right: 1px solid var(--sb-border);
             display: flex;
             flex-direction: column;
+            position: fixed;
+            inset: 0 auto 0 0;
             z-index: 200;
-            transition: width var(--transition);
+            transition: width var(--ease);
             overflow: hidden;
-            box-shadow: 4px 0 40px rgba(5,17,42,0.15);
+            box-shadow: 2px 0 20px rgba(15,23,42,.05);
         }
 
             .sidebar.collapsed {
                 width: var(--sidebar-collapsed);
             }
 
-        .sidebar-toggle {
-            position: absolute;
-            top: 20px;
-            right: -13px;
-            width: 26px;
-            height: 26px;
-            background: var(--blue-500);
-            border: 2px solid var(--blue-300);
-            border-radius: 50%;
+        /* Brand */
+        .sb-brand {
             display: flex;
             align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 300;
-            box-shadow: 0 2px 10px rgba(33,104,240,0.4);
-            transition: background 0.18s;
-        }
-
-            .sidebar-toggle:hover {
-                background: var(--blue-400);
-            }
-
-            .sidebar-toggle svg {
-                transition: transform var(--transition);
-                flex-shrink: 0;
-            }
-
-        .sidebar.collapsed .sidebar-toggle svg {
-            transform: rotate(180deg);
-        }
-
-        .sidebar-brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            gap: 11px;
             padding: 0 18px;
             height: var(--topbar-h);
-            border-bottom: 1px solid rgba(255,255,255,0.07);
+            border-bottom: 1px solid var(--sb-border);
             flex-shrink: 0;
             overflow: hidden;
-            white-space: nowrap;
         }
 
         .brand-mark {
             width: 36px;
             height: 36px;
-            background: linear-gradient(135deg, var(--blue-500), var(--blue-400));
             border-radius: 10px;
+            background: var(--blue-600);
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            box-shadow: 0 4px 14px rgba(33,104,240,0.45);
+            box-shadow: var(--shadow-blue);
         }
 
         .brand-text {
-            font-family: 'Syne', sans-serif;
-            font-size: 16px;
-            font-weight: 800;
-            color: var(--white);
-            letter-spacing: -0.3px;
-            opacity: 1;
-            transition: opacity var(--transition);
+            font-family: 'Sora', sans-serif;
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--text1);
             white-space: nowrap;
+            transition: opacity var(--ease), width var(--ease);
         }
 
         .sidebar.collapsed .brand-text {
             opacity: 0;
-            pointer-events: none;
+            width: 0;
         }
 
-        .sidebar-nav {
-            flex: 1;
-            padding: 18px 10px;
-            overflow-y: auto;
-            overflow-x: hidden;
-            scrollbar-width: none;
+        /* Toggle button */
+        .sb-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 26px;
+            height: 26px;
+            border-radius: var(--r-x);
+            background: var(--surface3);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background var(--ease), border-color var(--ease);
         }
 
-            .sidebar-nav::-webkit-scrollbar {
-                display: none;
+            .sb-toggle:hover {
+                background: var(--blue-50);
+                border-color: var(--blue-200);
             }
 
-        .nav-section-label {
-            font-size: 9px;
-            font-weight: 700;
-            letter-spacing: 1.4px;
-            text-transform: uppercase;
-            color: rgba(255,255,255,0.25);
-            padding: 14px 10px 6px;
-            white-space: nowrap;
-            overflow: hidden;
-            opacity: 1;
-            transition: opacity var(--transition);
+        .sidebar.collapsed .sb-toggle {
+            right: auto;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(180deg);
+            top: 33px;
         }
 
-        .sidebar.collapsed .nav-section-label {
+        /* Nav */
+        .sb-nav {
+            flex: 1;
+            padding: 14px 10px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+            .sb-nav::-webkit-scrollbar {
+                width: 3px;
+            }
+
+            .sb-nav::-webkit-scrollbar-thumb {
+                background: var(--border);
+                border-radius: 3px;
+            }
+
+        .nav-sec {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: var(--text4);
+            padding: 16px 8px 5px;
+            white-space: nowrap;
+            transition: opacity var(--ease);
+        }
+
+        .sidebar.collapsed .nav-sec {
             opacity: 0;
         }
 
         .nav-item {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 10px 10px;
-            border-radius: 10px;
-            color: rgba(255,255,255,0.5);
-            text-decoration: none;
+            gap: 10px;
+            padding: 9px 10px;
+            border-radius: var(--r-s);
+            color: var(--sb-text);
             font-size: 13.5px;
             font-weight: 500;
             white-space: nowrap;
-            overflow: hidden;
-            transition: background 0.18s, color 0.18s;
-            cursor: pointer;
             position: relative;
             margin-bottom: 2px;
+            transition: background var(--ease), color var(--ease);
         }
 
             .nav-item:hover {
-                background: rgba(255,255,255,0.07);
-                color: var(--white);
+                background: var(--sb-hover);
+                color: var(--sb-text-h);
             }
 
             .nav-item.active {
-                background: linear-gradient(135deg, var(--blue-600), var(--blue-500));
-                color: var(--white);
-                box-shadow: 0 4px 14px rgba(33,104,240,0.3);
+                background: var(--blue-50);
+                color: var(--blue-600);
+                font-weight: 600;
             }
 
-        .nav-icon-wrap {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
+                .nav-item.active::before {
+                    content: '';
+                    position: absolute;
+                    left: 0;
+                    top: 20%;
+                    bottom: 20%;
+                    width: 3px;
+                    border-radius: 0 3px 3px 0;
+                    background: var(--blue-600);
+                }
+
+        .ni-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--r-x);
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            background: rgba(255,255,255,0.06);
+            background: transparent;
+            transition: background var(--ease);
         }
 
-        .nav-item.active .nav-icon-wrap {
-            background: rgba(255,255,255,0.15);
+        .nav-item:hover .ni-icon {
+            background: var(--blue-50);
         }
 
-        .nav-label {
-            font-size: 13.5px;
-            opacity: 1;
-            transition: opacity var(--transition);
-            white-space: nowrap;
+        .nav-item.active .ni-icon {
+            background: var(--blue-100);
+            color: var(--blue-600);
         }
 
-        .sidebar.collapsed .nav-label {
+        .ni-label {
+            transition: opacity var(--ease), width var(--ease);
+            overflow: hidden;
+        }
+
+        .sidebar.collapsed .ni-label {
             opacity: 0;
-            pointer-events: none;
+            width: 0;
         }
 
-        .nav-tooltip {
+        /* Tooltip */
+        .ni-tip {
+            display: none;
             position: absolute;
-            left: calc(var(--sidebar-collapsed) + 8px);
-            background: var(--blue-800);
-            color: var(--white);
+            left: calc(var(--sidebar-collapsed) + 10px);
+            top: 50%;
+            transform: translateY(-50%) translateX(4px);
+            background: var(--text1);
+            color: #fff;
             font-size: 12px;
-            font-weight: 500;
-            padding: 6px 12px;
-            border-radius: 7px;
+            font-weight: 600;
+            padding: 5px 11px;
+            border-radius: var(--r-x);
             white-space: nowrap;
             pointer-events: none;
             opacity: 0;
-            transition: opacity 0.15s;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-            z-index: 999;
+            transition: opacity var(--ease), transform var(--ease);
+            box-shadow: var(--shadow-md);
+            z-index: 300;
         }
 
-        .sidebar.collapsed .nav-item:hover .nav-tooltip {
+        .sidebar.collapsed .ni-tip {
+            display: block;
+        }
+
+        .sidebar.collapsed .nav-item:hover .ni-tip {
             opacity: 1;
+            transform: translateY(-50%) translateX(8px);
         }
 
-        .sidebar-footer {
+        .sidebar.collapsed .nav-item {
+            justify-content: center;
+        }
+
+        /* Footer / Logout */
+        .sb-footer {
             padding: 12px 10px;
-            border-top: 1px solid rgba(255,255,255,0.07);
+            border-top: 1px solid var(--sb-border);
             flex-shrink: 0;
         }
 
         .logout-btn {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             width: 100%;
-            padding: 10px 10px;
-            border-radius: 10px;
-            background: rgba(239,68,68,0.1);
-            border: 1px solid rgba(239,68,68,0.18);
-            color: #f87171;
-            font-size: 13.5px;
+            padding: 9px 10px;
+            border-radius: var(--r-s);
+            background: var(--red-50);
+            border: 1px solid #fecaca;
+            color: var(--red);
+            font-size: 13px;
             font-weight: 500;
-            cursor: pointer;
-            transition: background 0.18s;
-            font-family: 'DM Sans', sans-serif;
             white-space: nowrap;
             overflow: hidden;
+            transition: background var(--ease), border-color var(--ease);
         }
 
             .logout-btn:hover {
-                background: rgba(239,68,68,0.2);
+                background: var(--red-100);
+                border-color: #fca5a5;
             }
 
-        .logout-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
+        .lo-icon {
+            flex-shrink: 0;
             display: flex;
             align-items: center;
+        }
+
+        .lo-label {
+            transition: opacity var(--ease), width var(--ease);
+        }
+
+        .sidebar.collapsed .logout-btn {
             justify-content: center;
-            flex-shrink: 0;
-            background: rgba(239,68,68,0.12);
         }
 
-        .logout-label {
-            opacity: 1;
-            transition: opacity var(--transition);
-        }
-
-        .sidebar.collapsed .logout-label {
+        .sidebar.collapsed .lo-label {
             opacity: 0;
+            width: 0;
         }
+
 
         /* ===================== MAIN WRAPPER ===================== */
         .main-wrapper {
@@ -918,29 +1044,35 @@
 </head>
 <body>
 
-    <!-- ==================== SIDEBAR ==================== -->
+    <!-- ════════════ SIDEBAR ════════════ -->
     <aside class="sidebar" id="sidebar">
-        <div class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">
-            <svg width="11" height="11" viewBox="0 0 12 12" fill="none">
-                <path d="M7.5 2L3.5 6L7.5 10" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-        </div>
-
-        <div class="sidebar-brand">
+        <!-- Brand + Toggle -->
+        <div class="sb-brand">
             <div class="brand-mark">
+                <!-- Shield / lock mark -->
                 <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-                    <rect x="2" y="6" width="16" height="11" rx="2" fill="white" fill-opacity="0.9" />
-                    <path d="M6 6V5a4 4 0 018 0v1" fill="white" fill-opacity="0.5" />
-                    <rect x="9" y="10" width="2" height="3" rx="1" fill="#2168f0" />
+                    <path d="M10 2L3 5v5c0 4.418 3.134 7.979 7 8 3.866-.021 7-3.582 7-8V5L10 2z"
+                          fill="white" fill-opacity=".9" />
+                    <rect x="8.5" y="9" width="3" height="4" rx="1" fill="
+#2563eb" />
+                    <circle cx="10" cy="9" r="1.5" fill="
+#2563eb" />
                 </svg>
             </div>
             <span class="brand-text">SecureBank</span>
+            <div class="sb-toggle" id="sbToggle">
+                <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
+                    <path d="M7.5 2L3.5 6L7.5 10" stroke="
+#64748b" stroke-width="1.8"
+                          stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </div>
         </div>
-
-        <nav class="sidebar-nav">
-            <div class="nav-section-label">Overview</div>
-            <a class="nav-item" asp-controller="Admin" asp-action="Index">
-                <span class="nav-icon-wrap">
+        <nav class="sb-nav">
+            <!-- Overview -->
+            <div class="nav-sec">Overview</div>
+            <a class="nav-item active" asp-controller="Admin" asp-action="Index">
+                <span class="ni-icon">
                     <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
                         <rect x="1" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5" />
                         <rect x="9" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5" />
@@ -948,83 +1080,90 @@
                         <rect x="9" y="9" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5" />
                     </svg>
                 </span>
-                <span class="nav-label">Dashboard</span>
-                <span class="nav-tooltip">Dashboard</span>
+                <span class="ni-label">Dashboard</span>
+                <span class="ni-tip">Dashboard</span>
             </a>
-
-            <div class="nav-section-label">Users</div>
-            <a class="nav-item active" asp-controller="Admin" asp-action="CreateUserAccount">
-                <span class="nav-icon-wrap">
+            <!-- Users -->
+            <div class="nav-sec">Users</div>
+            <a class="nav-item" asp-controller="Admin" asp-action="CreateUserAccount">
+                <span class="ni-icon">
                     <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
                         <circle cx="7" cy="5" r="3" stroke="currentColor" stroke-width="1.5" />
                         <path d="M1 13c0-3 2.686-4.5 6-4.5s6 1.5 6 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
                         <path d="M12 7v4M10 9h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
                     </svg>
                 </span>
-                <span class="nav-label">Create User</span>
-                <span class="nav-tooltip">Create User</span>
+                <span class="ni-label">Create User</span>
+                <span class="ni-tip">Create User</span>
             </a>
             <a class="nav-item" asp-controller="Admin" asp-action="ManageUser">
-                <span class="nav-icon-wrap">
+                <span class="ni-icon">
                     <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
-                        <circle cx="6" cy="5" r="3" stroke="currentColor" stroke-width="1.5" />
                         <path d="M1 13c0-3 2.686-4.5 6-4.5s6 1.5 6 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                        <circle cx="6" cy="5" r="3" stroke="currentColor" stroke-width="1.5" />
                         <path d="M13 7a2 2 0 010 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
                     </svg>
                 </span>
-                <span class="nav-label">Manage Users</span>
-                <span class="nav-tooltip">Manage Users</span>
+                <span class="ni-label">Manage Users</span>
+                <span class="ni-tip">Manage Users</span>
             </a>
-
-            <div class="nav-section-label">Finance</div>
-            <a class="nav-item" asp-controller="Admin" asp-action="transaction">
-                <span class="nav-icon-wrap">
+            <!-- Finance -->
+            <div class="nav-sec">Finance</div>
+            <a class="nav-item" asp-controller="Admin" asp-action="Transaction">
+                <span class="ni-icon">
                     <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
                         <path d="M2 8h12M10 5l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
                 </span>
-                <span class="nav-label">Transactions</span>
-                <span class="nav-tooltip">Transactions</span>
+                <span class="ni-label">Transactions</span>
+                <span class="ni-tip">Transactions</span>
             </a>
-            <a class="nav-item" href="#">
-                <span class="nav-icon-wrap">
+            <a class="nav-item" asp-controller="Admin" asp-action="ManageAccounts">
+                <span class="ni-icon">
                     <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
                         <rect x="1" y="4" width="14" height="9" rx="1.5" stroke="currentColor" stroke-width="1.5" />
                         <path d="M4 8h2M7 8h1M10 8h2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" />
                     </svg>
                 </span>
-                <span class="nav-label">Accounts</span>
-                <span class="nav-tooltip">Accounts</span>
+                <span class="ni-label">Accounts</span>
+                <span class="ni-tip">Accounts</span>
             </a>
-
-            <div class="nav-section-label">System</div>
-            <a class="nav-item" href="#">
-                <span class="nav-icon-wrap">
+            <!-- System -->
+            <div class="nav-sec">System</div>
+            <a class="nav-item" asp-controller="Admin" asp-action="Settings">
+                <span class="ni-icon">
                     <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
                         <circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.5" />
                         <path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.22 3.22l1.42 1.42M11.36 11.36l1.42 1.42M3.22 12.78l1.42-1.42M11.36 4.64l1.42-1.42" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
                     </svg>
                 </span>
-                <span class="nav-label">Settings</span>
-                <span class="nav-tooltip">Settings</span>
+                <span class="ni-label">Settings</span>
+                <span class="ni-tip">Settings</span>
+            </a>
+            <a class="nav-item" asp-controller="Admin" asp-action="Reports">
+                <span class="ni-icon">
+                    <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
+                        <path d="M2 3h12v8H2zM5 14h6M8 11v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </span>
+                <span class="ni-label">Reports</span>
+                <span class="ni-tip">Reports</span>
             </a>
         </nav>
-
-        <div class="sidebar-footer">
-            <form asp-controller="Login" asp-action="Logout" method="post" style="margin:0;">
-                @Html.AntiForgeryToken()
-                <button type="submit" class="logout-btn">
-                    <span class="logout-icon">
-                        <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
-                            <path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3M11 11l3-3-3-3M14 8H6" stroke="#f87171" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                    </span>
-                    <span class="logout-label">Logout</span>
-                </button>
-            </form>
+        <div class="sb-footer">
+            <button class="logout-btn">
+                <span class="lo-icon">
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                        <path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3M11 11l3-3-3-3M14 8H6"
+                              stroke="
+#dc2626" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </span>
+                <span class="lo-label">Logout</span>
+            </button>
         </div>
     </aside>
-
+    <!-- ════════════ /SIDEBAR ════════════ -->
     <!-- ==================== MAIN ==================== -->
     <div class="main-wrapper" id="mainWrapper">
 

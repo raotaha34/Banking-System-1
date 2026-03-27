@@ -16,5 +16,7 @@ namespace BankingSystemweb.Models
 
         // Navigation property
         public ICollection<Account> Accounts { get; set; } = null!;
+
+        public DateTime CreatedAt { get; set; } = DateTime.Now; // ✅ add this
     }
 }

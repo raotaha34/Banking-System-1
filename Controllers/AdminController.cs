@@ -41,7 +41,15 @@ namespace BankingSystemweb.Controllers
             ViewData["TotalUsers"] = totalUsers;
             ViewData["TotalTransactions"] = tt;
             ViewData["TotalActiveUsers"] = totalActive;
-            return View();
+
+            var recentActivities = await _transactionService.GetRecentActivitiesAsync();
+
+            var dashboardVM = new AdminDashboardVM
+            {
+                RecentActivities = recentActivities,
+            };
+
+            return View(dashboardVM);
         }
 
 
@@ -122,7 +130,7 @@ namespace BankingSystemweb.Controllers
             int totalInactive = inactiveUsers.Count;
 
             var allUsers = await _adminService.GetAllUsersAsync(); // pass to view
-            var totaladmins =await _adminService.GetTotalAdminsAsync();
+            var totaladmins = await _adminService.GetTotalAdminsAsync();
 
             ViewData["TotalUsers"] = totalUsers;
             ViewData["TotalActiveUsers"] = totalActive;
@@ -163,6 +171,6 @@ namespace BankingSystemweb.Controllers
         }
 
 
-        
+
     }
 }

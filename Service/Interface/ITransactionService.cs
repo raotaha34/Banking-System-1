@@ -9,5 +9,7 @@ namespace BankingSystemweb.Service.Interface
         Task<List<Transaction>> GetAllTransactions();
         // Returns total transaction count
         Task<int> GetTotalTransactionsAsync();
+
+        Task<List<RecentActivityVM>> GetRecentActivitiesAsync(int count = 10);
     }
 }
