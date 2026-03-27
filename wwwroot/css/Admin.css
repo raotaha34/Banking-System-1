@@ -855,9 +855,9 @@ button {
    BOTTOM ROW
 ══════════════════════════════ */
 .bottom-row {
-    display: grid; /* FIX: was missing */
-    grid-template-columns: 1fr 340px;
-    gap: 18px;
+    display: grid;
+    grid-template-columns: 2fr 1fr; /* activity wider, summary smaller */
+    gap: 20px;
 }
 
 .panel {
@@ -881,7 +881,7 @@ button {
 /* FIX: Added display:flex so dot and text sit side-by-side (horizontally),
    with the whole item itself stacking vertically inside .activity-list */
 .activity-item {
-    background: #effff1;
+    background: var(--surface2);
     display: flex;
     align-items: flex-start;
     gap: 12px;

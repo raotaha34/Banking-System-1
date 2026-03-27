@@ -1,0 +1,254 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Report Activities</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/report.css" />
+</head>
+<body>
+
+    <!-- ════ MAIN ════ -->
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+        <div class="topbar">
+            <div class="topbar-title">
+                <h1>Report Activities</h1>
+                <p>
+                    Welcome back, @ViewData["AdminName"];
+                    @DateTime.Now.ToString("   dd MMM yyyy   ,    hh:mm tt")
+                </p>
+            </div>
+            <div class="topbar-right">
+                <button class="t-icon-btn" title="Notifications">
+                    <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+                        <path d="M10 2a6 6 0 00-6 6v3l-1.5 2H17.5L16 11V8a6 6 0 00-6-6z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+                        <path d="M8.5 16a1.5 1.5 0 003 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+                    </svg>
+                    <span class="notif-dot"></span>
+                </button>
+                <div class="admin-chip">
+                    <div class="admin-avatar">@(ViewData["AdminName"]?.ToString() is string n ? GetInitials(n) : "AD")</div>
+                    <span class="admin-name">@ViewData["AdminName"]</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE BODY -->
+        <div class="page-body">
+
+            <!-- STAT CARDS -->
+            <div class="stats-grid">
+                <div class="stat-card card-blue">
+                    <div class="stat-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path d="M17 21v-2a4 4 0 00-4-4H7a4 4 0 00-4 4v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                            <circle cx="9" cy="7" r="4" stroke="currentColor" stroke-width="1.8" />
+                            <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <div class="stat-body">
+                        <p class="stat-label">Total Users</p>
+                        <p class="stat-number">@ViewData["TotalActiveUsers"]</p>
+                        <span class="stat-badge up">&#9650; 12%</span>
+                    </div>
+                </div>
+
+                <div class="stat-card card-green">
+                    <div class="stat-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <rect x="2" y="7" width="20" height="14" rx="2" stroke="currentColor" stroke-width="1.8" />
+                            <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                            <line x1="12" y1="12" x2="12" y2="16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                            <line x1="10" y1="14" x2="14" y2="14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <div class="stat-body">
+                        <p class="stat-label">Active Accounts</p>
+                        <p class="stat-number">@ViewData["TotalActiveUsers"]</p>
+                        <span class="stat-badge up">&#9650; 8%</span>
+                    </div>
+                </div>
+
+                <div class="stat-card card-purple">
+                    <div class="stat-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path d="M7 16l3-8 3 8M9.5 12h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                            <circle cx="17" cy="8" r="2" stroke="currentColor" stroke-width="1.8" />
+                            <path d="M3 12h2M19 12h2M12 3v2M12 19v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <div class="stat-body">
+                        <p class="stat-label">Total Transactions</p>
+                        <p class="stat-number">@ViewData["TotalTransactions"]</p>
+                        <span class="stat-badge up">&#9650; 5%</span>
+                    </div>
+                </div>
+
+                <div class="stat-card card-orange">
+                    <div class="stat-icon">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" />
+                            <path d="M12 7v1m0 8v1M9.5 9.5C9.5 8.4 10.6 8 12 8s2.5.4 2.5 1.5S13.4 11 12 12s-2.5 1-2.5 2.5S10.6 16 12 16s2.5-.4 2.5-1.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                        </svg>
+                    </div>
+                    <div class="stat-body">
+                        <p class="stat-label">Total Balance</p>
+                        <p class="stat-number">@ViewData["AdminBalance"]</p>
+                        <span class="stat-badge up">&#9650; 3%</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MIDDLE ROW: CHART + QUICK STATS -->
+            <div class="middle-row">
+                <div class="panel" style="padding-bottom:18px;">
+                    <div class="sec-hdr">
+                        <div>
+                            <p class="sec-title">Transaction Volume</p>
+                            <p class="sec-sub">Last 12 weeks</p>
+                        </div>
+                        <a class="sec-link" href="#">Export</a>
+                    </div>
+                    <div class="chart-placeholder" id="chartArea"></div>
+                    <div style="display:flex;justify-content:space-between;margin-top:10px;padding:0 4px;">
+                        <span style="font-size:11px;color:var(--ink-4)">Jan</span>
+                        <span style="font-size:11px;color:var(--ink-4)">Feb</span>
+                        <span style="font-size:11px;color:var(--ink-4)">Mar</span>
+                        <span style="font-size:11px;color:var(--ink-4)">Apr</span>
+                        <span style="font-size:11px;color:var(--ink-4)">May</span>
+                        <span style="font-size:11px;color:var(--ink-4)">Jun</span>
+                        <span style="font-size:11px;color:var(--ink-4)">Jul</span>
+                        <span style="font-size:11px;color:var(--ink-4)">Aug</span>
+                        <span style="font-size:11px;color:var(--ink-4)">Sep</span>
+                        <span style="font-size:11px;color:var(--ink-4)">Oct</span>
+                        <span style="font-size:11px;color:var(--ink-4)">Nov</span>
+                        <span style="font-size:11px;color:var(--ink-4)">Dec</span>
+                    </div>
+                </div>
+
+                <div class="quick-stat">
+                    <div class="qs-item">
+                        <div class="qs-label">Deposits Today</div>
+                        <div class="qs-value">$24,500</div>
+                    </div>
+                    <div class="qs-divider"></div>
+                    <div class="qs-item">
+                        <div class="qs-label">Withdrawals</div>
+                        <div class="qs-value">$8,200</div>
+                    </div>
+                    <div class="qs-divider"></div>
+                    <div class="qs-item">
+                        <div class="qs-label">Pending Reviews</div>
+                        <div class="qs-value">3</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BOTTOM ROW -->
+            <div class="bottom-row">
+
+                <!-- Recent Activity -->
+                <div class="panel">
+                    <div class="sec-hdr">
+                        <div>
+                            <p class="sec-title">Recent Activity</p>
+                            <p class="sec-sub">Latest system events</p>
+                        </div>
+                        <a class="sec-link" href="#">View all</a>
+                    </div>
+                    <div class="activity-list">
+                        @foreach (var item in Model.RecentActivities)
+                        {
+                            <div class="activity-item">
+                                <div class="ai-dot @item.Color">@item.Icon</div>
+                                <div class="ai-body">
+                                    <h4>@item.Title</h4>
+                                    <p>@item.Description</p>
+                                    <span class="ai-time">@GetTimeAgo(item.Time)</span>
+                                </div>
+                            </div>
+                        }
+                     
+                    </div>
+                </div>
+
+                <!-- System Summary -->
+                <div class="panel">
+                    <div class="sec-hdr" style="margin-bottom:18px">
+                        <div>
+                            <p class="sec-title">System Summary</p>
+                            <p class="sec-sub">Live overview</p>
+                        </div>
+                    </div>
+                    <div class="sum-row">
+                        <span class="sr-lbl"><span class="sr-dot g"></span>Active Users</span>
+                        <span class="sr-val">3,640</span>
+                    </div>
+                    <div class="sum-row">
+                        <span class="sr-lbl"><span class="sr-dot r"></span>Inactive Accounts</span>
+                        <span class="sr-val">2</span>
+                    </div>
+                    <div class="sum-row">
+                        <span class="sr-lbl"><span class="sr-dot a"></span>Pending Reviews</span>
+                        <span class="sr-val">3</span>
+                    </div>
+                    <div class="sum-row">
+                        <span class="sr-lbl"><span class="sr-dot g"></span>Today's Deposits</span>
+                        <span class="sr-val">$24,500</span>
+                    </div>
+                    <div class="sum-row">
+                        <span class="sr-lbl"><span class="sr-dot g"></span>Today's Withdrawals</span>
+                        <span class="sr-val">$8,200</span>
+                    </div>
+                    <div class="sum-row">
+                        <span class="sr-lbl"><span class="sr-dot r"></span>Failed Transactions</span>
+                        <span class="sr-val">1</span>
+                    </div>
+                </div>
+
+            </div>
+            <!-- /bottom-row -->
+        </div>
+        <!-- /page-body -->
+    </main>
+
+    <script>
+        // Build bar chart
+        const heights = [42, 58, 51, 70, 63, 80, 74, 88, 65, 92, 78, 95];
+        const chart = document.getElementById('chartArea');
+        heights.forEach((h, i) => {
+          const bar = document.createElement('div');
+          bar.className = 'bar' + (i === 11 ? ' active' : '');
+          bar.style.height = h + '%';
+          bar.style.animationDelay = (i * 0.04) + 's';
+          bar.style.animation = `fadeUp .4s ease ${(i * 0.04)}s both`;
+          chart.appendChild(bar);
+        });
+
+            @functions {
+                public string GetInitials(string fullName)
+                {
+                        if (string.IsNullOrWhiteSpace(fullName)) return "AD";
+                        var words = fullName.Split(' ', System.StringSplitOptions.RemoveEmptyEntries);
+                        char first = words.Length > 0 ? words[0][0] : 'A';
+                        char second = words.Length > 1 ? words[1][0] : 'D';
+                        return $"{char.ToUpper(first)}{char.ToUpper(second)}";
+                }
+        }
+
+              @functions {
+                public string GetTimeAgo(DateTime time)
+                {
+                        var span = DateTime.Now - time;
+                        if (span.TotalMinutes < 1) return "Just now";
+                        if (span.TotalMinutes < 60) return $"{(int)span.TotalMinutes} minutes ago";
+                        if (span.TotalHours < 24) return $"{(int)span.TotalHours} hours ago";
+                        return $"{(int)span.TotalDays} days ago";
+                }
+        }s
+    </script>
+</body>
+</html>

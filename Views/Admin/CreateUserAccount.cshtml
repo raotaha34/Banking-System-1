@@ -6,125 +6,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create Account — SecureBank</title>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.12/jquery.validate.unobtrusive.min.js"></script>
+
     <style>
-        :root {
-            --blue-950: #05112a;
-            --blue-900: #0a1f4e;
-            --blue-800: #0f2d6e;
-            --blue-700: #1240a0;
-            --blue-600: #1a55c8;
-            --blue-500: #2168f0;
-            --blue-400: #4f87f5;
-            --blue-300: #84aff9;
-            --blue-200: #bdd3fd;
-            --blue-100: #deeaff;
-            --blue-50: #f0f6ff;
-            --white: #ffffff;
-            --slate-50: #f8fafc;
-            --slate-100: #f0f4f9;
-            --slate-200: #e2eaf4;
-            --slate-300: #c8d6e8;
-            --slate-400: #94a8c4;
-            --slate-500: #647899;
-            --slate-600: #4a5c78;
-            --red-50: #fff1f2;
-            --red-200: #fecaca;
-            --red-500: #ef4444;
-            --green-50: #f0fdf4;
-            --green-500: #22c55e;
-            --sidebar-w: 260px;
-            --sidebar-collapsed: 72px;
-            --topbar-h: 64px;
-            --transition: 0.32s cubic-bezier(0.4,0,0.2,1);
-            --radius-sm: 8px;
-            --radius-md: 12px;
-            --radius-lg: 16px;
-            --radius-xl: 20px;
+   
+
+ :root {
+                   
+        --sidebar-w: 260px;
+        --sidebar-collapsed: 72px;
+        --topbar-h: 64px;
+        --ease: .22s cubic-bezier(.4, 0, .2, 1);
+        --r-xs: 6px;
+        --r-sm: 10px;
+        --r-md: 14px;
+        --r-lg: 18px;
+        --r-xl: 22px;
+        --blue-50: #eff6ff;
+        --blue-100: #dbeafe;
+        --blue-200: #bfdbfe;
+        --blue-300: #93c5fd;
+        --blue-400: #60a5fa;
+        --blue-500: #3b82f6;
+        --blue-600: #2563eb;
+        --blue-700: #1d4ed8;
+        --blue-800: #1e40af;
+        --blue-900: #1e3a8a;
+        --blue-950: #172554;
+        --white: #ffffff;
+        --bg: #f8fafc;
+        --surface: #ffffff;
+        --border: #e2e8f0;
+        --border-2: #cbd5e1;
+        --text-1: #0f172a;
+        --text-2: #334155;
+        --text-3: #64748b;
+        --text-4: #94a3b8;
+        --red: #dc2626;
+        --red-50: #fef2f2;
+        --red-100: #fee2e2;
+        --red-200: #fecaca;
+        --green: #16a34a;
+        --green-50: #f0fdf4;
+        --green-100: #dcfce7;
+        --teal: #0891b2;
+        --sb-bg: #ffffff;
+        --sb-border: #e2e8f0;
+        --sb-text: #64748b;
+        --sb-text-h: #0f172a;
+        --sb-hover: #f1f5f9;
+        --sb-active-bg: #eff6ff;
+        --sb-active-c: var(--blue-600);
+        --shadow-xs: 0 1px 2px rgba(15, 23, 42, .04);
+        --shadow-sm: 0 1px 4px rgba(15, 23, 42, .06), 0 1px 2px rgba(15, 23, 42, .03);
+        --shadow-md: 0 4px 16px rgba(15, 23, 42, .07), 0 2px 4px rgba(15, 23, 42, .04);
+        --shadow-lg: 0 12px 32px rgba(15, 23, 42, .10), 0 4px 8px rgba(15, 23, 42, .05);
+        --shadow-blue: 0 4px 14px rgba(37, 99, 235, .25);
         }
 
-        *, *::before, *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'DM Sans', sans-serif;
-            background: var(--slate-100);
-            color: var(--blue-950);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /:root {
-            --sidebar-w: 260px;
-            --sidebar-collapsed: 70px;
-            --topbar-h: 66px;
-            /* Blues */
-            --blue-50: #eff6ff;
-            --blue-100: #dbeafe;
-            --blue-200: #bfdbfe;
-            --blue-400: #60a5fa;
-            --blue-500: #3b82f6;
-            --blue-600: #2563eb;
-            --blue-700: #1d4ed8;
-            --blue-900: #1e3a8a;
-            /* Accent colours (light tints only) */
-            --green: #16a34a;
-            --green-50: #f0fdf4;
-            --green-100: #dcfce7;
-            --purple: #7c3aed;
-            --purple-50: #faf5ff;
-            --purple-100: #ede9fe;
-            --orange: #ea580c;
-            --orange-50: #fff7ed;
-            --orange-100: #ffedd5;
-            --teal: #0891b2;
-            --teal-50: #ecfeff;
-            --teal-100: #cffafe;
-            --red: #dc2626;
-            --red-50: #fef2f2;
-            --red-100: #fee2e2;
-            --amber: #d97706;
-            --amber-50: #fffbeb;
-            /* Neutrals — all light */
-            --bg: #f8fafc;
-            --bg2: #f1f5f9;
-            --surface: #ffffff;
-            --surface2: #f8fafc;
-            --surface3: #f1f5f9;
-            --border: #e2e8f0;
-            --border-2: #cbd5e1;
-            --text1: #0f172a;
-            --text2: #334155;
-            --text3: #64748b;
-            --text4: #94a3b8;
-            /* Sidebar — crisp white */
-            --sb-bg: #ffffff;
-            --sb-border: #e2e8f0;
-            --sb-text: #64748b;
-            --sb-text-h: #0f172a;
-            --sb-hover: #f1f5f9;
-            --sb-active-bg: #eff6ff;
-            --sb-active-c: var(--blue-600);
-            /* Shadows */
-            --shadow-xs: 0 1px 2px rgba(15,23,42,.04);
-            --shadow-sm: 0 1px 4px rgba(15,23,42,.06), 0 1px 2px rgba(15,23,42,.03);
-            --shadow-md: 0 4px 16px rgba(15,23,42,.07), 0 2px 4px rgba(15,23,42,.04);
-            --shadow-lg: 0 12px 32px rgba(15,23,42,.10), 0 4px 8px rgba(15,23,42,.05);
-            --shadow-blue: 0 4px 14px rgba(37,99,235,.18);
-            --r: 14px;
-            --r-s: 10px;
-            --r-x: 7px;
-            --ease: .22s cubic-bezier(.4,0,.2,1);
-        }
-
+        /* ══════════════════════════════════════════
+                   RESET & BASE
+                ══════════════════════════════════════════ */
         *, *::before, *::after {
             box-sizing: border-box;
             margin: 0;
@@ -138,11 +85,12 @@
         body {
             font-family: 'DM Sans', sans-serif;
             background: var(--bg);
-            color: var(--text1);
+            color: var(--text-1);
             min-height: 100vh;
             font-size: 14px;
             line-height: 1.55;
             -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
         }
 
         a {
@@ -155,28 +103,21 @@
             cursor: pointer;
         }
 
-        /* ══════════════════════════════
-           LAYOUT
-        ══════════════════════════════ */
-        .admin-layout {
-            min-height: 100vh;
-        }
-
-        /* ══════════════════════════════
-           SIDEBAR
-        ══════════════════════════════ */
+        /* ══════════════════════════════════════════
+                   SIDEBAR
+                ══════════════════════════════════════════ */
         .sidebar {
+            position: fixed;
+            inset: 0 auto 0 0;
             width: var(--sidebar-w);
             background: var(--sb-bg);
             border-right: 1px solid var(--sb-border);
             display: flex;
             flex-direction: column;
-            position: fixed;
-            inset: 0 auto 0 0;
             z-index: 200;
-            transition: width var(--ease);
             overflow: hidden;
-            box-shadow: 2px 0 20px rgba(15,23,42,.05);
+            transition: width var(--ease);
+            box-shadow: 2px 0 20px rgba(15, 23, 42, .04);
         }
 
             .sidebar.collapsed {
@@ -193,6 +134,7 @@
             border-bottom: 1px solid var(--sb-border);
             flex-shrink: 0;
             overflow: hidden;
+            position: relative;
         }
 
         .brand-mark {
@@ -208,20 +150,19 @@
         }
 
         .brand-text {
-            font-family: 'Sora', sans-serif;
+            font-family: 'Syne', sans-serif;
             font-weight: 700;
             font-size: 15px;
-            color: var(--text1);
+            color: var(--text-1);
             white-space: nowrap;
-            transition: opacity var(--ease), width var(--ease);
+            transition: opacity var(--ease);
         }
 
         .sidebar.collapsed .brand-text {
             opacity: 0;
-            width: 0;
+            pointer-events: none;
         }
 
-        /* Toggle button */
         .sb-toggle {
             position: absolute;
             right: 12px;
@@ -229,8 +170,8 @@
             transform: translateY(-50%);
             width: 26px;
             height: 26px;
-            border-radius: var(--r-x);
-            background: var(--surface3);
+            border-radius: var(--r-xs);
+            background: #f1f5f9;
             border: 1px solid var(--border);
             display: flex;
             align-items: center;
@@ -268,18 +209,18 @@
                 border-radius: 3px;
             }
 
-        .nav-sec {
+        .nav-section-label {
             font-size: 10px;
             font-weight: 700;
-            letter-spacing: .08em;
+            letter-spacing: .09em;
             text-transform: uppercase;
-            color: var(--text4);
+            color: var(--text-4);
             padding: 16px 8px 5px;
             white-space: nowrap;
             transition: opacity var(--ease);
         }
 
-        .sidebar.collapsed .nav-sec {
+        .sidebar.collapsed .nav-section-label {
             opacity: 0;
         }
 
@@ -288,7 +229,7 @@
             align-items: center;
             gap: 10px;
             padding: 9px 10px;
-            border-radius: var(--r-s);
+            border-radius: var(--r-sm);
             color: var(--sb-text);
             font-size: 13.5px;
             font-weight: 500;
@@ -304,8 +245,8 @@
             }
 
             .nav-item.active {
-                background: var(--blue-50);
-                color: var(--blue-600);
+                background: var(--sb-active-bg);
+                color: var(--sb-active-c);
                 font-weight: 600;
             }
 
@@ -320,15 +261,18 @@
                     background: var(--blue-600);
                 }
 
+        .sidebar.collapsed .nav-item {
+            justify-content: center;
+        }
+
         .ni-icon {
             width: 32px;
             height: 32px;
-            border-radius: var(--r-x);
+            border-radius: var(--r-xs);
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
-            background: transparent;
             transition: background var(--ease);
         }
 
@@ -342,8 +286,8 @@
         }
 
         .ni-label {
-            transition: opacity var(--ease), width var(--ease);
             overflow: hidden;
+            transition: opacity var(--ease);
         }
 
         .sidebar.collapsed .ni-label {
@@ -351,19 +295,19 @@
             width: 0;
         }
 
-        /* Tooltip */
+        /* Collapsed tooltip */
         .ni-tip {
             display: none;
             position: absolute;
             left: calc(var(--sidebar-collapsed) + 10px);
             top: 50%;
             transform: translateY(-50%) translateX(4px);
-            background: var(--text1);
+            background: var(--text-1);
             color: #fff;
             font-size: 12px;
             font-weight: 600;
             padding: 5px 11px;
-            border-radius: var(--r-x);
+            border-radius: var(--r-xs);
             white-space: nowrap;
             pointer-events: none;
             opacity: 0;
@@ -381,11 +325,7 @@
             transform: translateY(-50%) translateX(8px);
         }
 
-        .sidebar.collapsed .nav-item {
-            justify-content: center;
-        }
-
-        /* Footer / Logout */
+        /* Sidebar footer / logout */
         .sb-footer {
             padding: 12px 10px;
             border-top: 1px solid var(--sb-border);
@@ -397,10 +337,10 @@
             align-items: center;
             gap: 10px;
             width: 100%;
-            padding: 9px 10px;
-            border-radius: var(--r-s);
+            padding: 9px 12px;
+            border-radius: var(--r-sm);
             background: var(--red-50);
-            border: 1px solid #fecaca;
+            border: 1px solid var(--red-200);
             color: var(--red);
             font-size: 13px;
             font-weight: 500;
@@ -414,18 +354,12 @@
                 border-color: #fca5a5;
             }
 
-        .lo-icon {
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
+        .sidebar.collapsed .logout-btn {
+            justify-content: center;
         }
 
         .lo-label {
-            transition: opacity var(--ease), width var(--ease);
-        }
-
-        .sidebar.collapsed .logout-btn {
-            justify-content: center;
+            transition: opacity var(--ease);
         }
 
         .sidebar.collapsed .lo-label {
@@ -433,33 +367,36 @@
             width: 0;
         }
 
-
-        /* ===================== MAIN WRAPPER ===================== */
+        /* ══════════════════════════════════════════
+                   MAIN WRAPPER
+                ══════════════════════════════════════════ */
         .main-wrapper {
             margin-left: var(--sidebar-w);
-            transition: margin-left var(--transition);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            transition: margin-left var(--ease);
         }
 
             .main-wrapper.collapsed {
                 margin-left: var(--sidebar-collapsed);
             }
 
-        /* ===================== TOPBAR ===================== */
+        /* ══════════════════════════════════════════
+                   TOPBAR
+                ══════════════════════════════════════════ */
         .topbar {
             position: sticky;
             top: 0;
             height: var(--topbar-h);
-            background: rgba(255,255,255,0.95);
+            background: rgba(255, 255, 255, .95);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--slate-200);
+            border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 36px;
+            padding: 0 32px;
             z-index: 100;
         }
 
@@ -473,9 +410,8 @@
             font-family: 'Syne', sans-serif;
             font-size: 13px;
             font-weight: 600;
-            color: var(--slate-400);
-            text-decoration: none;
-            transition: color 0.15s;
+            color: var(--text-4);
+            transition: color var(--ease);
         }
 
             .breadcrumb-home:hover {
@@ -483,7 +419,7 @@
             }
 
         .breadcrumb-sep {
-            color: var(--slate-300);
+            color: var(--border-2);
             font-size: 14px;
         }
 
@@ -505,15 +441,14 @@
             align-items: center;
             gap: 7px;
             padding: 8px 16px;
-            border-radius: var(--radius-sm);
+            border-radius: var(--r-sm);
             font-size: 12.5px;
             font-weight: 600;
             cursor: pointer;
-            text-decoration: none;
             font-family: 'DM Sans', sans-serif;
-            transition: all 0.18s;
-            line-height: 1;
+            transition: all var(--ease);
             border: 1.5px solid transparent;
+            line-height: 1;
         }
 
             .btn-topbar.ghost {
@@ -523,24 +458,26 @@
             }
 
                 .btn-topbar.ghost:hover {
-                    background: var(--blue-500);
+                    background: var(--blue-600);
                     color: var(--white);
-                    border-color: var(--blue-500);
+                    border-color: var(--blue-600);
                 }
 
             .btn-topbar.danger {
                 background: transparent;
-                color: var(--slate-500);
-                border-color: var(--slate-200);
+                color: var(--text-3);
+                border-color: var(--border);
             }
 
                 .btn-topbar.danger:hover {
                     background: var(--red-50);
-                    color: var(--red-500);
+                    color: var(--red);
                     border-color: var(--red-200);
                 }
 
-        /* ===================== PAGE CONTENT ===================== */
+        /* ══════════════════════════════════════════
+                   PAGE CONTENT
+                ══════════════════════════════════════════ */
         .page-content {
             flex: 1;
             padding: 36px 40px 60px;
@@ -549,16 +486,15 @@
             margin: 0 auto;
         }
 
-        /* ===================== PAGE HEADER ===================== */
+        /* ══════════════════════════════════════════
+                   PAGE HEADER
+                ══════════════════════════════════════════ */
         .page-header {
             display: flex;
             align-items: flex-end;
             justify-content: space-between;
             margin-bottom: 32px;
-            animation: fadeDown 0.4s ease both;
-        }
-
-        .page-header-left {
+            animation: fadeDown .4s ease both;
         }
 
         .page-badge {
@@ -573,7 +509,7 @@
             font-size: 10px;
             font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 0.8px;
+            letter-spacing: .8px;
             margin-bottom: 10px;
         }
 
@@ -582,14 +518,14 @@
             font-size: 26px;
             font-weight: 800;
             color: var(--blue-950);
-            letter-spacing: -0.6px;
+            letter-spacing: -.6px;
             line-height: 1.2;
             margin-bottom: 5px;
         }
 
         .page-subtitle {
             font-size: 13.5px;
-            color: var(--slate-500);
+            color: var(--text-3);
             font-weight: 400;
         }
 
@@ -597,7 +533,6 @@
         .steps {
             display: flex;
             align-items: center;
-            gap: 0;
         }
 
         .step-item {
@@ -606,7 +541,7 @@
             gap: 8px;
             font-size: 12px;
             font-weight: 600;
-            color: var(--slate-400);
+            color: var(--text-4);
         }
 
             .step-item.active {
@@ -614,52 +549,54 @@
             }
 
             .step-item.done {
-                color: var(--green-500);
+                color: var(--green);
             }
 
         .step-num {
             width: 28px;
             height: 28px;
             border-radius: 50%;
-            background: var(--slate-100);
-            border: 2px solid var(--slate-300);
+            background: #f1f5f9;
+            border: 2px solid var(--border-2);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 11px;
             font-weight: 700;
             flex-shrink: 0;
-            transition: all 0.2s;
+            transition: all .2s;
         }
 
         .step-item.active .step-num {
             background: var(--blue-500);
             border-color: var(--blue-500);
             color: var(--white);
-            box-shadow: 0 0 0 4px rgba(33,104,240,0.15);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, .18);
         }
 
         .step-connector {
             width: 40px;
             height: 2px;
-            background: var(--slate-200);
+            background: var(--border);
             margin: 0 6px;
         }
 
             .step-connector.done {
-                background: var(--green-500);
+                background: var(--green);
             }
 
-        /* ===================== VALIDATION ===================== */
+        /* ══════════════════════════════════════════
+                   VALIDATION BOX
+                ══════════════════════════════════════════ */
         .validation-box {
             background: var(--red-50);
             border: 1.5px solid var(--red-200);
-            border-radius: var(--radius-md);
+            border-radius: var(--r-md);
             padding: 14px 18px;
             margin-bottom: 22px;
+            color: var(--red);
             font-size: 13px;
-            color: var(--red-500);
-            animation: shake 0.3s ease;
+            animation: shake .3s ease;
         }
 
             .validation-box ul {
@@ -672,28 +609,30 @@
                 margin-bottom: 2px;
             }
 
-      
-
-        /* ===================== FORM LAYOUT ===================== */
+        /* ══════════════════════════════════════════
+                   FORM GRID
+                ══════════════════════════════════════════ */
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1.2fr;
             gap: 22px;
             margin-bottom: 22px;
-            animation: fadeUp 0.45s 0.1s ease both;
+            animation: fadeUp .45s .1s ease both;
         }
 
-        /* ===================== CARD ===================== */
+        /* ══════════════════════════════════════════
+                   FORM CARDS
+                ══════════════════════════════════════════ */
         .form-card {
             background: var(--white);
-            border: 1.5px solid var(--slate-200);
-            border-radius: var(--radius-xl);
+            border: 1.5px solid var(--border);
+            border-radius: var(--r-xl);
             overflow: hidden;
-            transition: box-shadow 0.22s, border-color 0.22s;
+            transition: box-shadow var(--ease), border-color var(--ease);
         }
 
             .form-card:hover {
-                box-shadow: 0 8px 32px rgba(33,104,240,0.08);
+                box-shadow: 0 8px 32px rgba(37, 99, 235, .08);
                 border-color: var(--blue-200);
             }
 
@@ -702,14 +641,14 @@
             align-items: center;
             gap: 14px;
             padding: 20px 26px 18px;
-            background: linear-gradient(135deg, var(--slate-50) 0%, var(--blue-50) 100%);
-            border-bottom: 1.5px solid var(--slate-200);
+            background: linear-gradient(135deg, #f8fafc 0%, var(--blue-50) 100%);
+            border-bottom: 1.5px solid var(--border);
         }
 
         .card-icon {
             width: 44px;
             height: 44px;
-            border-radius: var(--radius-md);
+            border-radius: var(--r-md);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -728,9 +667,6 @@
             border: 1.5px solid #a7f3d0;
         }
 
-        .card-header-text {
-        }
-
         .card-title {
             font-family: 'Syne', sans-serif;
             font-size: 14px;
@@ -741,16 +677,16 @@
 
         .card-desc {
             font-size: 12px;
-            color: var(--slate-400);
-            font-weight: 400;
+            color: var(--text-4);
         }
 
-        /* ===================== FIELDS ===================== */
+        /* ══════════════════════════════════════════
+                   FIELD LAYOUTS
+                ══════════════════════════════════════════ */
         .fields-stack {
             padding: 22px 26px 26px;
             display: flex;
             flex-direction: column;
-            gap: 0;
         }
 
         .fields-2col {
@@ -763,7 +699,7 @@
         .field-group {
             display: flex;
             flex-direction: column;
-            margin-bottom: 14px;
+            margin-bottom: 16px;
         }
 
             .field-group.col-span-2 {
@@ -774,82 +710,90 @@
                 margin-bottom: 0;
             }
 
+        /* Field Label */
         .field-label {
             font-size: 10.5px;
             font-weight: 700;
-            color: var(--slate-500);
-            letter-spacing: 0.6px;
+            color: var(--text-3);
+            letter-spacing: .6px;
             text-transform: uppercase;
             margin-bottom: 7px;
         }
 
-        /* Input wrap */
+        /* ══════════════════════════════════════════
+                   INPUT COMPONENT
+                ══════════════════════════════════════════ */
         .input-wrap {
             display: flex;
             align-items: center;
-            border: 1.5px solid var(--slate-200);
-            border-radius: var(--radius-sm);
-            background: var(--slate-50);
+            border: 1.5px solid var(--border);
+            border-radius: var(--r-sm);
+            background: #f8fafc;
             overflow: hidden;
-            transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
+            transition: border-color var(--ease), box-shadow var(--ease), background var(--ease);
         }
 
             .input-wrap:focus-within {
                 border-color: var(--blue-400);
-                box-shadow: 0 0 0 3px rgba(33,104,240,0.12);
+                box-shadow: 0 0 0 3px rgba(59, 130, 246, .12);
                 background: var(--white);
             }
 
+        /* Icon prefix */
         .input-prefix {
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 0 12px;
-            color: var(--slate-300);
+            color: var(--border-2);
             flex-shrink: 0;
-            transition: color 0.18s;
             pointer-events: none;
+            transition: color var(--ease);
         }
 
         .input-wrap:focus-within .input-prefix {
             color: var(--blue-400);
         }
 
-        .input-prefix.text {
+        /* Text prefix (e.g. $) */
+        .input-prefix.text-prefix {
             font-size: 13px;
             font-weight: 700;
-            color: var(--slate-400);
-            border-right: 1.5px solid var(--slate-200);
+            color: var(--text-3);
+            border-right: 1.5px solid var(--border);
             padding: 0 13px;
         }
 
-        .input-wrap:focus-within .input-prefix.text {
+        .input-wrap:focus-within .input-prefix.text-prefix {
             color: var(--blue-500);
             border-right-color: var(--blue-200);
         }
 
-        .input-suffix-text {
+        /* Text suffix (e.g. %) */
+        .input-suffix {
             padding: 0 13px;
-            color: var(--slate-400);
+            color: var(--text-3);
             font-size: 12.5px;
             font-weight: 600;
             flex-shrink: 0;
             pointer-events: none;
-            transition: color 0.18s;
-            border-left: 1.5px solid var(--slate-200);
+            border-left: 1.5px solid var(--border);
+            transition: color var(--ease), border-color var(--ease);
         }
 
-        .input-wrap:focus-within .input-suffix-text {
+        .input-wrap:focus-within .input-suffix {
             color: var(--blue-500);
             border-left-color: var(--blue-200);
         }
 
-        input.inp, select.inp {
+        /* Actual input / select */
+        input.inp,
+        select.inp {
             flex: 1;
             padding: 11px 13px;
             border: none;
             background: transparent;
-            color: var(--blue-950);
+            color: var(--text-1);
             font-size: 13.5px;
             font-family: 'DM Sans', sans-serif;
             font-weight: 500;
@@ -859,22 +803,24 @@
         }
 
             input.inp::placeholder {
-                color: var(--slate-300);
+                color: var(--text-4);
                 font-weight: 400;
             }
 
+            /* Autofill fix */
             input.inp:-webkit-autofill,
             input.inp:-webkit-autofill:hover,
             input.inp:-webkit-autofill:focus {
-                -webkit-box-shadow: 0 0 0px 1000px var(--slate-50) inset;
-                -webkit-text-fill-color: var(--blue-950);
+                -webkit-box-shadow: 0 0 0 1000px #f8fafc inset;
+                -webkit-text-fill-color: var(--text-1);
                 transition: background-color 5000s;
             }
 
+        /* Select */
         select.inp {
             cursor: pointer;
-            appearance: none;
             -webkit-appearance: none;
+            appearance: none;
         }
 
         .select-wrap {
@@ -891,55 +837,57 @@
                 height: 0;
                 border-left: 4px solid transparent;
                 border-right: 4px solid transparent;
-                border-top: 5px solid var(--slate-400);
+                border-top: 5px solid var(--text-3);
                 pointer-events: none;
             }
 
-        /* Password toggle */
+        /* Password visibility toggle */
         .pw-toggle {
             background: none;
             border: none;
             padding: 0 12px;
-            color: var(--slate-300);
+            color: var(--border-2);
             cursor: pointer;
             display: flex;
             align-items: center;
-            transition: color 0.15s;
             flex-shrink: 0;
+            transition: color var(--ease);
         }
 
             .pw-toggle:hover {
                 color: var(--blue-400);
             }
 
-        /* Field error */
+        /* Inline validation error */
         .field-err {
+            display: block;
             font-size: 11.5px;
-            color: var(--red-500);
+            color: var(--red);
             font-weight: 500;
             margin-top: 5px;
             min-height: 14px;
-            display: block;
         }
 
-        /* ===================== FORM ACTIONS ===================== */
+        /* ══════════════════════════════════════════
+                   FORM ACTIONS BAR
+                ══════════════════════════════════════════ */
         .form-actions {
             display: flex;
             align-items: center;
             justify-content: space-between;
             background: var(--white);
-            border: 1.5px solid var(--slate-200);
-            border-radius: var(--radius-lg);
+            border: 1.5px solid var(--border);
+            border-radius: var(--r-lg);
             padding: 18px 26px;
-            animation: fadeUp 0.45s 0.18s ease both;
+            animation: fadeUp .45s .18s ease both;
         }
 
-        .form-actions-left {
+        .form-actions-note {
             font-size: 12px;
-            color: var(--slate-400);
+            color: var(--text-4);
         }
 
-            .form-actions-left span {
+            .form-actions-note span {
                 color: var(--blue-500);
                 font-weight: 600;
             }
@@ -950,25 +898,28 @@
             gap: 10px;
         }
 
+        /* ══════════════════════════════════════════
+                   BUTTONS
+                ══════════════════════════════════════════ */
         .btn {
             display: inline-flex;
             align-items: center;
             gap: 8px;
             padding: 11px 24px;
-            border-radius: var(--radius-sm);
+            border-radius: var(--r-sm);
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             font-family: 'DM Sans', sans-serif;
             line-height: 1;
-            transition: all 0.18s;
+            transition: all var(--ease);
             border: 1.5px solid transparent;
         }
 
         .btn-secondary {
-            background: var(--slate-50);
-            color: var(--slate-600);
-            border-color: var(--slate-200);
+            background: #f8fafc;
+            color: var(--text-2);
+            border-color: var(--border);
         }
 
             .btn-secondary:hover {
@@ -981,24 +932,26 @@
             background: var(--blue-500);
             color: var(--white);
             border-color: var(--blue-500);
-            box-shadow: 0 4px 16px rgba(33,104,240,0.3);
             padding: 12px 28px;
             font-size: 13.5px;
             font-weight: 700;
+            box-shadow: var(--shadow-blue);
         }
 
             .btn-primary:hover {
                 background: var(--blue-600);
                 border-color: var(--blue-600);
-                box-shadow: 0 6px 22px rgba(33,104,240,0.4);
+                box-shadow: 0 6px 22px rgba(37, 99, 235, .38);
                 transform: translateY(-1px);
             }
 
             .btn-primary:active {
-                transform: scale(0.98) translateY(0);
+                transform: scale(.98) translateY(0);
             }
 
-        /* ===================== TOASTR ===================== */
+        /* ══════════════════════════════════════════
+                   TOASTR OVERRIDES
+                ══════════════════════════════════════════ */
         .toast-top-right {
             top: 74px !important;
             right: 20px !important;
@@ -1009,12 +962,61 @@
             font-family: 'DM Sans', sans-serif !important;
             font-size: 13px !important;
             font-weight: 500 !important;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.10) !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, .10) !important;
         }
 
-        
+        /* ══════════════════════════════════════════
+                   KEYFRAMES
+                ══════════════════════════════════════════ */
+        @@keyframes fadeDown {
+            from {
+                opacity: 0;
+                transform: translateY(-12px);
+            }
 
-        /* ===================== RESPONSIVE ===================== */
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @@keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @@keyframes shake {
+            0% 100% {
+                transform: translateX(0);
+            }
+
+            20% {
+                transform: translateX(-6px);
+            }
+
+            40% {
+                transform: translateX(6px);
+            }
+
+            60% {
+                transform: translateX(-4px);
+            }
+
+            80% {
+                transform: translateX(4px);
+            }
+        }
+
+        /* ══════════════════════════════════════════
+                   RESPONSIVE
+                ══════════════════════════════════════════ */
         @@media (max-width: 900px) {
             .form-grid {
                 grid-template-columns: 1fr;
@@ -1044,33 +1046,28 @@
 </head>
 <body>
 
-    <!-- ════════════ SIDEBAR ════════════ -->
+    <!-- ══════════ SIDEBAR ══════════ -->
     <aside class="sidebar" id="sidebar">
-        <!-- Brand + Toggle -->
+
         <div class="sb-brand">
             <div class="brand-mark">
-                <!-- Shield / lock mark -->
                 <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
-                    <path d="M10 2L3 5v5c0 4.418 3.134 7.979 7 8 3.866-.021 7-3.582 7-8V5L10 2z"
-                          fill="white" fill-opacity=".9" />
-                    <rect x="8.5" y="9" width="3" height="4" rx="1" fill="
-#2563eb" />
-                    <circle cx="10" cy="9" r="1.5" fill="
-#2563eb" />
+                    <path d="M10 2L3 5v5c0 4.418 3.134 7.979 7 8 3.866-.021 7-3.582 7-8V5L10 2z" fill="white" fill-opacity=".9" />
+                    <rect x="8.5" y="9" width="3" height="4" rx="1" fill="#2563eb" />
+                    <circle cx="10" cy="9" r="1.5" fill="#2563eb" />
                 </svg>
             </div>
             <span class="brand-text">SecureBank</span>
             <div class="sb-toggle" id="sbToggle">
                 <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
-                    <path d="M7.5 2L3.5 6L7.5 10" stroke="
-#64748b" stroke-width="1.8"
-                          stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M7.5 2L3.5 6L7.5 10" stroke="#64748b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
             </div>
         </div>
+
         <nav class="sb-nav">
-            <!-- Overview -->
-            <div class="nav-sec">Overview</div>
+
+            <div class="nav-section-label">Overview</div>
             <a class="nav-item active" asp-controller="Admin" asp-action="Index">
                 <span class="ni-icon">
                     <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
@@ -1083,8 +1080,8 @@
                 <span class="ni-label">Dashboard</span>
                 <span class="ni-tip">Dashboard</span>
             </a>
-            <!-- Users -->
-            <div class="nav-sec">Users</div>
+
+            <div class="nav-section-label">Users</div>
             <a class="nav-item" asp-controller="Admin" asp-action="CreateUserAccount">
                 <span class="ni-icon">
                     <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
@@ -1107,8 +1104,8 @@
                 <span class="ni-label">Manage Users</span>
                 <span class="ni-tip">Manage Users</span>
             </a>
-            <!-- Finance -->
-            <div class="nav-sec">Finance</div>
+
+            <div class="nav-section-label">Finance</div>
             <a class="nav-item" asp-controller="Admin" asp-action="Transaction">
                 <span class="ni-icon">
                     <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
@@ -1128,8 +1125,8 @@
                 <span class="ni-label">Accounts</span>
                 <span class="ni-tip">Accounts</span>
             </a>
-            <!-- System -->
-            <div class="nav-sec">System</div>
+
+            <div class="nav-section-label">System</div>
             <a class="nav-item" asp-controller="Admin" asp-action="Settings">
                 <span class="ni-icon">
                     <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
@@ -1149,22 +1146,27 @@
                 <span class="ni-label">Reports</span>
                 <span class="ni-tip">Reports</span>
             </a>
+
         </nav>
+
         <div class="sb-footer">
-            <button class="logout-btn">
-                <span class="lo-icon">
-                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
-                        <path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3M11 11l3-3-3-3M14 8H6"
-                              stroke="
-#dc2626" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                    </svg>
-                </span>
-                <span class="lo-label">Logout</span>
-            </button>
+            <form asp-controller="Login" asp-action="Logout" method="post">
+                <button type="submit" class="logout-btn">
+                    <span class="lo-icon">
+                        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                            <path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3M11 11l3-3-3-3M14 8H6"
+                                  stroke="#dc2626" stroke-width="1.5"
+                                  stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </span>
+                    <span class="lo-label">Logout</span>
+                </button>
+            </form>
         </div>
+
     </aside>
-    <!-- ════════════ /SIDEBAR ════════════ -->
-    <!-- ==================== MAIN ==================== -->
+    <!-- ══════════ /SIDEBAR ══════════ -->
+    <!-- ══════════ MAIN ══════════ -->
     <div class="main-wrapper" id="mainWrapper">
 
         <!-- Topbar -->
@@ -1197,9 +1199,9 @@
         <!-- Page Content -->
         <div class="page-content">
 
-            <!-- Header -->
+            <!-- Page Header -->
             <div class="page-header">
-                <div class="page-header-left">
+                <div>
                     <div class="page-badge">
                         <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
                             <circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.5" />
@@ -1210,6 +1212,8 @@
                     <h1 class="page-title">Create User Account</h1>
                     <p class="page-subtitle">Register a new user and configure their banking profile</p>
                 </div>
+
+                <!-- Step indicator -->
                 <div class="steps">
                     <div class="step-item active">
                         <div class="step-num">1</div>
@@ -1228,7 +1232,7 @@
                 </div>
             </div>
 
-            <!-- Validation -->
+            <!-- Server-side validation summary -->
             @if (!ViewData.ModelState.IsValid)
             {
                 <div class="validation-box">
@@ -1236,13 +1240,13 @@
                 </div>
             }
 
-            <!-- Form -->
+            <!-- ══ FORM ══ -->
             <form asp-controller="Admin" asp-action="CreateUserAccount" method="post">
                 @Html.AntiForgeryToken()
 
                 <div class="form-grid">
 
-                    <!-- LEFT: User Information -->
+                    <!-- ── LEFT: User Information ── -->
                     <div class="form-card">
                         <div class="card-header">
                             <div class="card-icon icon-blue">
@@ -1251,15 +1255,17 @@
                                     <path d="M3 18c0-3.866 3.134-7 7-7s7 3.134 7 7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
                                 </svg>
                             </div>
-                            <div class="card-header-text">
+                            <div>
                                 <div class="card-title">User Information</div>
                                 <div class="card-desc">Personal credentials and login details</div>
                             </div>
                         </div>
 
                         <div class="fields-stack">
+
+                            <!-- Full Name -->
                             <div class="field-group">
-                                <label class="field-label">Full Name</label>
+                                <label class="field-label" asp-for="FullName">Full Name</label>
                                 <div class="input-wrap">
                                     <span class="input-prefix">
                                         <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
@@ -1272,8 +1278,9 @@
                                 <span asp-validation-for="FullName" class="field-err"></span>
                             </div>
 
+                            <!-- Email -->
                             <div class="field-group">
-                                <label class="field-label">Email Address</label>
+                                <label class="field-label" asp-for="Email">Email Address</label>
                                 <div class="input-wrap">
                                     <span class="input-prefix">
                                         <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
@@ -1286,8 +1293,9 @@
                                 <span asp-validation-for="Email" class="field-err"></span>
                             </div>
 
+                            <!-- Password -->
                             <div class="field-group">
-                                <label class="field-label">Password</label>
+                                <label class="field-label" asp-for="Password">Password</label>
                                 <div class="input-wrap">
                                     <span class="input-prefix">
                                         <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
@@ -1297,7 +1305,7 @@
                                         </svg>
                                     </span>
                                     <input asp-for="Password" id="pwInput" type="password" class="inp" placeholder="Min. 8 characters" autocomplete="new-password" />
-                                    <button type="button" class="pw-toggle" onclick="togglePw()">
+                                    <button type="button" class="pw-toggle" onclick="togglePw()" aria-label="Toggle password visibility">
                                         <svg id="eye-show" width="14" height="14" viewBox="0 0 16 16" fill="none">
                                             <ellipse cx="8" cy="8" rx="6" ry="4" stroke="currentColor" stroke-width="1.4" />
                                             <circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.4" />
@@ -1309,10 +1317,11 @@
                                 </div>
                                 <span asp-validation-for="Password" class="field-err"></span>
                             </div>
+
                         </div>
                     </div>
-
-                    <!-- RIGHT: Account Information -->
+                    <!-- ── /LEFT ── -->
+                    <!-- ── RIGHT: Account Information ── -->
                     <div class="form-card">
                         <div class="card-header">
                             <div class="card-icon icon-teal">
@@ -1322,15 +1331,17 @@
                                     <path d="M7 11h2M11 11h2M7 14h2M11 14h2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
                                 </svg>
                             </div>
-                            <div class="card-header-text">
+                            <div>
                                 <div class="card-title">Account Information</div>
                                 <div class="card-desc">Banking account configuration and settings</div>
                             </div>
                         </div>
 
                         <div class="fields-2col">
+
+                            <!-- Account Number -->
                             <div class="field-group col-span-2">
-                                <label class="field-label">Account Number</label>
+                                <label class="field-label" asp-for="AccountNumber">Account Number</label>
                                 <div class="input-wrap">
                                     <span class="input-prefix">
                                         <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
@@ -1343,8 +1354,9 @@
                                 <span asp-validation-for="AccountNumber" class="field-err"></span>
                             </div>
 
+                            <!-- Account Type -->
                             <div class="field-group col-span-2">
-                                <label class="field-label">Account Type</label>
+                                <label class="field-label" asp-for="AccountType">Account Type</label>
                                 <div class="input-wrap select-wrap">
                                     <span class="input-prefix">
                                         <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
@@ -1361,17 +1373,19 @@
                                 <span asp-validation-for="AccountType" class="field-err"></span>
                             </div>
 
+                            <!-- Initial Balance -->
                             <div class="field-group">
-                                <label class="field-label">Initial Balance</label>
+                                <label class="field-label" asp-for="Balance">Initial Balance</label>
                                 <div class="input-wrap">
-                                    <span class="input-prefix text">$</span>
+                                    <span class="input-prefix text-prefix">$</span>
                                     <input asp-for="Balance" class="inp" placeholder="0.00" autocomplete="off" />
                                 </div>
                                 <span asp-validation-for="Balance" class="field-err"></span>
                             </div>
 
+                            <!-- Interest Rate -->
                             <div class="field-group">
-                                <label class="field-label">Interest Rate</label>
+                                <label class="field-label" asp-for="InterestRate">Interest Rate</label>
                                 <div class="input-wrap">
                                     <span class="input-prefix">
                                         <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
@@ -1381,20 +1395,20 @@
                                         </svg>
                                     </span>
                                     <input asp-for="InterestRate" class="inp" placeholder="e.g. 3.5" autocomplete="off" />
-                                    <span class="input-suffix-text">%</span>
+                                    <span class="input-suffix">%</span>
                                 </div>
                                 <span asp-validation-for="InterestRate" class="field-err"></span>
                             </div>
+
                         </div>
                     </div>
+                    <!-- ── /RIGHT ── -->
 
                 </div>
-
-                <!-- Actions -->
+                <!-- /form-grid -->
+                <!-- Action bar -->
                 <div class="form-actions">
-                    <div class="form-actions-left">
-                        All fields marked are <span>required</span>
-                    </div>
+                    <p class="form-actions-note">All fields marked are <span>required</span></p>
                     <div class="form-actions-right">
                         <button type="reset" class="btn btn-secondary">
                             <svg width="13" height="13" viewBox="0 0 14 14" fill="none">
@@ -1413,59 +1427,65 @@
                 </div>
 
             </form>
+
         </div>
+        <!-- /page-content -->
+
     </div>
+    <!-- ══════════ /MAIN ══════════ -->
+
 
     <script>
-        // Sidebar
-        function toggleSidebar() {
-            const s = document.getElementById('sidebar');
-            const w = document.getElementById('mainWrapper');
-            s.classList.toggle('collapsed');
-            w.classList.toggle('collapsed');
-            localStorage.setItem('sb', s.classList.contains('collapsed'));
-        }
+        /* ── Sidebar toggle ── */
+        document.getElementById('sbToggle').addEventListener('click', function () {
+            const sidebar     = document.getElementById('sidebar');
+            const mainWrapper = document.getElementById('mainWrapper');
+            sidebar.classList.toggle('collapsed');
+            mainWrapper.classList.toggle('collapsed');
+            localStorage.setItem('sb-collapsed', sidebar.classList.contains('collapsed'));
+        });
 
-        window.addEventListener('DOMContentLoaded', () => {
-            if (localStorage.getItem('sb') === 'true') {
+        /* Restore sidebar state */
+        window.addEventListener('DOMContentLoaded', function () {
+            if (localStorage.getItem('sb-collapsed') === 'true') {
                 document.getElementById('sidebar').classList.add('collapsed');
                 document.getElementById('mainWrapper').classList.add('collapsed');
             }
         });
 
-        // Password toggle
+        /* ── Password visibility toggle ── */
         function togglePw() {
-            const pw = document.getElementById('pwInput');
-            const show = document.getElementById('eye-show');
-            const hide = document.getElementById('eye-hide');
-            if (pw.type === 'password') {
-                pw.type = 'text';
-                show.style.display = 'none';
-                hide.style.display = 'block';
-            } else {
-                pw.type = 'password';
-                show.style.display = 'block';
-                hide.style.display = 'none';
-            }
+            const input   = document.getElementById('pwInput');
+            const eyeShow = document.getElementById('eye-show');
+            const eyeHide = document.getElementById('eye-hide');
+            const isHidden = input.type === 'password';
+
+            input.type         = isHidden ? 'text' : 'password';
+            eyeShow.style.display = isHidden ? 'none'  : 'block';
+            eyeHide.style.display = isHidden ? 'block' : 'none';
         }
 
-        // Toastr
+        /* ── Toastr notifications ── */
         $(document).ready(function () {
             toastr.options = {
-                positionClass: "toast-top-right",
-                timeOut: "3500",
-                closeButton: true,
-                progressBar: true,
+                positionClass:    'toast-top-right',
+                timeOut:          '3500',
+                closeButton:      true,
+                progressBar:      true,
                 preventDuplicates: true,
-                showMethod: "slideDown",
-                hideMethod: "slideUp"
+                showMethod:       'slideDown',
+                hideMethod:       'slideUp'
             };
 
-            var s = '@TempData["SuccessMessage"]';
-            var e = '@TempData["ErrorMessage"]';
+            var successMsg = '@TempData["SuccessMessage"]';
+            var errorMsg   = '@TempData["ErrorMessage"]';
 
-            if (s && s.trim() !== '' && s !== 'null') toastr.success(s);
-            if (e && e.trim() !== '' && e !== 'null') toastr.error(e);
+            if (successMsg && successMsg.trim() !== '' && successMsg !== 'null') {
+                toastr.success(successMsg);
+            }
+            if (errorMsg && errorMsg.trim() !== '' && errorMsg !== 'null') {
+                toastr.error(errorMsg);
+            }
         });
     </script>
 
