@@ -10,6 +10,6 @@ namespace BankingSystemweb.Service.Interface
         // Returns total transaction count
         Task<int> GetTotalTransactionsAsync();
 
-        Task<List<RecentActivityVM>> GetRecentActivitiesAsync(int count = 10);
+        Task<List<RecentActivityVM>> GetRecentActivitiesAsync(string adminId);
     }
 }

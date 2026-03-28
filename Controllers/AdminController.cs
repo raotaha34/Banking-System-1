@@ -49,9 +49,6 @@ namespace BankingSystemweb.Controllers
         public async Task<IActionResult> Index  ()
 
         {
-
-
-
             //1. Call service to get total users
 
             int totalUsers = await _adminService.GetTotalUsersAsync();
@@ -85,8 +82,7 @@ namespace BankingSystemweb.Controllers
             ViewData["TotalActiveUsers"] = totalActive;
 
 
-
-            var recentActivities = await _transactionService.GetRecentActivitiesAsync();
+            var recentActivities = await _transactionService.GetRecentActivitiesAsync(adminId);
 
 
 
@@ -123,42 +119,67 @@ namespace BankingSystemweb.Controllers
 
 
         [HttpPost]
-
         public async Task<IActionResult> CreateUserAccount(CreateUserAccountVM model)
-
         {
+            if (!ModelState.IsValid)
+                return View(model);
 
-            if (ModelState.IsValid)
-
+            try
             {
-
-                var result = await _adminService.CreateUserAndAccount(model);
-
-
-
-                if (result)
-
-                {
-
-                    // Pass success message using TempData
-
-                    TempData["SuccessMessage"] = "User account created successfully!";
-
-                    return RedirectToAction("CreateUserAccount", "Admin");
-
-                }
-
-
-
-                // Pass error message if creation failed
-
-                TempData["ErrorMessage"] = "User creation failed.";
-
+                 await _adminService.CreateUserAndAccount(model);
+                TempData["SuccessMessage"] = "User account created successfully!";
+                return RedirectToAction("CreateUserAccount", "Admin");
             }
+            catch (Exception ex)
+            {
+                var message = ex.Message;
 
-            return View(model);
+                if (message.Contains("password", StringComparison.OrdinalIgnoreCase))
+                    ModelState.AddModelError("Password", message);
+                else if (message.Contains("email", StringComparison.OrdinalIgnoreCase) ||
+                         message.Contains("username", StringComparison.OrdinalIgnoreCase))
+                    ModelState.AddModelError("Email", message);
+                else
+                    ModelState.AddModelError(string.Empty, message);
 
+                return View(model);
+            }
         }
+        //public async Task<IActionResult> CreateUserAccount(CreateUserAccountVM model)
+
+        //{
+
+        //    if (ModelState.IsValid)
+
+        //    {
+
+        //        var result = await _adminService.CreateUserAndAccount(model);
+
+
+
+        //        if (result)
+
+        //        {
+
+        //            // Pass success message using TempData
+
+        //            TempData["SuccessMessage"] = "User account created successfully!";
+
+        //            return RedirectToAction("CreateUserAccount", "Admin");
+
+        //        }
+
+
+
+        //        // Pass error message if creation failed
+
+        //        TempData["ErrorMessage"] = "User creation failed.";
+
+        //    }
+
+        //    return View(model);
+
+        //}
 
 
 
@@ -414,7 +435,7 @@ namespace BankingSystemweb.Controllers
 
             ViewData["TotalActiveUsers"] = totalActive;
 
-            var recentActivities = await _transactionService.GetRecentActivitiesAsync();
+            var recentActivities = await _transactionService.GetRecentActivitiesAsync(adminId);
 
 
             var dashboardVM = new AdminDashboardVM
@@ -426,7 +447,27 @@ namespace BankingSystemweb.Controllers
             };
 
             return View(dashboardVM);
-
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+                return BadRequest("User ID is required");
+
+            // Call your service method to delete the user
+            var result = await _adminService.DeleteUserAsync(id);
+
+            if (!result)
+                return NotFound("User not found or could not be deleted");
+
+            return Ok();
+        }
+
+
+
     }
+
 }
+

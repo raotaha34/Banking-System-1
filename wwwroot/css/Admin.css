@@ -179,8 +179,8 @@ button {
     transition: background var(--ease), border-color var(--ease);
     position: absolute;
     right: 12px;
-    top: 50%;
     transform: translateY(-50%);
+    top: 50%;
 }
 
     .sb-toggle:hover {
@@ -877,8 +877,11 @@ button {
 .activity-list {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 17px;
     width: 100%;
+    max-height: 300px;
+    overflow: hidden;
+    
 }
 
 /* FIX: Added display:flex so dot and text sit side-by-side (horizontally),

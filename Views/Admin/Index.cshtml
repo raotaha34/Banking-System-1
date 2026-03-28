@@ -338,9 +338,9 @@
                                 <p class="sec-title">Recent Activity</p>
                                 <p class="sec-sub">Latest system events</p>
                             </div>
-                            <a class="sec-link" href="#">View all</a>
+                            <a class="sec-link" href="#" id="viewAllBtn">View all</a>
                         </div>
-                        <div class="activity-list">
+                        <div class="activity-list" id="activityList">
                                 @foreach (var item in Model.RecentActivities)
                                 {
                                     <div class="activity-item">
@@ -430,7 +430,32 @@
                 el.classList.add('active');
             }
         });
+
+                // ===== View All Button Logic =====
+
+        const viewAllBtn = document.getElementById('viewAllBtn');
+        const activityList = document.getElementById('activityList');
+
+        let expanded = false;
+
+        viewAllBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            if (!expanded) {
+                activityList.style.maxHeight = "none";
+                viewAllBtn.innerText = "Show less";
+            } else {
+                activityList.style.maxHeight = "300px";
+                viewAllBtn.innerText = "View all";
+            }
+
+            expanded = !expanded;
+        });
+
+
     </script>
+
+
     @functions {
         public string GetInitials(string fullName)
         {

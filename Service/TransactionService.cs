@@ -2,14 +2,18 @@
 using BankingSystemweb.Models;
 using BankingSystemweb.Service.Interface;
 using BankingSystemweb.ViewModels;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 public class TransactionService : ITransactionService
 {
     private readonly ApplicationDbContext _context;
 
-    public TransactionService(ApplicationDbContext context)
+    private readonly UserManager<ApplicationUser> _userManager;
+
+    public TransactionService(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
     {
+        _userManager = userManager;
         _context = context;
     }
 
@@ -83,14 +87,20 @@ public class TransactionService : ITransactionService
         return true;
     }
 
-    public async Task<List<RecentActivityVM>> GetRecentActivitiesAsync(int count = 10)
+
+    public async Task<List<RecentActivityVM>> GetRecentActivitiesAsync(string adminId)
     {
+        // 🔹 Get Admin Info
+        var adminUser = await _userManager.Users
+            .FirstOrDefaultAsync(u => u.Id == adminId);
+
+        var adminName = adminUser?.FullName ?? "Admin";
+
         // 1️⃣ Transactions
         var transactionActivities = _context.Transactions!
             .Include(t => t.Account)
             .ThenInclude(a => a.User)
             .OrderByDescending(t => t.TransactionDate)
-            .Take(count)
             .AsEnumerable()
             .Select(t => new RecentActivityVM
             {
@@ -101,13 +111,15 @@ public class TransactionService : ITransactionService
                     "Transfer" => "Transfer Completed",
                     _ => "Transaction"
                 },
+
                 Description = t.TransactionType switch
                 {
-                    "Deposit" => $"${t.Amount} — Account #{t.Account.AccountNumber}",
-                    "Withdraw" => $"${t.Amount} — Account #{t.Account.AccountNumber}",
-                    "Transfer" => $"${t.Amount} — To Account #{t.ReceiverAccountId}",
+                    "Deposit" => $"${t.Amount} — {t.Account.User?.FullName ?? "Unknown"}",
+                    "Withdraw" => $"${t.Amount} — {t.Account.User?.FullName ?? "Unknown"}",
+                    "Transfer" => $"${t.Amount} — To Account #{t.ReceiverAccountId} (by {adminName})",
                     _ => $"${t.Amount}"
                 },
+
                 Icon = t.TransactionType switch
                 {
                     "Deposit" => "D",
@@ -115,6 +127,7 @@ public class TransactionService : ITransactionService
                     "Transfer" => "T",
                     _ => "T"
                 },
+
                 Color = t.TransactionType switch
                 {
                     "Deposit" => "orange",
@@ -122,6 +135,7 @@ public class TransactionService : ITransactionService
                     "Transfer" => "purple",
                     _ => "blue"
                 },
+
                 Time = t.TransactionDate
             })
             .ToList();
@@ -131,7 +145,7 @@ public class TransactionService : ITransactionService
             .AsEnumerable()
             .Select(u => new RecentActivityVM
             {
-                Title = "User Account Created",
+                Title = $"User Account Created by {adminName}",
                 Description = $"{u.FullName} — {u.Email}",
                 Icon = "U",
                 Color = "blue",
@@ -158,7 +172,6 @@ public class TransactionService : ITransactionService
             .Concat(userActivities)
             .Concat(accountActivities)
             .OrderByDescending(a => a.Time)
-            .Take(count)
             .ToList();
 
         return allActivities;

@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@model BankingSystemweb.ViewModels.AdminDashboardVM
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
@@ -10,7 +12,7 @@
 <body>
 
     <!-- ════ MAIN ════ -->
-    <main class="main-content">
+    <main class="main-content">   
 
         <!-- TOPBAR -->
         <div class="topbar">
@@ -157,9 +159,9 @@
                             <p class="sec-title">Recent Activity</p>
                             <p class="sec-sub">Latest system events</p>
                         </div>
-                        <a class="sec-link" href="#">View all</a>
+                        <a class="sec-link" href="#" id="viewAllBtn">View all</a>
                     </div>
-                    <div class="activity-list">
+                    <div class="activity-list" id="activityList">
                         @foreach (var item in Model.RecentActivities)
                         {
                             <div class="activity-item">
@@ -185,7 +187,7 @@
                     </div>
                     <div class="sum-row">
                         <span class="sr-lbl"><span class="sr-dot g"></span>Active Users</span>
-                        <span class="sr-val">@ViewData["TotalActiveUsers"]<</span>
+                        <span class="sr-val">@ViewData["TotalActiveUsers"]</span>
                     </div>
                     <div class="sum-row">
                         <span class="sr-lbl"><span class="sr-dot r"></span>Inactive Accounts</span>
@@ -228,7 +230,35 @@
           chart.appendChild(bar);
         });
 
-            @functions {
+
+              document.addEventListener("DOMContentLoaded", function () {
+
+            const viewAllBtn = document.getElementById('viewAllBtn');
+            const activityList = document.getElementById('activityList');
+
+            if (!viewAllBtn || !activityList) return; // safety check
+
+            let expanded = false;
+
+            viewAllBtn.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                if (!expanded) {
+                    activityList.style.maxHeight = "none";
+                    viewAllBtn.innerText = "Show less";
+                } else {
+                    activityList.style.maxHeight = "300px";
+                    viewAllBtn.innerText = "View all";
+                }
+
+                expanded = !expanded;
+            });
+
+        });
+
+    </script>
+
+        @functions {
                 public string GetInitials(string fullName)
                 {
                         if (string.IsNullOrWhiteSpace(fullName)) return "AD";
@@ -239,7 +269,7 @@
                 }
         }
 
-              @functions {
+        @functions {
                 public string GetTimeAgo(DateTime time)
                 {
                         var span = DateTime.Now - time;
@@ -248,7 +278,7 @@
                         if (span.TotalHours < 24) return $"{(int)span.TotalHours} hours ago";
                         return $"{(int)span.TotalDays} days ago";
                 }
-        }s
-    </script>
+        }
+ 
 </body>
 </html>
