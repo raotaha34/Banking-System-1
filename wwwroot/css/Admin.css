@@ -124,10 +124,13 @@ button {
         width: var(--sidebar-collapsed);
     }
 
+
+
 /* Brand */
 .sb-brand {
     display: flex;
-    align-items: center;
+    align-items: center; /* THIS centers everything vertically */
+    position: relative;
     gap: 11px;
     padding: 0 18px;
     height: var(--topbar-h);
@@ -164,10 +167,6 @@ button {
 
 /* Toggle button */
 .sb-toggle {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
     width: 26px;
     height: 26px;
     border-radius: var(--r-x);
@@ -178,6 +177,10 @@ button {
     justify-content: center;
     cursor: pointer;
     transition: background var(--ease), border-color var(--ease);
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
     .sb-toggle:hover {
@@ -611,7 +614,7 @@ button {
     width: 46px;
     height: 46px;
     border-radius: 12px;
-    display: flex; /* FIX: was commented out */
+    display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;

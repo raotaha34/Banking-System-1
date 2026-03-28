@@ -117,8 +117,8 @@ public class TransactionService : ITransactionService
                 },
                 Color = t.TransactionType switch
                 {
-                    "Deposit" => "teal",
-                    "Withdraw" => "orange",
+                    "Deposit" => "orange",
+                    "Withdraw" => "red",
                     "Transfer" => "purple",
                     _ => "blue"
                 },
