@@ -1,10 +1,7 @@
 ﻿@model IEnumerable<BankingSystemweb.ViewModels.UserListVM>
-
-
 @{
     var usersJson = System.Text.Json.JsonSerializer.Serialize(Model);
 }
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -144,6 +141,33 @@
                 color: #ffffff;
                 border-color: #1a6ef5;
             }
+
+
+
+        .role-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Admin = light red */
+        .role-admin {
+            background: #FEE2E2;
+            color: #DC2626;
+        }
+
+        /* User = light blue */
+        .role-user {
+            background: #DBEAFE;
+            color: #2563EB;
+        }
+
+        /* Customer = light orange */
+        .role-customer {
+            background: #FFEDD5;
+            color: #EA580C;
+        }
     </style>
 </head>
 
@@ -230,8 +254,8 @@
                     <select class="filter-select" id="filter-role">
                         <option value="">All Roles</option>
                         <option value="Admin">Admin</option>
-                        <option value="Manager">Manager</option>
-                        <option value="Viewer">Viewer</option>
+                        <option value="User">User</option>
+                        <option value="Customer">Customer</option>
                     </select>
                 </div>
 
@@ -260,11 +284,11 @@
     <!-- Toast -->
     <div id="toast" class="toast"></div>
 
-    
+
     <script>
         let users = @Html.Raw(usersJson);
 
-        const PER_PAGE = 6;
+        const PER_PAGE = 10;
         let currentPage = 1;
 
         const csrfToken = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
@@ -276,7 +300,15 @@
             return users.filter(u => {
                 if (q && !((u.FullName + ' ' + u.Email).toLowerCase().includes(q))) return false;
                 if (st && u.Status !== st) return false;
-                if (rl && u.Role !== rl) return false;
+                        if (rl) {
+            const mappedRole =
+                u.Role === 'Admin' ? 'Admin' :
+                (u.Role === 'Manager' || u.Role === 'User') ? 'User' :
+                (u.Role === 'Viewer' || u.Role === 'Customer') ? 'Customer' :
+            u.Role;
+
+            if (mappedRole !== rl) return false;
+        }
                 return true;
             });
         }
@@ -295,7 +327,9 @@
                 <tr>
                     <td>
                         <div class="user-cell">
-                            <div class="user-avatar">${u.FullName[0].toUpperCase()}</div>
+                             <div class="user-avatar" style="background:${getAvatarColor(u.FullName)}">
+                               ${u.FullName[0].toUpperCase()}
+                               </div>
                             <div>
                                 <div class="user-name">${u.FullName}</div>
                                 <div class="user-email">${u.Email}</div>
@@ -303,9 +337,19 @@
                         </div>
                     </td>
                     <td>
-                        <span class="role-badge ${u.Role === 'Admin' ? 'role-admin' : u.Role === 'Manager' ? 'role-manager' : 'role-viewer'}">
-                            ${u.Role}
-                        </span>
+                  <span class="role-badge ${
+                      u.Role === 'Admin' ? 'role-admin' :
+                      (u.Role === 'Manager' || u.Role === 'User') ? 'role-user' :
+                      (u.Role === 'Viewer' || u.Role === 'Customer') ? 'role-customer' :
+                      'role-user'
+                   }">
+                     ${
+                         u.Role === 'Admin' ? 'Admin' :
+                         (u.Role === 'Manager' || u.Role === 'User') ? 'User' :
+                         (u.Role === 'Viewer' || u.Role === 'Customer') ? 'Customer' :
+                          u.Role
+                    }
+                 </span>
                     </td>
                     <td>${u.Email}</td>
                     <td>
@@ -373,6 +417,24 @@
             }
         }
 
+
+        // getAtarColor column
+
+        function getAvatarColor(name) {
+            const colors = [
+                "#F87171", "#FBBF24", "#34D399",
+                "#60A5FA", "#A78BFA", "#F472B6",
+                "#22D3EE", "#FB923C", "#4ADE80",
+                "#C084FC"
+            ];
+
+            const firstChar = name.charAt(0).toUpperCase();
+            const index = firstChar.charCodeAt(0) % colors.length;
+
+            return colors[index];
+        }
+
+
         function showToast(msg,type = 'success') {
             const t = document.getElementById('toast');
             t.textContent = msg;
@@ -395,6 +457,7 @@
         document.getElementById('filter-role').addEventListener('change', () => { currentPage = 1; renderTable(); });
 
         renderTable();
+
     </script>
 </body>
 </html>

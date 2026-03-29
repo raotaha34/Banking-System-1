@@ -31,6 +31,7 @@ public class TransactionService : ITransactionService
             .CountAsync();
     }
 
+
     public async Task<bool> CreateTransaction(TransactionVM model)
     {
         ArgumentNullException.ThrowIfNull(model);
@@ -131,7 +132,7 @@ public class TransactionService : ITransactionService
                 Color = t.TransactionType switch
                 {
                     "Deposit" => "orange",
-                    "Withdraw" => "red",
+                    "Withdraw" => "yellow",
                     "Transfer" => "purple",
                     _ => "blue"
                 },
@@ -159,11 +160,11 @@ public class TransactionService : ITransactionService
             .AsEnumerable()
             .Select(a => new RecentActivityVM
             {
-                Title = "Savings Account Opened",
+                Title = $"Savings Account Opened by {adminName}",
                 Description = $"Account #{a.AccountNumber} — Initial deposit ${a.Balance}",
                 Icon = "A",
                 Color = "green",
-                Time = a.CreatedAt
+                Time = a.CreatedAt 
             })
             .ToList();
 
@@ -175,5 +176,31 @@ public class TransactionService : ITransactionService
             .ToList();
 
         return allActivities;
+    }
+
+    public async Task<(decimal deposits, int depositCount, decimal withdrawals, int withdrawalCount)> GetTodaysTransactionsTotalsAsync()
+    {
+        var today = DateTime.Today;
+        var tomorrow = today.AddDays(1);
+
+        // Today's deposits sum and count
+        var depositsQuery = _context.Transactions!
+            .Where(t => t.TransactionType == "Deposit"
+                        && t.TransactionDate >= today
+                        && t.TransactionDate < tomorrow);
+
+        var deposits = await depositsQuery.SumAsync(t => t.Amount);
+        var depositCount = await depositsQuery.CountAsync();
+
+        // Today's withdrawals sum and count
+        var withdrawalsQuery = _context.Transactions!
+            .Where(t => t.TransactionType == "Withdraw"
+                        && t.TransactionDate >= today
+                        && t.TransactionDate < tomorrow);
+
+        var withdrawals = await withdrawalsQuery.SumAsync(t => t.Amount);
+        var withdrawalCount = await withdrawalsQuery.CountAsync();
+
+        return (deposits, depositCount, withdrawals, withdrawalCount);
     }
 }

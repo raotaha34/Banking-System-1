@@ -12,7 +12,7 @@
 
         public string AccountType { get; set; } = null!;
 
-        public double Balance { get; set; }
+        public decimal Balance { get; set; }
 
         public double? InterestRate { get; set; }
 

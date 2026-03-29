@@ -8,6 +8,32 @@
     <title>Report Activities</title>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/report.css" />
+
+    <style>
+
+        /* ── SYSTEM SUMMARY ── */
+        .sum-row {
+            display: flex; /* FIX: was commented out */
+            align-items: center;
+            justify-content: space-between;
+            padding: 11px 14px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: var(--r-s);
+            margin-bottom: 8px;
+            transition: border-color var(--ease), background var(--ease);
+            cursor: default;
+        }
+
+            .sum-row:last-child {
+                margin-bottom: 0;
+            }
+
+            .sum-row:hover {
+                border-color: var(--blue-200);
+                background: var(--blue-50);
+            }
+    </style>
 </head>
 <body>
 
@@ -19,8 +45,8 @@
             <div class="topbar-title">
                 <h1>Report Activities</h1>
                 <p>
-                    Welcome back, @ViewData["AdminName"];
-                    @DateTime.Now.ToString("   dd MMM yyyy   ,    hh:mm tt")
+                    Welcome back, @ViewData["AdminName"]
+                    @DateTime.Now.ToString("dd MMM yyyy,hh:mm tt")
                 </p>
             </div>
             <div class="topbar-right">
@@ -53,7 +79,7 @@
                     </div>
                     <div class="stat-body">
                         <p class="stat-label">Total Users</p>
-                        <p class="stat-number">@ViewData["TotalActiveUsers"]</p>
+                        <p class="stat-number">@ViewData["TotalUsers"]</p>
                         <span class="stat-badge up">&#9650; 12%</span>
                     </div>
                 </div>
@@ -134,17 +160,17 @@
                 <div class="quick-stat">
                     <div class="qs-item">
                         <div class="qs-label">Deposits Today</div>
-                        <div class="qs-value">$24,500</div>
+                        <div class="qs-value">@ViewData["TodaysDeposits"]</div>
                     </div>
                     <div class="qs-divider"></div>
                     <div class="qs-item">
                         <div class="qs-label">Withdrawals</div>
-                        <div class="qs-value">$8,200</div>
+                        <div class="qs-value">@ViewData["TodaysWithdrawals"]</div>
                     </div>
                     <div class="qs-divider"></div>
                     <div class="qs-item">
-                        <div class="qs-label">Pending Reviews</div>
-                        <div class="qs-value">3</div>
+                        <div class="qs-label">Total Tranaction</div>
+                        <div class="qs-value">@ViewData["TotalTransactions"]</div>
                     </div>
                 </div>
             </div>
@@ -173,7 +199,6 @@
                                 </div>
                             </div>
                         }
-                     
                     </div>
                 </div>
 
@@ -191,23 +216,24 @@
                     </div>
                     <div class="sum-row">
                         <span class="sr-lbl"><span class="sr-dot r"></span>Inactive Accounts</span>
-                        <span class="sr-val">2</span>
-                    </div>
-                    <div class="sum-row">
-                        <span class="sr-lbl"><span class="sr-dot a"></span>Pending Reviews</span>
-                        <span class="sr-val">3</span>
+                        <span class="sr-val">@ViewData["TotalInActiveUsers"]</span>
                     </div>
                     <div class="sum-row">
                         <span class="sr-lbl"><span class="sr-dot g"></span>Today's Deposits</span>
-                        <span class="sr-val">$24,500</span>
+                        <span class="sr-val">@ViewData["TodaysDeposits"]</span>
                     </div>
                     <div class="sum-row">
                         <span class="sr-lbl"><span class="sr-dot g"></span>Today's Withdrawals</span>
-                        <span class="sr-val">$8,200</span>
+                        <span class="sr-val">@ViewData["TodaysWithdrawals"]</span>
                     </div>
                     <div class="sum-row">
-                        <span class="sr-lbl"><span class="sr-dot r"></span>Failed Transactions</span>
-                        <span class="sr-val">1</span>
+                        <span class="sr-lbl"><span class="sr-dot g"></span>Today'Transaction</span>
+                        <span class="sr-val">@ViewData["Today Transaction"]</span>
+                    </div>
+                   
+                    <div class="sum-row">
+                        <span class="sr-lbl"><span class="sr-dot g"></span>Total Transactions</span>
+                        <span class="sr-val">@ViewData["TotalTransactions"]</span>
                     </div>
                 </div>
 

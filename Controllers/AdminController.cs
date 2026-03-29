@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 using Microsoft.EntityFrameworkCore;
+using System.Net.NetworkInformation;
+using System.Xml.Linq;
 
 
 
@@ -61,15 +63,19 @@ namespace BankingSystemweb.Controllers
 
             var adminInfo = await _adminService.GetAdminInfoAsync(adminId);
 
-
-
             int tt = await _transactionService.GetTotalTransactionsAsync(); //tt = totaltransaction
 
             var activeUsers = await _adminService.GetUsersByStatusAsync("Active");
 
             int totalActive = activeUsers.Count;
 
+            var inactiveUsers = await _adminService.GetUsersByStatusAsync("Inactive");
 
+            int totalInActive = inactiveUsers.Count;
+
+            var (todaysDeposits, depositCount, todaysWithdrawals, withdrawalCount) = await _transactionService.GetTodaysTransactionsTotalsAsync();
+
+            ViewData["TotalInActiveUsers"] = totalInActive;
 
             ViewData["AdminName"] = adminInfo.AdminName;
 
@@ -80,24 +86,18 @@ namespace BankingSystemweb.Controllers
             ViewData["TotalTransactions"] = tt;
 
             ViewData["TotalActiveUsers"] = totalActive;
-
+            ViewData["TodaysDeposits"] = todaysDeposits;
+            ViewData["TodaysWithdrawals"] = todaysWithdrawals;
+            ViewData["Today Transaction"] = withdrawalCount + depositCount;
 
             var recentActivities = await _transactionService.GetRecentActivitiesAsync(adminId);
-
-
 
             var dashboardVM = new AdminDashboardVM
 
             {
-
                 RecentActivities = recentActivities,
-
             };
-
-
-
             return View(dashboardVM);
-
         }
 
 
@@ -109,13 +109,8 @@ namespace BankingSystemweb.Controllers
         public IActionResult CreateUserAccount()
 
         {
-
             return View(); // will automatically look for Views/Admin/CreateUserAccount.cshtml
-
         }
-
-
-
 
 
         [HttpPost]
@@ -145,53 +140,8 @@ namespace BankingSystemweb.Controllers
                 return View(model);
             }
         }
-        //public async Task<IActionResult> CreateUserAccount(CreateUserAccountVM model)
-
-        //{
-
-        //    if (ModelState.IsValid)
-
-        //    {
-
-        //        var result = await _adminService.CreateUserAndAccount(model);
-
-
-
-        //        if (result)
-
-        //        {
-
-        //            // Pass success message using TempData
-
-        //            TempData["SuccessMessage"] = "User account created successfully!";
-
-        //            return RedirectToAction("CreateUserAccount", "Admin");
-
-        //        }
-
-
-
-        //        // Pass error message if creation failed
-
-        //        TempData["ErrorMessage"] = "User creation failed.";
-
-        //    }
-
-        //    return View(model);
-
-        //}
-
-
-
-
-
-        // =========================
-
+        
         // ✅ TRANSACTION PAGE
-
-        // =========================
-
-
 
         [HttpGet]
 
@@ -403,51 +353,58 @@ namespace BankingSystemweb.Controllers
 
         }
 
+
         public async Task<IActionResult> Report()
-
         {
-            //1. Call service to get total users
-
+            // 1️⃣ Call service to get total users
             int totalUsers = await _adminService.GetTotalUsersAsync();
 
-            // 2. Get current admin ID from claims
-
+            // 2️⃣ Get current admin ID from claims
             string adminId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "";
 
-            // 3. Get admin name and balance
-
+            // 3️⃣ Get admin info
             var adminInfo = await _adminService.GetAdminInfoAsync(adminId);
 
-            int tt = await _transactionService.GetTotalTransactionsAsync(); //tt = totaltransaction
+            // 4️⃣ Total transactions
+            int totalTransactions = await _transactionService.GetTotalTransactionsAsync();
 
+            // 5️⃣ Active and inactive users
             var activeUsers = await _adminService.GetUsersByStatusAsync("Active");
-
             int totalActive = activeUsers.Count;
 
-
-            ViewData["AdminName"] = adminInfo.AdminName;
-
-            ViewData["AdminBalance"] = adminInfo.AdminBalance;
-
-            ViewData["TotalUsers"] = totalUsers;
-
-            ViewData["TotalTransactions"] = tt;
-
-            ViewData["TotalActiveUsers"] = totalActive;
-
+            var inactiveUsers = await _adminService.GetUsersByStatusAsync("Inactive");
+            int totalInActive = inactiveUsers.Count;
+            // 6️⃣ Recent activities
             var recentActivities = await _transactionService.GetRecentActivitiesAsync(adminId);
 
+            var (todaysDeposits, depositCount, todaysWithdrawals, withdrawalCount) = await _transactionService.GetTodaysTransactionsTotalsAsync();
 
+
+            // 7️⃣ Fill the ViewModel
             var dashboardVM = new AdminDashboardVM
-
             {
-
-                RecentActivities = recentActivities,
-
+                AdminName = adminInfo.AdminName,
+                AdminBalance = adminInfo.AdminBalance,
+                TotalUsers = totalUsers,
+                TotalTransactions = totalTransactions,
+                TotalActiveUsers = activeUsers.Count,
+                TotalInActiveUsers = inactiveUsers.Count,
+                RecentActivities = recentActivities
             };
 
+            ViewData["AdminName"] = adminInfo.AdminName;
+            ViewData["AdminBalance"] = adminInfo.AdminBalance;
+            ViewData["TotalUsers"] = totalUsers;
+            ViewData["TotalTransactions"] = totalTransactions;
+            ViewData["TotalActiveUsers"] = totalActive;
+            ViewData["TotalInActiveUsers"] = totalInActive;
+            ViewData["TodaysDeposits"] = todaysDeposits;
+            ViewData["TodaysWithdrawals"] = todaysWithdrawals;
+            ViewData["Today Transaction"] = withdrawalCount+ depositCount;
             return View(dashboardVM);
         }
+
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]

@@ -6,7 +6,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard — SecureBank Admin</title>
-    <link rel="stylesheet" href="~/css/Admin.css" />
+    <link rel="stylesheet" href="~/css/Admin.css"/>
 </head>
 <body>
     <!-- Mobile overlay -->
@@ -371,23 +371,24 @@
                         </div>
                         <div class="sum-row">
                             <span class="sr-lbl"><span class="sr-dot r"></span>Inactive Accounts</span>
-                            <span class="sr-val">2</span>
-                        </div>
-                        <div class="sum-row">
-                            <span class="sr-lbl"><span class="sr-dot a"></span>Pending Reviews</span>
-                            <span class="sr-val">3</span>
+                            <span class="sr-val">@ViewData["TotalInActiveUsers"]</span>
                         </div>
                         <div class="sum-row">
                             <span class="sr-lbl"><span class="sr-dot g"></span>Today's Deposits</span>
-                            <span class="sr-val">$24,500</span>
+                            <span class="sr-val">@ViewData["TodaysDeposits"]</span>
                         </div>
                         <div class="sum-row">
                             <span class="sr-lbl"><span class="sr-dot g"></span>Today's Withdrawals</span>
-                            <span class="sr-val">$8,200</span>
+                            <span class="sr-val">@ViewData["TodaysWithdrawals"]</span>
                         </div>
                         <div class="sum-row">
-                            <span class="sr-lbl"><span class="sr-dot r"></span>Failed Transactions</span>
-                            <span class="sr-val">1</span>
+                            <span class="sr-lbl"><span class="sr-dot g"></span>Today'Transaction</span>
+                            <span class="sr-val">@ViewData["Today Transaction"]</span>
+                        </div>
+
+                        <div class="sum-row">
+                            <span class="sr-lbl"><span class="sr-dot g"></span>Total Transactions</span>
+                            <span class="sr-val">@ViewData["TotalTransactions"]</span>
                         </div>
                     </div>
                     <!-- /system summary -->

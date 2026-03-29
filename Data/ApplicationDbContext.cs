@@ -22,9 +22,14 @@ namespace BankingSystemweb.Data
                 .Property(a => a.MonthlyLimit)
                 .HasPrecision(18, 2);
 
-            builder.Entity<Transaction>()
-                .Property(t => t.Amount)
-                .HasPrecision(18, 2);
+            // Ensure Balance and Amount have proper precision and scale
+    builder.Entity<Account>()
+        .Property(a => a.Balance)
+        .HasColumnType("decimal(18,2)");
+
+    builder.Entity<Transaction>()
+        .Property(t => t.Amount)
+        .HasColumnType("decimal(18,2)");
 
             // Additional configurations (if needed) can go here
         }

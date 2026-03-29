@@ -8,7 +8,7 @@
 
         public Account Account { get; set; } = null!;
 
-        public double Amount { get; set; }
+        public decimal Amount { get; set; }
 
         public string? TransactionType { get; set; }
 

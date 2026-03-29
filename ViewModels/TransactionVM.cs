@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿
+using System.ComponentModel.DataAnnotations;
 
 namespace BankingSystemweb.ViewModels
 {
@@ -12,7 +13,7 @@ namespace BankingSystemweb.ViewModels
         public int? ReceiverAccountId { get; set; }
 
         [Required]
-        public double Amount { get; set; }
+        public decimal Amount { get; set; } = 0;
 
         [Required]
         public string? TransactionType { get; set; }

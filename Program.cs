@@ -2,7 +2,6 @@ using BankingSystemweb.Data;
 using BankingSystemweb.Models;
 using BankingSystemweb.Service;
 using BankingSystemweb.Service.Interface;
-using BankingSystemweb.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 

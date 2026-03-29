@@ -66,6 +66,8 @@
     --red-100: #fee2e2;
     --amber: #d97706;
     --amber-50: #fffbeb;
+    --yellow: #fff4b8;
+    --lightyellow: #ffd800;
     /* Neutrals — all light */
     --bg: #f8fafc;
     --bg2: #f1f5f9;
@@ -441,9 +443,6 @@ body {
     overflow: hidden;
 }
 
-    .activity-list.expanded {
-        max-height: none;
-    }
 /* FIX: Added display:flex so dot and text sit side-by-side (horizontally),
    with the whole item itself stacking vertically inside .activity-list */
 .activity-item {
@@ -481,6 +480,11 @@ body {
         color: var(--blue-600);
     }
 
+    .ai-dot.yellow {
+        background: #fff4b8;
+        color: #E6CD00;
+    }
+
     .ai-dot.green {
         background: var(--green-100);
         color: var(--green);
@@ -500,6 +504,7 @@ body {
         background: var(--teal-100);
         color: var(--teal);
     }
+
 
 /* Text Body */
 /* FIX: Added display:flex so flex-direction:column actually works */
@@ -532,25 +537,34 @@ body {
 
 /* ── SYSTEM SUMMARY ── */
 .sum-row {
-    display: flex;
+    display: flex; /* FIX: was commented out */
     align-items: center;
     justify-content: space-between;
-    padding: 11px 0;
-    border-bottom: 1px solid var(--cream-3);
-    transition: background .15s;
+    padding: 11px 14px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--r-s);
+    margin-bottom: 8px;
+    transition: border-color var(--ease), background var(--ease);
+    cursor: default;
 }
 
     .sum-row:last-child {
-        border-bottom: none;
+        margin-bottom: 0;
+    }
+
+    .sum-row:hover {
+        border-color: var(--blue-200);
+        background: var(--blue-50);
     }
 
 .sr-lbl {
-    display: flex;
+    display: flex; /* FIX: was commented out */
     align-items: center;
-    gap: 9px;
-    font-size: 13.5px;
-    color: var(--ink-2);
-    font-weight: 440;
+    gap: 7px;
+    font-size: 13px;
+    color: var(--text2);
+    font-weight: 500;
 }
 
 .sr-dot {
@@ -561,22 +575,22 @@ body {
 }
 
     .sr-dot.g {
-        background: var(--green-acc);
+        background: var(--green);
     }
 
     .sr-dot.r {
-        background: #ef4444;
+        background: var(--red);
     }
 
     .sr-dot.a {
-        background: var(--amber-acc);
+        background: var(--amber);
     }
 
 .sr-val {
+    font-family: 'Sora', sans-serif;
     font-size: 14px;
-    font-weight: 650;
-    color: var(--ink);
-    font-variant-numeric: tabular-nums;
+    font-weight: 700;
+    color: var(--text1);
 }
 
 /* ── MIDDLE ROW: CHART + QUICK STATS ── */

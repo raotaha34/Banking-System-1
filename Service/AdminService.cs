@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 
-namespace BankingSystemweb.Services
+namespace BankingSystemweb.Service
 {
     public class AdminService : IAdminService
     {
@@ -15,26 +15,26 @@ namespace BankingSystemweb.Services
         private readonly RoleManager<IdentityRole> _roleManager;
 
         public AdminService(UserManager<ApplicationUser> userManager,
-                            RoleManager<IdentityRole> roleManager,
-                            ApplicationDbContext context)
+                            ApplicationDbContext context,
+                            RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
-            _roleManager = roleManager;
             _context = context;
+            _roleManager = roleManager;
         }
         //create account
         public async Task<bool> CreateUserAndAccount(CreateUserAccountVM model)
         {
             if (model == null)
-                throw new ArgumentNullException(nameof(model));
-
+                ArgumentNullException.ThrowIfNull(model, nameof(model));
+            
             var user = new ApplicationUser
             {
                 UserName = model.Email,
                 Email = model.Email,
                 FullName = model.FullName ?? ""
             };
-
+            
             var result = await _userManager.CreateAsync(user, model.Password);
 
             if (!result.Succeeded)
@@ -54,8 +54,8 @@ namespace BankingSystemweb.Services
             {
                 AccountNumber = model.AccountNumber ?? "",
                 AccountType = model.AccountType ?? "Checking",
-                Balance = model.Balance,
-                InterestRate = model.InterestRate ?? 0,
+                Balance = Convert.ToDecimal(model.Balance),
+                InterestRate = (double)(model.InterestRate ?? 0),
                 OpeningDate = DateTime.UtcNow,
                 Status = "Active",
                 UserId = user.Id
@@ -97,7 +97,7 @@ namespace BankingSystemweb.Services
             return new AdminDashboardVM
             {
                 AdminName = adminUser.FullName ?? "Admin",
-                AdminBalance = adminAccount?.Balance ?? 0
+                AdminBalance = (double)(adminAccount?.Balance ?? 0)
             };
         }
 
@@ -109,12 +109,10 @@ namespace BankingSystemweb.Services
                 .ToListAsync();
 
             var userList = new List<UserListVM>();
-
             foreach (var user in users)
             {
-                var roles = await _userManager.GetRolesAsync(user); // get roles
+                var roles = await _userManager.GetRolesAsync(user);
                 var account = user.Accounts.FirstOrDefault();
-
                 userList.Add(new UserListVM
                 {
                     Id = user.Id,
@@ -123,8 +121,7 @@ namespace BankingSystemweb.Services
                     Role = string.Join(", ", roles),
                     Status = account?.Status ?? "Inactive"
                 });
-            }
-
+            } 
             return userList;
         }
         //get user by status
@@ -195,7 +192,7 @@ namespace BankingSystemweb.Services
                 account.Status = model.Status;
                 account.AccountNumber = model.AccountNumber;
                 account.AccountType = model.AccountType;
-                account.Balance = model.Balance;
+                account.Balance = (decimal)model.Balance;
                 account.InterestRate = model.InterestRate;
                 _context.Accounts.Update(account);
                 await _context.SaveChangesAsync();
@@ -240,7 +237,7 @@ namespace BankingSystemweb.Services
                 Status = account?.Status ?? "Inactive",
                 AccountNumber = account?.AccountNumber ?? "",
                 AccountType = account?.AccountType ?? "",
-                Balance = account?.Balance ?? 0,
+                Balance = (double)(account?.Balance ?? 0),
                 InterestRate = account?.InterestRate ?? 0
             };
         }
