@@ -16,5 +16,6 @@
 
         public string? Description { get; set; }
         public int? ReceiverAccountId { get; set; }
+        public string? ReceiverName { get; set; }
     }
 }

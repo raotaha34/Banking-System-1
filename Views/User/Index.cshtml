@@ -34,14 +34,29 @@
                     <span class="sb-label">
                         <a class="sb-item" asp-controller="User" asp-action="Transactions">
                             <i class="fas fa-exchange-alt"></i>
-                            <span class="sb-label">Transactions</span>
+                            Transaction
                         </a>
                     </span>
                 </div>
                 <div class="sb-item"><i class="fas fa-history"></i><span class="sb-label">Recent Activity</span></div>
                 <div class="sb-item"><i class="fas fa-list-alt"></i><span class="sb-label">Transaction History</span></div>
-                <div class="sb-item"><i class="fas fa-bell"></i><span class="sb-label">Notifications</span></div>
-                <div class="sb-item"><i class="fas fa-key"></i><span class="sb-label">Change Password</span></div>
+
+                <div class="sb-item">
+                    <span class="sb-label">
+                        <a class="sb-item" asp-controller="User" asp-action="Notification">
+                            <i class="fas fa-bell"></i>
+                            Notification
+                        </a>
+                    </span>
+                </div>
+                <div class="sb-item">
+                    <span class="sb-label">
+                        <a class="sb-item" asp-controller="User" asp-action="Forgetpassword">
+                        <i class="fas fa-key"></i>
+                        Forgetpassword
+                        </a>
+                    </span>
+                </div>
                 <div class="sb-item"><i class="fas fa-cog"></i><span class="sb-label">Settings</span></div>
             </div>
             <div class="sb-footer">
@@ -145,11 +160,11 @@
                             <div class="action-icon"><i class="fas fa-list-alt"></i></div>
                             <div class="action-label">Transaction History</div>
                         </a>
-                        <a href="#" class="action-btn">
+                        <a class="action-btn" asp-controller="User" asp-action="Notification">
                             <div class="action-icon"><i class="fas fa-bell"></i></div>
                             <div class="action-label">Notifications</div>
                         </a>
-                        <a href="#" class="action-btn">
+                        <a class="action-btn" asp-controller="User" asp-action="Forgetpassword">
                             <div class="action-icon"><i class="fas fa-key"></i></div>
                             <div class="action-label">Change Password</div>
                         </a>

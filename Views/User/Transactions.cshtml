@@ -1,0 +1,380 @@
+﻿@model List<BankingSystemweb.Models.Transaction> 
+@{
+    ViewData["Title"] = "Transaction";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Transaction Page</title>
+    <style>
+        /* ===== BASE ===== */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f0f4fb;
+            color: #1a2340;
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 40px 0 60px;
+        }
+
+        /* ===== PAGE HEADER ===== */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 28px;
+        }
+
+        .page-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1a2340;
+        }
+
+        .page-subtitle {
+            font-size: 13px;
+            color: #6b7a99;
+            margin-top: 4px;
+        }
+
+        .live-badge {
+            background: #eef4ff;
+            color: #1a6ef5;
+            border: 1px solid #b8d9fc;
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .live-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #1a6ef5;
+        }
+
+        /* ===== FORM BOX ===== */
+        .form-box {
+            background: #ffffff;
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid #dce8f7;
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            color: #6b7a99;
+            text-transform: uppercase;
+            margin-top: 14px;
+            margin-bottom: 5px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px 13px;
+            border-radius: 9px;
+            border: 1px solid #dce8f7;
+            background: #f7faff;
+            color: #1a2340;
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.18s, box-shadow 0.18s;
+        }
+
+            input:focus, select:focus {
+                border-color: #1a6ef5;
+                box-shadow: 0 0 0 3px rgba(26,110,245,0.1);
+                background: #ffffff;
+            }
+
+        button {
+            margin-top: 18px;
+            padding: 13px;
+            width: 100%;
+            background: #1a6ef5;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.18s, transform 0.1s;
+        }
+
+            button:hover {
+                background: #1458cc;
+            }
+
+            button:active {
+                transform: scale(0.98);
+            }
+
+        /* ===== TABLE CARD ===== */
+        .table-card {
+            background: #ffffff;
+            border: 1px solid #dce8f7;
+            border-radius: 16px;
+            overflow: hidden;
+            padding: 24px 0 0;
+        }
+
+        .table-card-header {
+            padding: 0 22px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #ffffff;
+        }
+
+        th {
+            padding: 12px 18px;
+            background: #f7faff;
+            color: #6b7a99;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            text-align: left;
+            border-bottom: 1px solid #dce8f7;
+        }
+
+        td {
+            padding: 14px 18px;
+            font-size: 13px;
+            color: #3a4a6b;
+            border-bottom: 1px solid #f0f5fc;
+            text-align: left;
+        }
+
+        tbody tr:hover td {
+            background: #f7faff;
+        }
+
+        /* ===== TX TYPE BADGES ===== */
+        .tx-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .tx-Deposit {
+            background: #eafaf3;
+            color: #1aad71;
+        }
+
+        .tx-Withdraw {
+            background: #fff0f0;
+            color: #e5484d;
+        }
+
+        .tx-Transfer {
+            background: #eef4ff;
+            color: #1a6ef5;
+        }
+
+        /* ===== TOASTER ===== */
+        #toaster-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+
+        .toast {
+            min-width: 260px;
+            margin-bottom: 10px;
+            padding: 13px 18px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+            .toast.show {
+                opacity: 1;
+                transform: translateX(0);
+            }
+
+            .toast.success {
+                background: #eafaf3;
+                color: #1aad71;
+                border-color: #b6ecd6;
+            }
+
+            .toast.error {
+                background: #fff0f0;
+                color: #e5484d;
+                border-color: #fac8c8;
+            }
+
+            .toast.info {
+                background: #eef4ff;
+                color: #1a6ef5;
+                border-color: #b8d9fc;
+            }
+
+        /* ===== BACK BUTTON ===== */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 10px 20px;
+            background: #ffffff;
+            color: #6b7a99;
+            border: 1px solid #dce8f7;
+            border-radius: 9px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            margin: 24px 0 0;
+            transition: all 0.18s;
+        }
+
+            .btn:hover {
+                border-color: #1a6ef5;
+                color: #1a6ef5;
+                background: #eef4ff;
+            }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <!-- Page Header -->
+        <div class="page-header">
+            <div>
+                <div class="page-title">Transactions</div>
+                <div class="page-subtitle">Manage and monitor all account activity</div>
+            </div>
+            <div class="live-badge">
+                <div class="live-dot"></div> Live
+            </div>
+        </div>
+
+        <!-- Transaction Form -->
+        <div class="form-box">
+            <h2>New Transaction</h2>
+            <form asp-action="Transactions" method="post">
+                <input type="hidden" name="AccountId" placeholder="e.g. 100123" required />
+
+                <label>Receiver Account ID</label>
+                <input type="number" name="ReceiverAccountId" placeholder="For transfers only" />
+
+                <label>Amount (USD)</label>
+                <input type="number" name="Amount" placeholder="0.00" required />
+
+                <label>Transaction Type</label>
+                <select name="TransactionType">
+                    <option>Deposit</option>
+                    <option>Withdraw</option>
+                    <option>Transfer</option>
+                </select>
+
+                <label>Description</label>
+                <input type="text" name="Description" placeholder="Optional note..." />
+
+                <button type="submit">Submit Transaction</button>
+            </form>
+        </div>
+
+        <!-- Transaction History Table -->
+        <div class="table-card">
+            <div class="table-card-header"><h2>Transaction History</h2></div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Sender Name</th>
+                        <th>Account</th>
+                        <th>Receiver</th>
+                        <th>Amount</th>
+                        <th>Type</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>#@item.TransactionId</td>
+                            <td>@(item.Account?.User?.FullName ?? "N/A")</td>
+                            <td>@item.AccountId</td>
+                            <td>
+                                @(item.TransactionType == "Transfer" || item.TransactionType == "Deposit" ? 
+                                (item.ReceiverName ?? "—"): "—")
+                            </td>
+                            <td>$@item.Amount</td>
+                            <td><span class="tx-badge tx-@item.TransactionType">@item.TransactionType</span></td>
+                            <td>@item.TransactionDate.ToString("g")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Back Button -->
+        <a class="btn" href="@Url.Action("Index", "User")">Go to Dashboard</a>
+
+    </div>
+
+    <!-- Toaster Container -->
+    <div id="toaster-container"></div>
+
+    <script>
+
+
+
+        function showToast(message, type="info", duration=3000){
+            const container = document.getElementById("toaster-container");
+            const toast = document.createElement("div");
+            toast.classList.add("toast", type);
+            toast.textContent = message;
+            container.appendChild(toast);
+            setTimeout(()=>toast.classList.add("show"), 100);
+            setTimeout(()=>{
+                toast.classList.remove("show");
+                toast.addEventListener("transitionend",()=>toast.remove());
+            }, duration);
+        }
+
+        document.addEventListener("DOMContentLoaded", ()=>{
+            @if (TempData["SuccessMessage"] != null)
+            {
+                        <text>showToast("@TempData["SuccessMessage"]", "success");</text>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                        <text>showToast("@TempData["ErrorMessage"]", "error");</text>
+            }
+        });
+    </script>
+
+    
+</body>
+</html>

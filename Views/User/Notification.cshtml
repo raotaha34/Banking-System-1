@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureBank Notification Card</title>
+    <!-- Link external CSS file -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="~/css/Notification.css" asp-append-version="true">
+</head>
+<body>
+    <div class="page-bg">
+        <div class="bg-orb orb1"></div>
+        <div class="bg-orb orb2"></div>
+        <div class="bg-orb orb3"></div>
+
+        <div class="topbar">
+            <div class="bank-logo">
+                <div class="sb-logo-icon"><i class="fas fa-shield-alt"></i></div>
+                @* <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" /></svg> *@
+            </div>
+            <div class="bank-name">Secure<span>Bank</span></div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="notif-icon-wrap">
+                    <div class="notif-icon">
+                        <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 0 1-3.46 0" /></svg>
+                    </div>
+                    <div class="badge"></div>
+                </div>
+                <div>
+                    <p class="card-title">New Notification</p>
+                    <h2 class="card-heading">Welcome to SecureBank</h2>
+                    <p class="card-sub">Just now · Banking Alerts</p>
+                </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="message-body">
+                Welcome to <strong>SecureBank</strong>, <strong>@Model.FullName</strong>! 🎉<br><br>
+                Your account is now <strong>active and fully verified</strong>. We are committed to providing you with a safe, seamless, and rewarding banking experience every day.
+            </div>
+
+            <div class="highlight-box">
+                <div class="shield-icon">
+                    <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
+                </div>
+                <div class="highlight-text">
+                    Your account is protected with <strong>256-bit encryption</strong> and two-factor authentication. Your funds and data are always safe with us.
+                </div>
+            </div>
+
+            <div class="stats-row">
+                <div class="stat-chip"><span class="stat-num" id="s1">0</span><span class="stat-lbl">Members</span></div>
+                <div class="stat-chip"><span class="stat-num">99.9%</span><span class="stat-lbl">Uptime</span></div>
+                <div class="stat-chip"><span class="stat-num">24/7</span><span class="stat-lbl">Support</span></div>
+            </div>
+
+            <div class="action-row">
+                <button class="btn btn-primary" id="dashBtn">Dashboard</button>
+                <button class="btn btn-secondary" id="dismissBtn">Dismiss</button>
+            </div>
+
+            <div class="reactions-row">
+                <button class="reaction-btn" id="likeBtn" onclick="handleLike()">👍 <span class="count" id="likeCount">24</span></button>
+                <button class="reaction-btn" id="dislikeBtn" onclick="handleDislike()">👎 <span class="count" id="dislikeCount">3</span></button>
+                <button class="reaction-btn" id="commentBtn" onclick="toggleComment()">💬 <span class="count" id="commentCount">7</span></button>
+                <span class="timestamp">2 min ago</span>
+            </div>
+
+            <div class="comment-area" id="commentArea">
+                <div class="comment-input-wrap">
+                    <input class="comment-input" id="commentInput" placeholder="Write a comment...">
+                    <button class="send-btn" onclick="submitComment()">Send</button>
+                </div>
+                <div class="comments-list" id="commentsList">
+                    <div class="comment-item"><div class="comment-author">Alex M.</div>Great bank! Loving the experience so far.</div>
+                    <div class="comment-item"><div class="comment-author">Sarah K.</div>The security features are top-notch.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add your JS script below or link external JS -->
+    <script >
+    document.getElementById("dashBtn").addEventListener("click", function () {
+    window.location.href = "/User/Index";
+    }); 
+
+    </script>
+</body>
+</html>

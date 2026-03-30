@@ -29,5 +29,7 @@
         public ICollection<Transaction>? Transactions { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now; // ✅ add this
+
+
     }
 }

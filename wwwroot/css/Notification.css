@@ -1,0 +1,363 @@
+﻿/* ===================== Animations ===================== */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0%,100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.08);
+    }
+}
+
+/* ===================== Page ===================== */
+body {
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+}
+
+.page-bg {
+    min-height: 100vh;
+    background: linear-gradient(135deg,#f8fafc,#eef2ff,#f1f5f9);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+/* ===================== Background Orbs ===================== */
+.bg-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.2;
+}
+
+.orb1 {
+    width: 300px;
+    height: 300px;
+    background: #93c5fd;
+    top: -80px;
+    left: -80px;
+}
+
+.orb2 {
+    width: 250px;
+    height: 250px;
+    background: #c4b5fd;
+    bottom: -60px;
+    right: -60px;
+}
+
+.orb3 {
+    width: 200px;
+    height: 200px;
+    background: #67e8f9;
+    top: 50%;
+    left: 50%;
+}
+
+/* ===================== Topbar ===================== */
+.topbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 2rem;
+    animation: fadeInDown 0.6s ease;
+}
+
+.bank-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sb-logo-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg,#1e3a8a,#3b82f6);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 16px;
+}
+
+.bank-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+    .bank-name span {
+        color: #4f46e5;
+    }
+
+/* ===================== Card ===================== */
+.card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 2rem;
+    max-width: 480px;
+    width: 100%;
+    animation: fadeInUp 0.6s ease;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    border: 1px solid #e2e8f0;
+}
+
+/* ===================== Header ===================== */
+.card-header {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 1.5rem;
+}
+
+.notif-icon-wrap {
+    position: relative;
+}
+
+.notif-icon {
+    width: 52px;
+    height: 52px;
+    background: linear-gradient(135deg,#4f46e5,#06b6d4);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .notif-icon svg {
+        fill: white;
+        width: 24px;
+    }
+
+.badge {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    width: 12px;
+    height: 12px;
+    background: #22c55e;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+/* ===================== Text ===================== */
+.card-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+}
+
+.card-heading {
+    font-size: 22px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 4px 0;
+}
+
+.card-sub {
+    font-size: 13px;
+    color: #64748b;
+}
+
+/* ===================== Divider ===================== */
+.divider {
+    height: 1px;
+    background: #e2e8f0;
+    margin: 1.5rem 0;
+}
+
+/* ===================== Message ===================== */
+.message-body {
+    font-size: 15px;
+    color: #334155;
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+}
+
+/* ===================== Highlight ===================== */
+.highlight-box {
+    display: flex;
+    gap: 10px;
+    background: #eef2ff;
+    border: 1px solid #c7d2fe;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.shield-icon svg {
+    width: 18px;
+    fill: #4f46e5;
+}
+
+.highlight-text {
+    font-size: 13px;
+    color: #4338ca;
+}
+
+/* ===================== Stats ===================== */
+.stats-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+}
+
+.stat-chip {
+    flex: 1;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+}
+
+.stat-num {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.stat-lbl {
+    font-size: 11px;
+    color: #64748b;
+}
+
+/* ===================== Buttons ===================== */
+.action-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 1rem;
+}
+
+.btn {
+    flex: 1;
+    border-radius: 10px;
+    padding: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    border: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg,#4f46e5,#06b6d4);
+    color: white;
+}
+
+.btn-secondary {
+    background: #f1f5f9;
+    color: #334155;
+    border: 1px solid #e2e8f0;
+}
+
+/* ===================== Reactions ===================== */
+.reactions-row {
+    display: flex;
+    gap: 8px;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 1rem;
+    align-items: center;
+}
+
+.reaction-btn {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 13px;
+    color: #475569;
+    cursor: pointer;
+}
+
+    .reaction-btn:hover {
+        background: #e2e8f0;
+    }
+
+.count {
+    font-weight: 600;
+}
+
+.timestamp {
+    margin-left: auto;
+    font-size: 11px;
+    color: #94a3b8;
+}
+
+/* ===================== Comments ===================== */
+.comment-area {
+    display: none;
+    margin-top: 1rem;
+}
+
+    .comment-area.open {
+        display: block;
+    }
+
+.comment-input-wrap {
+    display: flex;
+    gap: 8px;
+}
+
+.comment-input {
+    flex: 1;
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid #cbd5f5;
+    font-size: 13px;
+}
+
+.send-btn {
+    background: #4f46e5;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.comments-list {
+    margin-top: 8px;
+}
+
+.comment-item {
+    background: #f8fafc;
+    border-radius: 8px;
+    padding: 8px;
+    font-size: 12px;
+    margin-top: 6px;
+}
+
+.comment-author {
+    font-weight: 600;
+    color: #4f46e5;
+}

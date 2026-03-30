@@ -207,9 +207,9 @@ public class TransactionService : ITransactionService
 
     public async Task<bool> CreateTransactions(TransactionVM model, string userId)
     {
-        ArgumentNullException.ThrowIfNull(model);
+        if (model == null) throw new ArgumentNullException(nameof(model));
 
-        // Get sender account based on logged-in user
+        // 1️⃣ Get sender account based on logged-in user
         var sender = await _context.Accounts!
             .Include(a => a.User)
             .FirstOrDefaultAsync(a => a.UserId == userId);
@@ -217,45 +217,60 @@ public class TransactionService : ITransactionService
         if (sender == null)
             throw new Exception("Sender account not found");
 
-        if (model.TransactionType == "Withdraw" || model.TransactionType == "Transfer")
-        {
-            if (sender.Balance < model.Amount)
-                throw new Exception("Insufficient balance");
-
-            sender.Balance -= model.Amount;
-        }
-
-        if (model.TransactionType == "Deposit")
-        {
-            sender.Balance += model.Amount;
-        }
-
-        Account? receiver = null;
-
-        if (model.TransactionType == "Transfer")
-        {
-            if (model.ReceiverAccountId == null)
-                throw new Exception("Receiver Account is required");
-
-            receiver = await _context.Accounts!
-                .FirstOrDefaultAsync(a => a.AccountId == model.ReceiverAccountId);
-
-            if (receiver == null)
-                throw new Exception("Receiver not found");
-
-            receiver.Balance += model.Amount;
-        }
-
+        // 2️⃣ Prepare transaction object
         var transaction = new Transaction
         {
-            AccountId = sender.AccountId, // always sender account
-            ReceiverAccountId = model.ReceiverAccountId,
+            AccountId = sender.AccountId, // Sender is always current user
             Amount = model.Amount,
             TransactionType = model.TransactionType,
             Description = model.Description,
             TransactionDate = DateTime.Now
         };
 
+        // 3️⃣ Handle transaction types
+        switch (model.TransactionType)
+        {
+            case "Deposit":
+                sender.Balance += model.Amount;
+                transaction.ReceiverName = "N/A"; // No receiver
+                break;
+
+            case "Withdraw":
+                if (sender.Balance < model.Amount)
+                    throw new Exception("Insufficient balance");
+
+                sender.Balance -= model.Amount;
+                transaction.ReceiverName = "N/A"; // No receiver
+                break;
+
+            case "Transfer":
+                if (model.ReceiverAccountId == null)
+                    throw new Exception("Receiver account is required");
+
+                var receiver = await _context.Accounts!
+                    .Include(a => a.User) // to get FullName
+                    .FirstOrDefaultAsync(a => a.AccountId == model.ReceiverAccountId);
+
+                if (receiver == null)
+                    throw new Exception("Receiver account not found");
+
+                if (sender.Balance < model.Amount)
+                    throw new Exception("Insufficient balance");
+
+                // 4️⃣ Update balances
+                sender.Balance -= model.Amount;
+                receiver.Balance += model.Amount;
+
+                // 5️⃣ Set receiver name
+                transaction.ReceiverName = receiver.User?.FullName ?? "Unknown";
+                transaction.ReceiverAccountId = receiver.AccountId;
+                break;
+
+            default:
+                throw new Exception("Invalid transaction type");
+        }
+
+        // 6️⃣ Save transaction
         _context.Transactions!.Add(transaction);
         await _context.SaveChangesAsync();
 
