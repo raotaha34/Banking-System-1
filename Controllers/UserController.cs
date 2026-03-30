@@ -67,17 +67,16 @@ namespace BankingSystemweb.Controllers
             // 3️⃣ Pass the transactions to the view
             return View(transactions);
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Transactions(TransactionVM model)
         {
-            // 1️⃣ Get the logged-in user's ID
+            // 1️⃣ Get logged-in user's ID
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userId))
                 return Unauthorized();
 
-            // 2️⃣ Validate model
+            // 2️⃣ Validate the model (AccountId is assigned internally by service)
             if (!ModelState.IsValid)
             {
                 TempData["ErrorMessage"] = "Please fill all required fields correctly.";
@@ -86,17 +85,21 @@ namespace BankingSystemweb.Controllers
 
             try
             {
-                // 3️⃣ Call service to create the transaction
+                // 3️⃣ Call service — this will handle sender, receiver, balances, and saving
                 await _transactionService.CreateTransactions(model, userId);
+
                 TempData["SuccessMessage"] = "Transaction completed successfully!";
             }
             catch (Exception ex)
             {
+                // Show exception error message in TempData
                 TempData["ErrorMessage"] = ex.Message;
+
+                // Return the same model to the view so user can fix inputs
                 return View(model);
             }
 
-            // 4️⃣ Redirect to GET Transactions page to show updated list
+            // 4️⃣ Redirect to GET Transactions page to show updated transactions
             return RedirectToAction(nameof(Transactions));
         }
 

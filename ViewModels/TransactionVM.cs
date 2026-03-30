@@ -6,10 +6,8 @@ namespace BankingSystemweb.ViewModels
     public class TransactionVM
     {
 
-        [Required]
         public int AccountId { get; set; }
 
-        [Required]
         public int? ReceiverAccountId { get; set; }
 
         [Required]
@@ -18,7 +16,6 @@ namespace BankingSystemweb.ViewModels
         [Required]
         public string? TransactionType { get; set; }
 
-        [Required]
         public string? Description { get; set; }
     }
 
