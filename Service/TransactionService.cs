@@ -203,4 +203,76 @@ public class TransactionService : ITransactionService
 
         return (deposits, depositCount, withdrawals, withdrawalCount);
     }
+
+
+    public async Task<bool> CreateTransactions(TransactionVM model, string userId)
+    {
+        ArgumentNullException.ThrowIfNull(model);
+
+        // Get sender account based on logged-in user
+        var sender = await _context.Accounts!
+            .Include(a => a.User)
+            .FirstOrDefaultAsync(a => a.UserId == userId);
+
+        if (sender == null)
+            throw new Exception("Sender account not found");
+
+        if (model.TransactionType == "Withdraw" || model.TransactionType == "Transfer")
+        {
+            if (sender.Balance < model.Amount)
+                throw new Exception("Insufficient balance");
+
+            sender.Balance -= model.Amount;
+        }
+
+        if (model.TransactionType == "Deposit")
+        {
+            sender.Balance += model.Amount;
+        }
+
+        Account? receiver = null;
+
+        if (model.TransactionType == "Transfer")
+        {
+            if (model.ReceiverAccountId == null)
+                throw new Exception("Receiver Account is required");
+
+            receiver = await _context.Accounts!
+                .FirstOrDefaultAsync(a => a.AccountId == model.ReceiverAccountId);
+
+            if (receiver == null)
+                throw new Exception("Receiver not found");
+
+            receiver.Balance += model.Amount;
+        }
+
+        var transaction = new Transaction
+        {
+            AccountId = sender.AccountId, // always sender account
+            ReceiverAccountId = model.ReceiverAccountId,
+            Amount = model.Amount,
+            TransactionType = model.TransactionType,
+            Description = model.Description,
+            TransactionDate = DateTime.Now
+        };
+
+        _context.Transactions!.Add(transaction);
+        await _context.SaveChangesAsync();
+
+        return true;
+    }
+
+    public async Task<List<Transaction>> GetUserTransactions(string userId)
+    {
+        // Get the logged-in user's account
+        var account = await _context.Accounts.FirstOrDefaultAsync(a => a.UserId == userId);
+        if (account == null) return new List<Transaction>();
+
+        // Return transactions where the user is sender OR receiver
+        return await _context.Transactions!
+            .Where(t => t.AccountId == account.AccountId || t.ReceiverAccountId == account.AccountId)
+            .Include(t => t.Account)           // sender
+            .ThenInclude(a => a.User)
+            .ToListAsync();
+    }
 }

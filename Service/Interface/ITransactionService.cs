@@ -6,6 +6,9 @@ namespace BankingSystemweb.Service.Interface
     public interface ITransactionService
     {
         Task<bool> CreateTransaction(TransactionVM model);
+        Task<bool> CreateTransactions(TransactionVM model, string userId);
+
+        Task<List<Transaction>> GetUserTransactions(string userId);
         Task<List<Transaction>> GetAllTransactions();
         // Returns total transaction count
         Task<int> GetTotalTransactionsAsync();

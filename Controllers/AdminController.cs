@@ -166,41 +166,21 @@ namespace BankingSystemweb.Controllers
         {
 
             if (!ModelState.IsValid)
-
             {
-
                 var data = await _transactionService.GetAllTransactions();
-
                 return View(data);
-
             }
-
-
-
             try
-
             {
-
                 await _transactionService.CreateTransaction(model);
-
-
-
                 TempData["SuccessMessage"] = "Transaction completed successfully!";
-
             }
 
             catch (Exception ex)
-
             {
-
                 TempData["ErrorMessage"] = ex.Message;
-
             }
-
-
-
             return RedirectToAction(nameof(Transaction));
-
         }
 
 
@@ -213,172 +193,86 @@ namespace BankingSystemweb.Controllers
         {
 
             int totalUsers = await _adminService.GetTotalUsersAsync();
-
             // Active users
-
             var activeUsers = await _adminService.GetUsersByStatusAsync("Active");
-
             int totalActive = activeUsers.Count;
-
-
-
             // Inactive users
-
             var inactiveUsers = await _adminService.GetUsersByStatusAsync("Inactive");
-
             int totalInactive = inactiveUsers.Count;
-
-
-
             var allUsers = await _adminService.GetAllUsersAsync(); // pass to view
-
             var totaladmins =await _adminService.GetTotalAdminsAsync();
 
-
-
             ViewData["TotalUsers"] = totalUsers;
-
             ViewData["TotalActiveUsers"] = totalActive;
-
             ViewData["TotalInactiveUsers"] = totalInactive;
-
             ViewData["TotalAdmins"] = totaladmins;
-
             return View(allUsers);
-
         }
-
-
-
-
-
 
 
         [HttpGet]
-
         public async Task<IActionResult> EditUser(string id)
-
         {
-
             if (string.IsNullOrEmpty(id)) return NotFound();
-
-
-
             var vm = await _adminService.GetEditUserByIdAsync(id);
-
             if (vm == null) return NotFound();
-
-
-
             return View(vm); // correctly passes EditUserVM
-
         }
-
-
 
         [HttpPost]
-
         [ValidateAntiForgeryToken]
-
         public async Task<IActionResult> EditUser(EditUserVM model)
-
         {
-
             if (!ModelState.IsValid) return View(model);
-
-
-
             var result = await _adminService.UpdateUserAsync(model);
-
-
-
             if (result)
-
             {
-
                 TempData["SuccessMessage"] = "User updated successfully!";
-
                 return RedirectToAction("EditUser", new { id = model.Id });
-
             }
-
-
-
             TempData["ErrorMessage"] = "Failed to update user.";
-
             return View(model);
-
         }
 
 
         [HttpGet]
-       
         public async Task<IActionResult> ManageAccounts()
-
         {
-
             int totalUsers = await _adminService.GetTotalUsersAsync();
-
             // Active users
-
             var activeUsers = await _adminService.GetUsersByStatusAsync("Active");
-
             int totalActive = activeUsers.Count;
-
-
-
             // Inactive users
-
             var inactiveUsers = await _adminService.GetUsersByStatusAsync("Inactive");
-
             int totalInactive = inactiveUsers.Count;
-
-
-
             var allUsers = await _adminService.GetAllUsersAsync(); // pass to view
-
             var totaladmins = await _adminService.GetTotalAdminsAsync();
 
-
-
             ViewData["TotalUsers"] = totalUsers;
-
             ViewData["TotalActiveUsers"] = totalActive;
-
             ViewData["TotalInactiveUsers"] = totalInactive;
-
             ViewData["TotalAdmins"] = totaladmins;
-
             return View(allUsers);
-
         }
-
 
         public async Task<IActionResult> Report()
         {
             // 1️⃣ Call service to get total users
             int totalUsers = await _adminService.GetTotalUsersAsync();
-
             // 2️⃣ Get current admin ID from claims
             string adminId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "";
-
             // 3️⃣ Get admin info
             var adminInfo = await _adminService.GetAdminInfoAsync(adminId);
-
             // 4️⃣ Total transactions
             int totalTransactions = await _transactionService.GetTotalTransactionsAsync();
-
             // 5️⃣ Active and inactive users
             var activeUsers = await _adminService.GetUsersByStatusAsync("Active");
             int totalActive = activeUsers.Count;
-
             var inactiveUsers = await _adminService.GetUsersByStatusAsync("Inactive");
             int totalInActive = inactiveUsers.Count;
             // 6️⃣ Recent activities
             var recentActivities = await _transactionService.GetRecentActivitiesAsync(adminId);
-
             var (todaysDeposits, depositCount, todaysWithdrawals, withdrawalCount) = await _transactionService.GetTodaysTransactionsTotalsAsync();
-
 
             // 7️⃣ Fill the ViewModel
             var dashboardVM = new AdminDashboardVM
@@ -405,26 +299,18 @@ namespace BankingSystemweb.Controllers
         }
 
 
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteUser(string id)
         {
             if (string.IsNullOrEmpty(id))
                 return BadRequest("User ID is required");
-
             // Call your service method to delete the user
             var result = await _adminService.DeleteUserAsync(id);
-
             if (!result)
                 return NotFound("User not found or could not be deleted");
-
             return Ok();
         }
-
-
-
     }
-
 }
 

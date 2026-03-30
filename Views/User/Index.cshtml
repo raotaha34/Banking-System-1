@@ -1,372 +1,364 @@
-﻿<!DOCTYPE html>
+﻿@model BankingSystemweb.ViewModels.UserDashboardVM
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>SecureBank User Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  
-    <!-- Stylesheet -->
     <link rel="stylesheet" href="~/css/userdashboard.css" asp-append-version="true" />
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <div class="logo-section">
-                <div class="bank-icon">
-                    <i class="fas fa-shield-alt"></i>
+    <div class="db-shell">
+
+        <!-- SIDEBAR -->
+        <div class="sidebar" id="sidebar">
+            <div class="sb-head">
+                <div class="sb-logo">
+                    <div class="sb-logo-icon"><i class="fas fa-shield-alt"></i></div>
+                    <span class="sb-logo-text">SecureBank</span>
                 </div>
-                <div class="bank-name">Secure Bank</div>
+                <button class="sb-toggle" onclick="toggleSB()"><i class="fas fa-bars"></i></button>
             </div>
-            <div class="user-section">
-                <div class="user-info">
-                    <div class="user-name">Name</div>
-                    <div class="user-id">AccountNumber</div>
+            <div class="sb-nav">
+                <div class="sb-item active"><i class="fas fa-home"></i><span class="sb-label">Dashboard</span></div>
+                <div class="sb-item">
+                    <span class="sb-label">
+                           <a class="sb-item" asp-controller="User" asp-action="UserInfo">
+                            <i class="fas fa-user-circle"></i>View My Details
+                        </a>
+                    </span>
                 </div>
-                <div class="user-avatar"></div>
+                <div class="sb-item">
+                    <span class="sb-label">
+                        <a class="sb-item" asp-controller="User" asp-action="Transactions">
+                            <i class="fas fa-exchange-alt"></i>
+                            <span class="sb-label">Transactions</span>
+                        </a>
+                    </span>
+                </div>
+                <div class="sb-item"><i class="fas fa-history"></i><span class="sb-label">Recent Activity</span></div>
+                <div class="sb-item"><i class="fas fa-list-alt"></i><span class="sb-label">Transaction History</span></div>
+                <div class="sb-item"><i class="fas fa-bell"></i><span class="sb-label">Notifications</span></div>
+                <div class="sb-item"><i class="fas fa-key"></i><span class="sb-label">Change Password</span></div>
+                <div class="sb-item"><i class="fas fa-cog"></i><span class="sb-label">Settings</span></div>
+            </div>
+            <div class="sb-footer">
+                <form asp-controller="Login" asp-action="Logout" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="sb-logout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span class="sb-label">Logout</span>
+                    </button>
+                </form>
             </div>
         </div>
 
-        <!-- Account Summary -->
-        <div class="account-summary">
-            <div class="summary-card">
-                <div class="card-header">
-                    <div class="card-title">Total Balance</div>
-                    <div class="card-icon icon-blue">
-                        <i class="fas fa-wallet"></i>
-                    </div>
-                </div>
-                <div class="card-amount">balance</div>
-                <div class="card-detail">
-                    <i class="fas fa-arrow-up positive"></i>
-                    <span class="positive">+12.5%</span> from last month
-                </div>
-            </div>
+        <!-- MAIN CONTENT -->
+        <div class="main">
+            <div class="container">
 
-            <div class="summary-card">
-                <div class="card-header">
-                    <div class="card-title">Savings Account</div>
-                    <div class="card-icon icon-green">
-                        <i class="fas fa-piggy-bank"></i>
+                <!-- Header -->
+                <div class="header">
+                    <div class="logo-section">
+                        <div class="bank-icon"><i class="fas fa-shield-alt"></i></div>
+                        <div class="bank-name">Secure Bank</div>
+                    </div>
+                    <div class="user-section">
+                        <div class="user-info">
+                            <div class="user-name">@Model.FullName</div>
+                            <div class="user-id"></div>
+                        </div>
+                        <div class="user-avatar" id="heroAvatar"></div>
                     </div>
                 </div>
-                <div class="card-amount">$32,450.00</div>
-                <div class="card-detail">
-                    Interest Rate: 4.5% APY
-                </div>
-            </div>
 
-            <div class="summary-card">
-                <div class="card-header">
-                    <div class="card-title">Credit Card</div>
-                    <div class="card-icon icon-orange">
-                        <i class="fas fa-credit-card"></i>
+                <!-- Account Summary -->
+                <div class="account-summary">
+                    <div class="summary-card">
+                        <div class="card-header">
+                            <div class="card-title">Total Balance</div>
+                            <div class="card-icon icon-blue"><i class="fas fa-wallet"></i></div>
+                        </div>
+                        <div class="card-amount">@Model.Accounts.Sum(a => a.Balance).ToString("N2")</div>
+                        <div class="card-detail">
+                            <i class="fas fa-arrow-up positive"></i>
+                            <span class="positive">+12.5%</span> from last month
+                        </div>
                     </div>
-                </div>
-                <div class="card-amount">$3,250.00</div>
-                <div class="card-detail">
-                    Available Credit: $16,750
-                </div>
-            </div>
 
-            <div class="summary-card">
-                <div class="card-header">
-                    <div class="card-title">Loan Balance</div>
-                    <div class="card-icon icon-red">
-                        <i class="fas fa-home"></i>
+                    <div class="summary-card">
+                        <div class="card-header">
+                            <div class="card-title">Total Deposit</div>
+                            <div class="card-icon icon-green"><i class="fas fa-arrow-circle-down"></i></div>
+                        </div>
+                        <div class="card-amount">$32,450.00</div>
+                        <div class="card-detail">
+                            <i class="fas fa-arrow-up positive"></i>
+                            <span class="positive">+8.2%</span> this month
+                        </div>
                     </div>
-                </div>
-                <div class="card-amount">$185,500.00</div>
-                <div class="card-detail">
-                    Next Payment: Dec 15, 2024
-                </div>
-            </div>
-        </div>
 
-        <!-- Quick Actions -->
-        <div class="quick-actions">
-            <div class="section-title">Quick Actions</div>
-            <div class="actions-grid">
-                <a href="#" class="action-btn">
-                    <div class="action-icon"><i class="fas fa-exchange-alt"></i></div>
-                    <div class="action-label">Transfer Money</div>
-                </a>
-                <a href="#" class="action-btn">
-                    <div class="action-icon"><i class="fas fa-mobile-alt"></i></div>
-                    <div class="action-label">Mobile Recharge</div>
-                </a>
-                <a href="#" class="action-btn">
-                    <div class="action-icon"><i class="fas fa-file-invoice-dollar"></i></div>
-                    <div class="action-label">Pay Bills</div>
-                </a>
-                <a href="#" class="action-btn">
-                    <div class="action-icon"><i class="fas fa-qrcode"></i></div>
-                    <div class="action-label">Scan & Pay</div>
-                </a>
-                <a href="#" class="action-btn">
-                    <div class="action-icon"><i class="fas fa-money-check-alt"></i></div>
-                    <div class="action-label">Deposit Check</div>
-                </a>
-                <a href="#" class="action-btn">
-                    <div class="action-icon"><i class="fas fa-chart-line"></i></div>
-                    <div class="action-label">Investments</div>
-                </a>
-                <a href="#" class="action-btn">
-                    <div class="action-icon"><i class="fas fa-hand-holding-usd"></i></div>
-                    <div class="action-label">Apply for Loan</div>
-                </a>
-                <a href="#" class="action-btn">
-                    <div class="action-icon"><i class="fas fa-headset"></i></div>
-                    <div class="action-label">Customer Support</div>
-                </a>
-            </div>
-        </div>
+                    <div class="summary-card">
+                        <div class="card-header">
+                            <div class="card-title">Total Withdraw</div>
+                            <div class="card-icon icon-orange"><i class="fas fa-arrow-circle-up"></i></div>
+                        </div>
+                        <div class="card-amount">$3,250.00</div>
+                        <div class="card-detail">
+                            <i class="fas fa-arrow-down negative"></i>
+                            <span class="negative">-2.1%</span> this month
+                        </div>
+                    </div>
 
-        <!-- Services Section -->
-        <div class="services-section">
-            <!-- Banking Services -->
-            <div class="service-card">
-                <div class="section-title">Banking Services</div>
-                <div class="service-item">
-                    <div class="service-icon icon-blue">
-                        <i class="fas fa-university"></i>
+                    <div class="summary-card">
+                        <div class="card-header">
+                            <div class="card-title">Total Transactions</div>
+                            <div class="card-icon icon-purple"><i class="fas fa-exchange-alt"></i></div>
+                        </div>
+                        <div class="card-amount">1,284</div>
+                        <div class="card-detail">
+                            <i class="fas fa-arrow-up positive"></i>
+                            <span class="positive">+5.3%</span> this month
+                        </div>
                     </div>
-                    <div class="service-info">
-                        <div class="service-name">Account Management</div>
-                        <div class="service-desc">View and manage all accounts</div>
-                    </div>
-                    <i class="fas fa-chevron-right service-arrow"></i>
                 </div>
-                <div class="service-item">
-                    <div class="service-icon icon-green">
-                        <i class="fas fa-receipt"></i>
-                    </div>
-                    <div class="service-info">
-                        <div class="service-name">Statements</div>
-                        <div class="service-desc">Download bank statements</div>
-                    </div>
-                    <i class="fas fa-chevron-right service-arrow"></i>
-                </div>
-                <div class="service-item">
-                    <div class="service-icon icon-orange">
-                        <i class="fas fa-cog"></i>
-                    </div>
-                    <div class="service-info">
-                        <div class="service-name">Standing Instructions</div>
-                        <div class="service-desc">Manage auto payments</div>
-                    </div>
-                    <i class="fas fa-chevron-right service-arrow"></i>
-                </div>
-                <div class="service-item">
-                    <div class="service-icon icon-red">
-                        <i class="fas fa-lock"></i>
-                    </div>
-                    <div class="service-info">
-                        <div class="service-name">Security Settings</div>
-                        <div class="service-desc">Update passwords & 2FA</div>
-                    </div>
-                    <i class="fas fa-chevron-right service-arrow"></i>
-                </div>
-            </div>
 
-            <!-- Cards & Payments -->
-            <div class="service-card">
-                <div class="section-title">Cards & Payments</div>
-                <div class="service-item">
-                    <div class="service-icon icon-blue">
-                        <i class="fas fa-credit-card"></i>
+                <!-- Quick Actions -->
+                <div class="quick-actions">
+                    <div class="section-title">Quick Actions</div>
+                    <div class="actions-grid">
+                        <a class="action-btn btn-back"asp-controller="User" asp-action="UserInfo">
+                            <div class="action-icon"><i class="fas fa-user-circle"></i></div>
+                            <div class="action-label">View My Details</div>
+                        </a>
+                        <a class="action-btn" asp-controller="User" asp-action="Transactions">
+                            <div class="action-icon"><i class="fas fa-exchange-alt"></i></div>
+                            <div class="action-label">Transaction</div>
+                        </a>
+                        <a href="#" class="action-btn">
+                            <div class="action-icon"><i class="fas fa-history"></i></div>
+                            <div class="action-label">Recent Activity</div>
+                        </a>
+                        <a href="#" class="action-btn">
+                            <div class="action-icon"><i class="fas fa-list-alt"></i></div>
+                            <div class="action-label">Transaction History</div>
+                        </a>
+                        <a href="#" class="action-btn">
+                            <div class="action-icon"><i class="fas fa-bell"></i></div>
+                            <div class="action-label">Notifications</div>
+                        </a>
+                        <a href="#" class="action-btn">
+                            <div class="action-icon"><i class="fas fa-key"></i></div>
+                            <div class="action-label">Change Password</div>
+                        </a>
                     </div>
-                    <div class="service-info">
-                        <div class="service-name">Manage Cards</div>
-                        <div class="service-desc">Block, activate or request new cards</div>
-                    </div>
-                    <i class="fas fa-chevron-right service-arrow"></i>
                 </div>
-                <div class="service-item">
-                    <div class="service-icon icon-green">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <div class="service-info">
-                        <div class="service-name">Card Security</div>
-                        <div class="service-desc">Set limits and controls</div>
-                    </div>
-                    <i class="fas fa-chevron-right service-arrow"></i>
-                </div>
-                <div class="service-item">
-                    <div class="service-icon icon-orange">
-                        <i class="fas fa-gift"></i>
-                    </div>
-                    <div class="service-info">
-                        <div class="service-name">Rewards & Offers</div>
-                        <div class="service-desc">View your rewards points</div>
-                    </div>
-                    <i class="fas fa-chevron-right service-arrow"></i>
-                </div>
-                <div class="service-item">
-                    <div class="service-icon icon-red">
-                        <i class="fas fa-percentage"></i>
-                    </div>
-                    <div class="service-info">
-                        <div class="service-name">EMI Calculator</div>
-                        <div class="service-desc">Convert to easy installments</div>
-                    </div>
-                    <i class="fas fa-chevron-right service-arrow"></i>
-                </div>
-            </div>
 
-            <!-- Additional Services -->
-            <div class="service-card">
-                <div class="section-title">Additional Services</div>
-                <div class="service-item">
-                    <div class="service-icon icon-blue">
-                        <i class="fas fa-plane"></i>
+                <!-- Services Section -->
+                <div class="services-section">
+                    <div class="service-card">
+                        <div class="section-title">Banking Services</div>
+                        <div class="service-item">
+                            <div class="service-icon icon-blue"><i class="fas fa-university"></i></div>
+                            <div class="service-info">
+                                <div class="service-name">Account Management</div>
+                                <div class="service-desc">View and manage all accounts</div>
+                            </div>
+                            <i class="fas fa-chevron-right service-arrow"></i>
+                        </div>
+                        <div class="service-item">
+                            <div class="service-icon icon-green"><i class="fas fa-receipt"></i></div>
+                            <div class="service-info">
+                                <div class="service-name">Statements</div>
+                                <div class="service-desc">Download bank statements</div>
+                            </div>
+                            <i class="fas fa-chevron-right service-arrow"></i>
+                        </div>
+                        <div class="service-item">
+                            <div class="service-icon icon-orange"><i class="fas fa-cog"></i></div>
+                            <div class="service-info">
+                                <div class="service-name">Standing Instructions</div>
+                                <div class="service-desc">Manage auto payments</div>
+                            </div>
+                            <i class="fas fa-chevron-right service-arrow"></i>
+                        </div>
+                        <div class="service-item">
+                            <div class="service-icon icon-red"><i class="fas fa-lock"></i></div>
+                            <div class="service-info">
+                                <div class="service-name">Security Settings</div>
+                                <div class="service-desc">Update passwords & 2FA</div>
+                            </div>
+                            <i class="fas fa-chevron-right service-arrow"></i>
+                        </div>
                     </div>
-                    <div class="service-info">
-                        <div class="service-name">Travel Insurance</div>
-                        <div class="service-desc">Protect your travels</div>
-                    </div>
-                    <i class="fas fa-chevron-right service-arrow"></i>
-                </div>
-                <div class="service-item">
-                    <div class="service-icon icon-green">
-                        <i class="fas fa-heartbeat"></i>
-                    </div>
-                    <div class="service-info">
-                        <div class="service-name">Health Insurance</div>
-                        <div class="service-desc">Medical coverage plans</div>
-                    </div>
-                    <i class="fas fa-chevron-right service-arrow"></i>
-                </div>
-                <div class="service-item">
-                    <div class="service-icon icon-orange">
-                        <i class="fas fa-landmark"></i>
-                    </div>
-                    <div class="service-info">
-                        <div class="service-name">Fixed Deposits</div>
-                        <div class="service-desc">Earn higher interest rates</div>
-                    </div>
-                    <i class="fas fa-chevron-right service-arrow"></i>
-                </div>
-                <div class="service-item">
-                    <div class="service-icon icon-red">
-                        <i class="fas fa-bell"></i>
-                    </div>
-                    <div class="service-info">
-                        <div class="service-name">Alerts & Notifications</div>
-                        <div class="service-desc">Manage transaction alerts</div>
-                    </div>
-                    <i class="fas fa-chevron-right service-arrow"></i>
-                </div>
-            </div>
-        </div>
 
-        <!-- Recent Transactions -->
-        <div class="transactions-table">
-            <div class="section-title">Recent Transactions</div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Description</th>
-                        <th>Type</th>
-                        <th>Amount</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Dec 10, 2024</td>
-                        <td>
-                            <span class="transaction-icon icon-green">
-                                <i class="fas fa-arrow-down"></i>
-                            </span>
-                            Salary Credit - ABC Corp
-                        </td>
-                        <td>Credit</td>
-                        <td style="color: #10b981; font-weight: 600;">+$5,250.00</td>
-                        <td><span class="status-badge status-completed">Completed</span></td>
-                    </tr>
-                    <tr>
-                        <td>Dec 09, 2024</td>
-                        <td>
-                            <span class="transaction-icon icon-orange">
-                                <i class="fas fa-shopping-cart"></i>
-                            </span>
-                            Amazon Purchase
-                        </td>
-                        <td>Debit</td>
-                        <td style="color: #ef4444; font-weight: 600;">-$129.99</td>
-                        <td><span class="status-badge status-completed">Completed</span></td>
-                    </tr>
-                    <tr>
-                        <td>Dec 08, 2024</td>
-                        <td>
-                            <span class="transaction-icon icon-blue">
-                                <i class="fas fa-exchange-alt"></i>
-                            </span>
-                            Transfer to John Doe
-                        </td>
-                        <td>Transfer</td>
-                        <td style="color: #ef4444; font-weight: 600;">-$500.00</td>
-                        <td><span class="status-badge status-completed">Completed</span></td>
-                    </tr>
-                    <tr>
-                        <td>Dec 07, 2024</td>
-                        <td>
-                            <span class="transaction-icon icon-red">
-                                <i class="fas fa-bolt"></i>
-                            </span>
-                            Electricity Bill Payment
-                        </td>
-                        <td>Bill Payment</td>
-                        <td style="color: #ef4444; font-weight: 600;">-$85.50</td>
-                        <td><span class="status-badge status-pending">Pending</span></td>
-                    </tr>
-                    <tr>
-                        <td>Dec 06, 2024</td>
-                        <td>
-                            <span class="transaction-icon icon-orange">
-                                <i class="fas fa-utensils"></i>
-                            </span>
-                            Restaurant - Olive Garden
-                        </td>
-                        <td>Debit</td>
-                        <td style="color: #ef4444; font-weight: 600;">-$67.25</td>
-                        <td><span class="status-badge status-completed">Completed</span></td>
-                    </tr>
-                </tbody>
-            </table>
+                    <div class="service-card">
+                        <div class="section-title">Cards & Payments</div>
+                        <div class="service-item">
+                            <div class="service-icon icon-blue"><i class="fas fa-credit-card"></i></div>
+                            <div class="service-info">
+                                <div class="service-name">Manage Cards</div>
+                                <div class="service-desc">Block, activate or request new cards</div>
+                            </div>
+                            <i class="fas fa-chevron-right service-arrow"></i>
+                        </div>
+                        <div class="service-item">
+                            <div class="service-icon icon-green"><i class="fas fa-shield-alt"></i></div>
+                            <div class="service-info">
+                                <div class="service-name">Card Security</div>
+                                <div class="service-desc">Set limits and controls</div>
+                            </div>
+                            <i class="fas fa-chevron-right service-arrow"></i>
+                        </div>
+                        <div class="service-item">
+                            <div class="service-icon icon-orange"><i class="fas fa-gift"></i></div>
+                            <div class="service-info">
+                                <div class="service-name">Rewards & Offers</div>
+                                <div class="service-desc">View your rewards points</div>
+                            </div>
+                            <i class="fas fa-chevron-right service-arrow"></i>
+                        </div>
+                        <div class="service-item">
+                            <div class="service-icon icon-red"><i class="fas fa-percentage"></i></div>
+                            <div class="service-info">
+                                <div class="service-name">EMI Calculator</div>
+                                <div class="service-desc">Convert to easy installments</div>
+                            </div>
+                            <i class="fas fa-chevron-right service-arrow"></i>
+                        </div>
+                    </div>
+
+                    <div class="service-card">
+                        <div class="section-title">Additional Services</div>
+                        <div class="service-item">
+                            <div class="service-icon icon-blue"><i class="fas fa-plane"></i></div>
+                            <div class="service-info">
+                                <div class="service-name">Travel Insurance</div>
+                                <div class="service-desc">Protect your travels</div>
+                            </div>
+                            <i class="fas fa-chevron-right service-arrow"></i>
+                        </div>
+                        <div class="service-item">
+                            <div class="service-icon icon-green"><i class="fas fa-heartbeat"></i></div>
+                            <div class="service-info">
+                                <div class="service-name">Health Insurance</div>
+                                <div class="service-desc">Medical coverage plans</div>
+                            </div>
+                            <i class="fas fa-chevron-right service-arrow"></i>
+                        </div>
+                        <div class="service-item">
+                            <div class="service-icon icon-orange"><i class="fas fa-landmark"></i></div>
+                            <div class="service-info">
+                                <div class="service-name">Fixed Deposits</div>
+                                <div class="service-desc">Earn higher interest rates</div>
+                            </div>
+                            <i class="fas fa-chevron-right service-arrow"></i>
+                        </div>
+                        <div class="service-item">
+                            <div class="service-icon icon-red"><i class="fas fa-bell"></i></div>
+                            <div class="service-info">
+                                <div class="service-name">Alerts & Notifications</div>
+                                <div class="service-desc">Manage transaction alerts</div>
+                            </div>
+                            <i class="fas fa-chevron-right service-arrow"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Transactions -->
+                <div class="transactions-table">
+                    <div class="section-title">Recent Transactions</div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Dec 10, 2024</td>
+                                <td><span class="transaction-icon icon-green"><i class="fas fa-arrow-down"></i></span>Salary Credit - ABC Corp</td>
+                                <td>Credit</td>
+                                <td style="color:#10b981;font-weight:600">+$5,250.00</td>
+                                <td><span class="status-badge status-completed">Completed</span></td>
+                            </tr>
+                            <tr>
+                                <td>Dec 09, 2024</td>
+                                <td><span class="transaction-icon icon-orange"><i class="fas fa-shopping-cart"></i></span>Amazon Purchase</td>
+                                <td>Debit</td>
+                                <td style="color:#ef4444;font-weight:600">-$129.99</td>
+                                <td><span class="status-badge status-completed">Completed</span></td>
+                            </tr>
+                            <tr>
+                                <td>Dec 08, 2024</td>
+                                <td><span class="transaction-icon icon-blue"><i class="fas fa-exchange-alt"></i></span>Transfer to John Doe</td>
+                                <td>Transfer</td>
+                                <td style="color:#ef4444;font-weight:600">-$500.00</td>
+                                <td><span class="status-badge status-completed">Completed</span></td>
+                            </tr>
+                            <tr>
+                                <td>Dec 07, 2024</td>
+                                <td><span class="transaction-icon icon-red"><i class="fas fa-bolt"></i></span>Electricity Bill Payment</td>
+                                <td>Bill Payment</td>
+                                <td style="color:#ef4444;font-weight:600">-$85.50</td>
+                                <td><span class="status-badge status-pending">Pending</span></td>
+                            </tr>
+                            <tr>
+                                <td>Dec 06, 2024</td>
+                                <td><span class="transaction-icon icon-orange"><i class="fas fa-utensils"></i></span>Restaurant - Olive Garden</td>
+                                <td>Debit</td>
+                                <td style="color:#ef4444;font-weight:600">-$67.25</td>
+                                <td><span class="status-badge status-completed">Completed</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
         </div>
     </div>
-    <form asp-controller="Login"
-          asp-action="Logout"
-          method="post"
-          class="nav-item d-inline">
-        @Html.AntiForgeryToken()
-        <button type="submit" class="nav-link btn btn-link p-0 border-0">
-            <span class="nav-icon">🚪</span>
-            <span>Logout</span>
-        </button>
-    </form>
 
     <script>
-        // Add interactivity
-        document.querySelectorAll('.action-btn, .service-item').forEach(item => {
-            item.addEventListener('click', function(e) {
-                e.preventDefault();
-                alert('Feature coming soon!');
-            });
-        });
+    
+        const avatarColors = {
+            A:'#E53E3E',B:'#DD6B20',C:'#D69E2E',D:'#38A169',E:'#319795',
+            F:'#3182CE',G:'#805AD5',H:'#D53F8C',I:'#E53E3E',J:'#2B6CB0',
+            K:'#D69E2E',L:'#38A169',M:'#319795',N:'#3182CE',O:'#805AD5',
+            P:'#D53F8C',Q:'#E53E3E',R:'#C05621',S:'#2F855A',T:'#2C7A7B',
+            U:'#2B6CB0',V:'#6B46C1',W:'#97266D',X:'#C53030',Y:'#744210',Z:'#1A365D'
+        };
 
-        // Update time periodically
-        function updateTime() {
-            const now = new Date();
-            console.log('Dashboard loaded at:', now.toLocaleString());
+        function getInitials(name) {
+            if (!name) return 'U';
+            const parts = name.trim().split(/\s+/);
+            return parts.length >= 2
+                ? (parts[0][0] + parts[1][0]).toUpperCase()
+                : parts[0][0].toUpperCase();
         }
 
-        updateTime();
-        setInterval(updateTime, 60000);
+        function getColor(name) {
+            if (!name) return '#6B7280';
+            const c = name.trim()[0].toUpperCase();
+            return avatarColors[c] || '#6B7280';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const fullName = '@(Model.FullName ?? "")';
+            const initials = getInitials(fullName);
+            const color = getColor(fullName);
+
+            const heroAvatar = document.getElementById('heroAvatar');
+            if (heroAvatar) {
+                heroAvatar.textContent = initials;
+                heroAvatar.style.background = color;
+            }
+        });
     </script>
 </body>
 </html>
