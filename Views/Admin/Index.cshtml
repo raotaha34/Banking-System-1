@@ -169,6 +169,7 @@
             <!-- ── PAGE BODY ── -->
             <div class="page-body">
                 <!-- ── STAT CARDS ── -->
+                <!-- Account Stats Grid -->
                 <div class="stats-grid">
                     <div class="stat-card card-blue">
                         <div class="stat-icon">
@@ -180,10 +181,11 @@
                         </div>
                         <div class="stat-body">
                             <p class="stat-label">Total Users</p>
-                            <p class="stat-number">@ViewData["TotalUsers"]</p>
+                            <p class="stat-number" id="totalUsers">@ViewData["TotalUsers"]</p>
                             <span class="stat-badge up">&#9650; 12%</span>
                         </div>
                     </div>
+
                     <div class="stat-card card-green">
                         <div class="stat-icon">
                             <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
@@ -195,10 +197,11 @@
                         </div>
                         <div class="stat-body">
                             <p class="stat-label">Active Accounts</p>
-                            <p class="stat-number">@ViewData["TotalActiveUsers"]</p>
+                            <p class="stat-number" id="activeAccounts">@ViewData["TotalActiveUsers"]</p>
                             <span class="stat-badge up">&#9650; 8%</span>
                         </div>
                     </div>
+
                     <div class="stat-card card-purple">
                         <div class="stat-icon">
                             <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
@@ -209,10 +212,11 @@
                         </div>
                         <div class="stat-body">
                             <p class="stat-label">Transactions Today</p>
-                            <p class="stat-number">@ViewData["TotalTransactions"]</p>
+                            <p class="stat-number" id="transactionsToday">@ViewData["TotalTransactions"]</p>
                             <span class="stat-badge up">&#9650; 5%</span>
                         </div>
                     </div>
+
                     <div class="stat-card card-orange">
                         <div class="stat-icon">
                             <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
@@ -223,7 +227,7 @@
                         </div>
                         <div class="stat-body">
                             <p class="stat-label">Total Balance</p>
-                            <p class="stat-number">@ViewData["AdminBalance"]</p>
+                            <p class="stat-number" id="totalBalance">@ViewData["AdminBalance"]</p>
                             <span class="stat-badge up">&#9650; 3%</span>
                         </div>
                     </div>
@@ -365,30 +369,30 @@
                                 <p class="sec-sub">Live overview</p>
                             </div>
                         </div>
+
                         <div class="sum-row">
                             <span class="sr-lbl"><span class="sr-dot g"></span>Active Users</span>
-                            <span class="sr-val">@ViewData["TotalActiveUsers"]</span>
+                            <span class="sr-val" id="sys-active">@ViewData["TotalActiveUsers"]</span>
                         </div>
                         <div class="sum-row">
                             <span class="sr-lbl"><span class="sr-dot r"></span>Inactive Accounts</span>
-                            <span class="sr-val">@ViewData["TotalInActiveUsers"]</span>
+                            <span class="sr-val" id="sys-inactive">@ViewData["TotalInActiveUsers"]</span>
                         </div>
                         <div class="sum-row">
                             <span class="sr-lbl"><span class="sr-dot g"></span>Today's Deposits</span>
-                            <span class="sr-val">@ViewData["TodaysDeposits"]</span>
+                            <span class="sr-val" id="sys-deposits">@ViewData["TodaysDeposits"]</span>
                         </div>
                         <div class="sum-row">
                             <span class="sr-lbl"><span class="sr-dot g"></span>Today's Withdrawals</span>
-                            <span class="sr-val">@ViewData["TodaysWithdrawals"]</span>
+                            <span class="sr-val" id="sys-withdrawals">@ViewData["TodaysWithdrawals"]</span>
                         </div>
                         <div class="sum-row">
-                            <span class="sr-lbl"><span class="sr-dot g"></span>Today'Transaction</span>
-                            <span class="sr-val">@ViewData["Today Transaction"]</span>
+                            <span class="sr-lbl"><span class="sr-dot g"></span>Today's Transactions</span>
+                            <span class="sr-val" id="sys-today-transactions">@ViewData["Today Transaction"]</span>
                         </div>
-
                         <div class="sum-row">
                             <span class="sr-lbl"><span class="sr-dot g"></span>Total Transactions</span>
-                            <span class="sr-val">@ViewData["TotalTransactions"]</span>
+                            <span class="sr-val" id="sys-total-transactions">@ViewData["TotalTransactions"]</span>
                         </div>
                     </div>
                     <!-- /system summary -->
@@ -401,6 +405,38 @@
     </div>
     <!-- /admin-layout -->
     <script>
+
+              function animateCounter(id, duration = 1500) {
+            const el = document.getElementById(id);
+            if (!el) return;
+
+            // Extract numeric value
+            const text = el.innerText.replace(/[^0-9.-]+/g, '');
+            const target = parseFloat(text) || 0;
+
+            let start = 0;
+            const increment = target / (duration / 16); // ~60fps
+
+            function update() {
+                start += increment;
+                if (start >= target) {
+                    el.innerText = Number(target).toLocaleString();
+                } else {
+                    el.innerText = Math.floor(start).toLocaleString();
+                    requestAnimationFrame(update);
+                }
+            }
+            update();
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            animateCounter('sys-active');
+            animateCounter('sys-inactive');
+            animateCounter('sys-deposits');
+            animateCounter('sys-withdrawals');
+            animateCounter('sys-today-transactions');
+            animateCounter('sys-total-transactions');
+        });
         /* ── Desktop: collapse/expand sidebar ── */
         const sidebar     = document.getElementById('sidebar');
         const mainContent = document.getElementById('mainContent');
@@ -452,7 +488,40 @@
 
             expanded = !expanded;
         });
+             function animateCounter(id, duration = 1500) {
+            const element = document.getElementById(id);
+            if (!element) return;
 
+            const target = parseFloat(element.innerText.replace(/[^0-9.-]+/g, '')) || 0;
+            let start = 0;
+            const increment = target / (duration / 16); // approx 60fps
+
+            function update() {
+                start += increment;
+                if (start >= target) {
+                    if (element.innerText.includes(".")) {
+                        element.innerText = target.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    } else {
+                        element.innerText = Math.floor(target).toLocaleString();
+                    }
+                } else {
+                    if (element.innerText.includes(".")) {
+                        element.innerText = start.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    } else {
+                        element.innerText = Math.floor(start).toLocaleString();
+                    }
+                    requestAnimationFrame(update);
+                }
+            }
+            update();
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            animateCounter('totalUsers', 1500);
+            animateCounter('activeAccounts', 1500);
+            animateCounter('transactionsToday', 1500);
+            animateCounter('totalBalance', 1500);
+        });
 
     </script>
 

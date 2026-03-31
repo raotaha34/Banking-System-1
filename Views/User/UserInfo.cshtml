@@ -55,7 +55,7 @@
                 <div class="stat-icon blue"><i class="fas fa-wallet"></i></div>
                 <div>
                     <div class="stat-label">Total Balance</div>
-                    <div class="stat-value">
+                    <div class="stat-value" id="stat-total-balance">
                         $@Model.Accounts.Sum(a => a.Balance).ToString("N2")
                     </div>
                 </div>
@@ -65,7 +65,7 @@
                 <div class="stat-icon green"><i class="fas fa-university"></i></div>
                 <div>
                     <div class="stat-label">Total Accounts</div>
-                    <div class="stat-value">@Model.Accounts.Count</div>
+                    <div class="stat-value" id="stat-total-accounts">@Model.Accounts.Count</div>
                 </div>
             </div>
 
@@ -73,7 +73,7 @@
                 <div class="stat-icon orange"><i class="fas fa-check-circle"></i></div>
                 <div>
                     <div class="stat-label">Active Accounts</div>
-                    <div class="stat-value">
+                    <div class="stat-value" id="stat-active-accounts">
                         @Model.Accounts.Count(a => a.Status == "Active")
                     </div>
                 </div>
@@ -83,7 +83,7 @@
                 <div class="stat-icon purple"><i class="fas fa-percentage"></i></div>
                 <div>
                     <div class="stat-label">Avg Interest</div>
-                    <div class="stat-value">
+                    <div class="stat-value" id="stat-avg-interest">
                         @{
                             var rates = Model.Accounts.Where(a => a.InterestRate.HasValue);
                             var avg = rates.Any() ? rates.Average(a => a.InterestRate!.Value) : 0;
@@ -135,6 +135,43 @@
     </div>
 
     <script>
+
+            // Animate number counting from 0 to target
+        function animateCounter(id, duration = 1500, isCurrency = false, isPercent = false) {
+            const el = document.getElementById(id);
+            if (!el) return;
+
+            let text = el.innerText.replace(/[^0-9.]+/g, '');
+            let target = parseFloat(text) || 0;
+            let start = 0;
+            const increment = target / (duration / 16); // approx 60fps
+
+            function update() {
+                start += increment;
+                if (start >= target) {
+                    el.innerText = formatValue(target);
+                } else {
+                    el.innerText = formatValue(start);
+                    requestAnimationFrame(update);
+                }
+            }
+
+            function formatValue(val) {
+                let formatted = Math.floor(val).toLocaleString();
+                if (isCurrency) formatted = '$' + formatted;
+                if (isPercent) formatted = val.toFixed(2) + '%';
+                return formatted;
+            }
+
+            update();
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            animateCounter('stat-total-balance', 1500, true);     // $ currency
+            animateCounter('stat-total-accounts', 1000);          // plain number
+            animateCounter('stat-active-accounts', 1000);         // plain number
+            animateCounter('stat-avg-interest', 1500, false, true); // percent
+        });
         const avatarColors = {
             A:'#E53E3E',B:'#DD6B20',C:'#D69E2E',D:'#38A169',E:'#319795',
             F:'#3182CE',G:'#805AD5',H:'#D53F8C',I:'#E53E3E',J:'#2B6CB0',

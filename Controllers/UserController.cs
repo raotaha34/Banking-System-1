@@ -37,6 +37,13 @@ namespace BankingSystemweb.Controllers
 
             var data = await _userService.GetUserDashboardAsync(user.Id);
 
+            var (totalDeposit, totalWithdraw,  totalTransfer,  totalTransactions,  todayTotalTransactions) = await _transactionService.GetUserTransactionTotalssAsync(user.Id);
+
+            ViewData["TotalTransfer"] = totalTransfer;
+            ViewData["TodaysDeposits"] = totalDeposit;
+            ViewData["TodaysWithdrawals"] = totalWithdraw;
+            ViewData["Total Transaction"] = totalTransactions;
+            ViewData["Total today Transaction"] = todayTotalTransactions;
             return View(data);
         }
 
@@ -103,6 +110,29 @@ namespace BankingSystemweb.Controllers
             return RedirectToAction(nameof(Transactions));
         }
 
+        public async Task<IActionResult> TransactionHistroy()
+        {
+            
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+                return Unauthorized();
+
+            var data = await _userService.GetUserDashboardAsync(userId);
+
+            var (totalDeposit, totalWithdraw, totalTransfer, totalTransactions, todayTotalTransactions) = await _transactionService.GetUserTransactionTotalssAsync(userId);
+
+            ViewData["TotalTransfer"] = totalTransfer;
+            ViewData["TodaysDeposits"] = totalDeposit;
+            ViewData["TodaysWithdrawals"] = totalWithdraw;
+            ViewData["Total Transaction"] = totalTransactions;
+            ViewData["Total today Transaction"] = todayTotalTransactions;
+            // 2️⃣ Fetch transactions for the current user
+            var transactions = await _transactionService.GetUserTransactions(userId);
+
+            return View(transactions);
+        }
+
+
 
         //Notification
         [HttpGet]
@@ -131,5 +161,8 @@ namespace BankingSystemweb.Controllers
 
             return View(data);
         }
+
+
+
     }
 }

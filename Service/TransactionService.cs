@@ -290,4 +290,48 @@ public class TransactionService : ITransactionService
             .ThenInclude(a => a.User)
             .ToListAsync();
     }
+
+
+    public async Task<( decimal totalDeposit, decimal totalWithdraw,decimal totalTransfer,int totalTransactions,int todayTotalTransactions)> GetUserTransactionTotalssAsync(string userId)
+    {
+        if (string.IsNullOrEmpty(userId))
+            throw new ArgumentNullException(nameof(userId));
+
+        // 1️⃣ Get the user's account
+        var account = await _context.Accounts.FirstOrDefaultAsync(a => a.UserId == userId);
+        if (account == null)
+            throw new Exception("User account not found");
+
+        // 2️⃣ Get all transactions where the user is sender (or any type for total count)
+        var allTransactionsQuery = _context.Transactions!
+            .Where(t => t.AccountId == account.AccountId);
+
+        var allTransactions = await allTransactionsQuery.ToListAsync();
+
+        // 3️⃣ Total Deposit
+        decimal totalDeposit = allTransactions
+            .Where(t => t.TransactionType == "Deposit")
+            .Sum(t => t.Amount);
+
+        // 4️⃣ Total Withdraw
+        decimal totalWithdraw = allTransactions
+            .Where(t => t.TransactionType == "Withdraw")
+            .Sum(t => t.Amount);
+
+        // 5️⃣ Total Transfer (sent)
+        decimal totalTransfer = allTransactions
+            .Where(t => t.TransactionType == "Transfer")
+            .Sum(t => t.Amount);
+
+        // 6️⃣ Total transactions count
+        int totalTransactions = allTransactions.Count;
+
+        // 7️⃣ Today's transactions count
+        var today = DateTime.Today;
+        var tomorrow = today.AddDays(1);
+        int todayTotalTransactions = allTransactions
+            .Count(t => t.TransactionDate >= today && t.TransactionDate < tomorrow);
+
+        return (totalDeposit, totalWithdraw, totalTransfer, totalTransactions, todayTotalTransactions);
+    }
 }

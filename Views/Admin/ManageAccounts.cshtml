@@ -210,27 +210,56 @@
         <div class="stats-row">
             <div class="stat-card">
                 <div class="stat-icon" style="background:#EFF6FF;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
                 </div>
-                <div><div class="stat-label">Total Users</div><div class="stat-value" id="s-total">@ViewData["TotalUsers"]</div></div>
+                <div>
+                    <div class="stat-label">Total Users</div>
+                    <div class="stat-value" id="s-total">@ViewData["TotalUsers"]</div>
+                </div>
             </div>
+
             <div class="stat-card">
                 <div class="stat-icon" style="background:#F0FDF4;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                        <polyline points="22 4 12 14.01 9 11.01" />
+                    </svg>
                 </div>
-                <div><div class="stat-label">Active</div><div class="stat-value" id="s-active" style="color:#16A34A;">@ViewData["TotalActiveUsers"]</div></div>
+                <div>
+                    <div class="stat-label">Active</div>
+                    <div class="stat-value" id="s-active" style="color:#16A34A;">@ViewData["TotalActiveUsers"]</div>
+                </div>
             </div>
+
             <div class="stat-card">
                 <div class="stat-icon" style="background:#FFF7ED;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#EA580C" stroke-width="2"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#EA580C" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="8" x2="12" y2="12" />
+                        <line x1="12" y1="16" x2="12.01" y2="16" />
+                    </svg>
                 </div>
-                <div><div class="stat-label">Inactive</div><div class="stat-value" id="s-inactive" style="color:#EA580C;">@ViewData["TotalInactiveUsers"]</div></div>
+                <div>
+                    <div class="stat-label">Inactive</div>
+                    <div class="stat-value" id="s-inactive" style="color:#EA580C;">@ViewData["TotalInactiveUsers"]</div>
+                </div>
             </div>
+
             <div class="stat-card">
                 <div class="stat-icon" style="background:#F5F3FF;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    </svg>
                 </div>
-                <div><div class="stat-label">Admins</div><div class="stat-value" id="s-admins" style="color:#7C3AED;">@ViewData["TotalAdmins"]</div></div>
+                <div>
+                    <div class="stat-label">Admins</div>
+                    <div class="stat-value" id="s-admins" style="color:#7C3AED;">@ViewData["TotalAdmins"]</div>
+                </div>
             </div>
         </div>
 
@@ -459,6 +488,35 @@
 
         renderTable();
 
+
+            // Animate numbers from 0 to target
+        function animateCounter(id, duration = 1500) {
+            const el = document.getElementById(id);
+            if (!el) return;
+
+            // Remove commas or other non-numeric characters
+            const target = parseFloat(el.innerText.replace(/[^0-9.-]+/g, '')) || 0;
+            let start = 0;
+            const increment = target / (duration / 16); // ~60fps
+
+            function update() {
+                start += increment;
+                if (start >= target) {
+                    el.innerText = Number(target).toLocaleString();
+                } else {
+                    el.innerText = Math.floor(start).toLocaleString();
+                    requestAnimationFrame(update);
+                }
+            }
+            update();
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            animateCounter('s-total');
+            animateCounter('s-active');
+            animateCounter('s-inactive');
+            animateCounter('s-admins');
+        });
     </script>
 </body>
 </html>

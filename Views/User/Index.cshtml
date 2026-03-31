@@ -39,8 +39,16 @@
                     </span>
                 </div>
                 <div class="sb-item"><i class="fas fa-history"></i><span class="sb-label">Recent Activity</span></div>
-                <div class="sb-item"><i class="fas fa-list-alt"></i><span class="sb-label">Transaction History</span></div>
+                <div class="sb-item"><span class="sb-label">
+                        <a class="sb-item" asp-controller="User" asp-action="TransactionHistroy">
+                        <i class="fas fa-list-alt"></i>
+                    Transaction History
+                </a>
+                </span>
+                </div>
 
+
+                
                 <div class="sb-item">
                     <span class="sb-label">
                         <a class="sb-item" asp-controller="User" asp-action="Notification">
@@ -96,7 +104,9 @@
                             <div class="card-title">Total Balance</div>
                             <div class="card-icon icon-blue"><i class="fas fa-wallet"></i></div>
                         </div>
-                        <div class="card-amount">@Model.Accounts.Sum(a => a.Balance).ToString("N2")</div>
+                        <div class="card-amount" id="totalBalance">
+                            @Model.Accounts.Sum(a => a.Balance).ToString("N2")
+                        </div>
                         <div class="card-detail">
                             <i class="fas fa-arrow-up positive"></i>
                             <span class="positive">+12.5%</span> from last month
@@ -108,10 +118,12 @@
                             <div class="card-title">Total Deposit</div>
                             <div class="card-icon icon-green"><i class="fas fa-arrow-circle-down"></i></div>
                         </div>
-                        <div class="card-amount">$32,450.00</div>
+                        <div class="card-amount" id="totalDeposit">
+                            @ViewData["TodaysDeposits"]
+                        </div>
                         <div class="card-detail">
                             <i class="fas fa-arrow-up positive"></i>
-                            <span class="positive">+8.2%</span> this month
+                            <span class="positive"></span> this month
                         </div>
                     </div>
 
@@ -120,10 +132,12 @@
                             <div class="card-title">Total Withdraw</div>
                             <div class="card-icon icon-orange"><i class="fas fa-arrow-circle-up"></i></div>
                         </div>
-                        <div class="card-amount">$3,250.00</div>
+                        <div class="card-amount" id="totalWithdraw">
+                            @ViewData["TodaysWithdrawals"]
+                        </div>
                         <div class="card-detail">
                             <i class="fas fa-arrow-down negative"></i>
-                            <span class="negative">-2.1%</span> this month
+                            <span class="negative">-</span> this month
                         </div>
                     </div>
 
@@ -132,10 +146,12 @@
                             <div class="card-title">Total Transactions</div>
                             <div class="card-icon icon-purple"><i class="fas fa-exchange-alt"></i></div>
                         </div>
-                        <div class="card-amount">1,284</div>
+                        <div class="card-amount" id="totalTransactions">
+                            @ViewData["Total Transaction"]
+                        </div>
                         <div class="card-detail">
                             <i class="fas fa-arrow-up positive"></i>
-                            <span class="positive">+5.3%</span> this month
+                            <span class="positive"></span> this month
                         </div>
                     </div>
                 </div>
@@ -156,7 +172,7 @@
                             <div class="action-icon"><i class="fas fa-history"></i></div>
                             <div class="action-label">Recent Activity</div>
                         </a>
-                        <a href="#" class="action-btn">
+                        <a class="action-btn" asp-controller="User" asp-action="TransactionHistroy">
                             <div class="action-icon"><i class="fas fa-list-alt"></i></div>
                             <div class="action-label">Transaction History</div>
                         </a>
@@ -373,6 +389,43 @@
                 heroAvatar.textContent = initials;
                 heroAvatar.style.background = color;
             }
+        });
+
+             function animateCounter(id, duration = 1500) {
+            const element = document.getElementById(id);
+            if (!element) return;
+
+            // Parse numeric value, remove any formatting
+            const target = parseFloat(element.innerText.replace(/[^0-9.-]+/g, '')) || 0;
+            let start = 0;
+            const increment = target / (duration / 16); // approx 60fps
+
+            function update() {
+                start += increment;
+                if (start >= target) {
+                    // Keep decimals if needed
+                    if (element.innerText.includes(".")) {
+                        element.innerText = target.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    } else {
+                        element.innerText = Math.floor(target).toLocaleString();
+                    }
+                } else {
+                    if (element.innerText.includes(".")) {
+                        element.innerText = start.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                    } else {
+                        element.innerText = Math.floor(start).toLocaleString();
+                    }
+                    requestAnimationFrame(update);
+                }
+            }
+            update();
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            animateCounter('totalBalance', 1500);
+            animateCounter('totalDeposit', 1500);
+            animateCounter('totalWithdraw', 1500);
+            animateCounter('totalTransactions', 1500);
         });
     </script>
 </body>

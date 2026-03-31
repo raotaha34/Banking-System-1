@@ -16,5 +16,7 @@ namespace BankingSystemweb.Service.Interface
         Task<List<RecentActivityVM>> GetRecentActivitiesAsync(string adminId);
 
         Task<(decimal deposits, int depositCount, decimal withdrawals, int withdrawalCount)> GetTodaysTransactionsTotalsAsync();
-    };
+
+        Task<(decimal totalDeposit, decimal totalWithdraw, decimal totalTransfer, int totalTransactions, int todayTotalTransactions)> GetUserTransactionTotalssAsync(string userId);
+    }
 }

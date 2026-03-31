@@ -79,7 +79,7 @@
                     </div>
                     <div class="stat-body">
                         <p class="stat-label">Total Users</p>
-                        <p class="stat-number">@ViewData["TotalUsers"]</p>
+                        <p class="stat-number" id="stat-total-users">@ViewData["TotalUsers"]</p>
                         <span class="stat-badge up">&#9650; 12%</span>
                     </div>
                 </div>
@@ -95,7 +95,7 @@
                     </div>
                     <div class="stat-body">
                         <p class="stat-label">Active Accounts</p>
-                        <p class="stat-number">@ViewData["TotalActiveUsers"]</p>
+                        <p class="stat-number" id="stat-active-users">@ViewData["TotalActiveUsers"]</p>
                         <span class="stat-badge up">&#9650; 8%</span>
                     </div>
                 </div>
@@ -110,8 +110,8 @@
                     </div>
                     <div class="stat-body">
                         <p class="stat-label">Total Transactions</p>
-                        <p class="stat-number">@ViewData["TotalTransactions"]</p>
-                        <span class="stat-badge up">&#9650; 5%</span>
+                        <p class="stat-number" id="stat-transactions">@ViewData["TotalTransactions"]</p>
+                        <span class="stat-badge up"></span>
                     </div>
                 </div>
 
@@ -124,8 +124,8 @@
                     </div>
                     <div class="stat-body">
                         <p class="stat-label">Total Balance</p>
-                        <p class="stat-number">@ViewData["AdminBalance"]</p>
-                        <span class="stat-badge up">&#9650; 3%</span>
+                        <p class="stat-number" id="stat-total-balance">$@ViewData["AdminBalance"]</p>
+                        <span class="stat-badge up"></span>
                     </div>
                 </div>
             </div>
@@ -160,17 +160,17 @@
                 <div class="quick-stat">
                     <div class="qs-item">
                         <div class="qs-label">Deposits Today</div>
-                        <div class="qs-value">@ViewData["TodaysDeposits"]</div>
+                        <div class="qs-value" id="qs-deposits">@ViewData["TodaysDeposits"]</div>
                     </div>
                     <div class="qs-divider"></div>
                     <div class="qs-item">
                         <div class="qs-label">Withdrawals</div>
-                        <div class="qs-value">@ViewData["TodaysWithdrawals"]</div>
+                        <div class="qs-value" id="qs-withdrawals">@ViewData["TodaysWithdrawals"]</div>
                     </div>
                     <div class="qs-divider"></div>
                     <div class="qs-item">
-                        <div class="qs-label">Total Tranaction</div>
-                        <div class="qs-value">@ViewData["TotalTransactions"]</div>
+                        <div class="qs-label">Total Transaction</div>
+                        <div class="qs-value" id="qs-total">@ViewData["TotalTransactions"]</div>
                     </div>
                 </div>
             </div>
@@ -202,7 +202,6 @@
                     </div>
                 </div>
 
-                <!-- System Summary -->
                 <div class="panel">
                     <div class="sec-hdr" style="margin-bottom:18px">
                         <div>
@@ -212,28 +211,27 @@
                     </div>
                     <div class="sum-row">
                         <span class="sr-lbl"><span class="sr-dot g"></span>Active Users</span>
-                        <span class="sr-val">@ViewData["TotalActiveUsers"]</span>
+                        <span class="sr-val" id="sys-active">@ViewData["TotalActiveUsers"]</span>
                     </div>
                     <div class="sum-row">
                         <span class="sr-lbl"><span class="sr-dot r"></span>Inactive Accounts</span>
-                        <span class="sr-val">@ViewData["TotalInActiveUsers"]</span>
+                        <span class="sr-val" id="sys-inactive">@ViewData["TotalInActiveUsers"]</span>
                     </div>
                     <div class="sum-row">
                         <span class="sr-lbl"><span class="sr-dot g"></span>Today's Deposits</span>
-                        <span class="sr-val">@ViewData["TodaysDeposits"]</span>
+                        <span class="sr-val" id="sys-deposits">@ViewData["TodaysDeposits"]</span>
                     </div>
                     <div class="sum-row">
                         <span class="sr-lbl"><span class="sr-dot g"></span>Today's Withdrawals</span>
-                        <span class="sr-val">@ViewData["TodaysWithdrawals"]</span>
+                        <span class="sr-val" id="sys-withdrawals">@ViewData["TodaysWithdrawals"]</span>
                     </div>
                     <div class="sum-row">
-                        <span class="sr-lbl"><span class="sr-dot g"></span>Today'Transaction</span>
-                        <span class="sr-val">@ViewData["Today Transaction"]</span>
+                        <span class="sr-lbl"><span class="sr-dot g"></span>Today's Transactions</span>
+                        <span class="sr-val" id="sys-today-transactions">@ViewData["Today Transaction"]</span>
                     </div>
-                   
                     <div class="sum-row">
                         <span class="sr-lbl"><span class="sr-dot g"></span>Total Transactions</span>
-                        <span class="sr-val">@ViewData["TotalTransactions"]</span>
+                        <span class="sr-val" id="sys-total-transactions">@ViewData["TotalTransactions"]</span>
                     </div>
                 </div>
 
@@ -244,6 +242,122 @@
     </main>
 
     <script>
+            // Generic counter function
+        function animateCounter(id, duration = 1500) {
+            const el = document.getElementById(id);
+            if (!el) return;
+
+            let target = parseFloat(el.innerText.replace(/[^0-9.]+/g, '')) || 0;
+            let start = 0;
+            const increment = target / (duration / 16);
+
+            function update() {
+                start += increment;
+                if (start >= target) {
+                    el.innerText = target.toLocaleString();
+                } else {
+                    el.innerText = Math.floor(start).toLocaleString();
+                    requestAnimationFrame(update);
+                }
+            }
+            update();
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            animateCounter('qs-deposits', 1500);
+            animateCounter('qs-withdrawals', 1500);
+            animateCounter('qs-total', 1500);
+        });
+            // Animate numbers from 0 → target
+        function animateCounter(id, duration = 1500) {
+            const el = document.getElementById(id);
+            if (!el) return;
+
+            const text = el.innerText.replace(/[^0-9.-]+/g, '');
+            const target = parseFloat(text) || 0;
+            let start = 0;
+            const increment = target / (duration / 16); // ~60fps
+
+            function update() {
+                start += increment;
+                if (start >= target) {
+                    el.innerText = Number(target).toLocaleString();
+                } else {
+                    el.innerText = Math.floor(start).toLocaleString();
+                    requestAnimationFrame(update);
+                }
+            }
+            update();
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            animateCounter('sys-active');
+            animateCounter('sys-inactive');
+            animateCounter('sys-deposits');
+            animateCounter('sys-withdrawals');
+            animateCounter('sys-today-transactions');
+            animateCounter('sys-total-transactions');
+        });
+                // Animate numbers
+        function animateCounter(id, duration = 1500) {
+            const el = document.getElementById(id);
+            if (!el) return;
+
+            // Extract numeric value (removes $ or commas)
+            const text = el.innerText.replace(/[^0-9.-]+/g, '');
+            const target = parseFloat(text) || 0;
+
+            let start = 0;
+            const increment = target / (duration / 16); // approx 60fps
+
+            function update() {
+                start += increment;
+                if (start >= target) {
+                    el.innerText = el.innerText.startsWith('$') ? '$' + Number(target).toLocaleString() : Number(target).toLocaleString();
+                } else {
+                    el.innerText = el.innerText.startsWith('$') ? '$' + Math.floor(start).toLocaleString() : Math.floor(start).toLocaleString();
+                    requestAnimationFrame(update);
+                }
+            }
+            update();
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            animateCounter('stat-total-users');
+            animateCounter('stat-active-users');
+            animateCounter('stat-transactions');
+            animateCounter('stat-total-balance');
+        });
+               // Animate numbers
+        function animateCounter(id, duration = 1500) {
+            const el = document.getElementById(id);
+            if (!el) return;
+
+            // Extract numeric value (removes $ or commas)
+            const text = el.innerText.replace(/[^0-9.-]+/g, '');
+            const target = parseFloat(text) || 0;
+
+            let start = 0;
+            const increment = target / (duration / 16); // approx 60fps
+
+            function update() {
+                start += increment;
+                if (start >= target) {
+                    el.innerText = el.innerText.startsWith('$') ? '$' + Number(target).toLocaleString() : Number(target).toLocaleString();
+                } else {
+                    el.innerText = el.innerText.startsWith('$') ? '$' + Math.floor(start).toLocaleString() : Math.floor(start).toLocaleString();
+                    requestAnimationFrame(update);
+                }
+            }
+            update();
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            animateCounter('stat-total-users');
+            animateCounter('stat-active-users');
+            animateCounter('stat-transactions');
+            animateCounter('stat-total-balance');
+        });
         // Build bar chart
         const heights = [42, 58, 51, 70, 63, 80, 74, 88, 65, 92, 78, 95];
         const chart = document.getElementById('chartArea');

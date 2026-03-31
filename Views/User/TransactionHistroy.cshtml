@@ -1,0 +1,139 @@
+﻿@model List<BankingSystemweb.Models.Transaction>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction Dashboard</title>
+    <link rel="stylesheet" href="~/css/TransactionHistory.css" />
+</head>
+<body>
+    <div class="container">
+
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Transaction Dashboard</h1>
+                <p class="page-subtitle">Overview of your deposits, withdrawals, and transfers</p>
+            </div>
+
+            <!-- Button to left of live badge -->
+            <div class="header-actions">
+                <a class="btn-dashboard" asp-controller="User" asp-action="Index">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" width="18" height="18">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12h18m-9-9v18" />
+                    </svg>
+                    Go to Dashboard
+                </a>
+                <span class="live-badge"><span class="live-dot"></span> Live Data</span>
+            </div>
+        </div>
+        <!-- ===== SUMMARY CARDS ===== -->
+        <div class="summary-cards">
+            <div class="card card-deposit">
+                <h3>Total Deposit</h3>
+                <p id="totalDeposit">$@ViewData["TodaysDeposits"]</p>
+            </div>
+            <div class="card card-withdraw">
+                <h3>Total Withdraw</h3>
+                <p id="totalWithdraw">$@ViewData["TodaysWithdrawals"]</p>
+            </div>
+            <div class="card card-transfer">
+                <h3>Total Transfer</h3>
+                <p id="totalTransfer">$@ViewData["TotalTransfer"]</p>
+            </div>
+            <div class="card card-today">
+                <h3>Today Transactions</h3>
+                <p id="todayTransactions">@ViewData["Total today Transaction"]</p>
+            </div>
+        </div>
+        <!-- ===== TRANSACTION HISTORY ===== -->
+        <div class="table-card">
+            <div class="table-card-header"><h2>Transaction History</h2></div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>#ID</th>
+                        <th>Sender</th>
+                        <th>Account</th>
+                        <th>Receiver</th>
+                        <th>Amount</th>
+                        <th>Type</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>#@item.TransactionId</td>
+                            <td>
+                                <div class="user-cell">
+                                    <div class="user-avatar" style="background:@GetAvatarColor(item.Account?.User?.FullName ?? "N/A")">
+                                        @(item.Account?.User?.FullName?[0].ToString().ToUpper() ?? "A")
+                                    </div>
+                                    <div>
+                                        <div class="user-name">@item.Account?.User?.FullName</div>
+                                        <div class="user-email">@item.Account?.User?.Email</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>@item.AccountId</td>
+                            <td>@(item.TransactionType == "Transfer" || item.TransactionType == "Deposit" ? (item.ReceiverName ?? "—") : "—")</td>
+                            <td>$@item.Amount</td>
+                            <td><span class="tx-badge tx-@item.TransactionType">@item.TransactionType</span></td>
+                            <td>@item.TransactionDate.ToString("g")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    @functions {
+        // Generate consistent avatar color based on name
+        private string GetAvatarColor(string name)
+        {
+            var colors = new string[] { "#F87171", "#FBBF24", "#34D399", "#60A5FA", "#A78BFA", "#F472B6", "#22D3EE", "#FB923C", "#4ADE80", "#C084FC" };
+            if (string.IsNullOrEmpty(name)) return colors[0];
+            int index = name.Sum(c => c) % colors.Length;
+            return colors[index];
+        }
+    }
+    <script>
+        // Helper function: animate number counting
+        function animateCounter(id, target, duration = 1500) {
+            const element = document.getElementById(id);
+            let start = 0;
+            const increment = target / (duration / 16); // approx 60fps
+
+            function update() {
+                start += increment;
+                if (start >= target) {
+                    element.innerText = target.toLocaleString(); // format with commas
+                } else {
+                    element.innerText = Math.floor(start).toLocaleString();
+                    requestAnimationFrame(update);
+                }
+            }
+            update();
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            // Get values from Razor (ViewData) and parse as numbers
+            const totalDeposit = parseInt('@ViewData["TodaysDeposits"]');
+            const totalWithdraw = parseInt('@ViewData["TodaysWithdrawals"]');
+            const totalTransfer = parseInt('@ViewData["TotalTransfer"]');
+            const todayTransactions = parseInt('@ViewData["Total today Transaction"]');
+
+            // Animate counters
+            animateCounter('totalDeposit', totalDeposit, 1500);
+            animateCounter('totalWithdraw', totalWithdraw, 1500);
+            animateCounter('totalTransfer', totalTransfer, 1500);
+            animateCounter('todayTransactions', todayTransactions, 1500);
+        });
+
+
+    </script>
+   
+</body>
+</html>

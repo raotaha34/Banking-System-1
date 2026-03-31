@@ -25,9 +25,6 @@ namespace BankingSystemweb.Controllers
     public class AdminController : Controller
 
     {
-
-
-
         private readonly IAdminService _adminService;
 
         private readonly ITransactionService _transactionService;
@@ -88,7 +85,7 @@ namespace BankingSystemweb.Controllers
             ViewData["TotalActiveUsers"] = totalActive;
             ViewData["TodaysDeposits"] = todaysDeposits;
             ViewData["TodaysWithdrawals"] = todaysWithdrawals;
-            ViewData["Today Transaction"] = withdrawalCount + depositCount;
+            ViewData["Today Transaction"] = withdrawalCount + depositCount;   //total todays transaction
 
             var recentActivities = await _transactionService.GetRecentActivitiesAsync(adminId);
 
