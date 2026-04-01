@@ -14,65 +14,65 @@
 
         <!-- SIDEBAR -->
         <div class="sidebar" id="sidebar">
-            <div class="sb-head">
-                <div class="sb-logo">
-                    <div class="sb-logo-icon"><i class="fas fa-shield-alt"></i></div>
-                    <span class="sb-logo-text">SecureBank</span>
-                </div>
-                <button class="sb-toggle" onclick="toggleSB()"><i class="fas fa-bars"></i></button>
+            <!-- Brand -->
+            <div class="sb-brand">
+                <div class="brand-mark"><i class="fas fa-shield-alt"></i></div>
+                <span class="brand-text">SecureBank</span>
+                <button class="sb-toggle" onclick="toggleSB()">
+                    <i class="fas fa-bars"></i>
+                </button>
             </div>
+
+            <!-- Navigation -->
             <div class="sb-nav">
-                <div class="sb-item active"><i class="fas fa-home"></i><span class="sb-label">Dashboard</span></div>
-                <div class="sb-item">
-                    <span class="sb-label">
-                           <a class="sb-item" asp-controller="User" asp-action="UserInfo">
-                            <i class="fas fa-user-circle"></i>View My Details
-                        </a>
-                    </span>
+                <div class="nav-item active" data-label="Dashboard">
+                    <div class="ni-icon"><i class="fas fa-home"></i></div>
+                    <span class="ni-label">Dashboard</span>
                 </div>
-                <div class="sb-item">
-                    <span class="sb-label">
-                        <a class="sb-item" asp-controller="User" asp-action="Transactions">
-                            <i class="fas fa-exchange-alt"></i>
-                            Transaction
-                        </a>
-                    </span>
-                </div>
-                <div class="sb-item"><i class="fas fa-history"></i><span class="sb-label">Recent Activity</span></div>
-                <div class="sb-item"><span class="sb-label">
-                        <a class="sb-item" asp-controller="User" asp-action="TransactionHistroy">
-                        <i class="fas fa-list-alt"></i>
-                    Transaction History
+
+                <a class="nav-item" asp-controller="User" asp-action="UserInfo" data-label="View My Details">
+                    <div class="ni-icon"><i class="fas fa-user-circle"></i></div>
+                    <span class="ni-label">View My Details</span>
                 </a>
-                </span>
-                </div>
 
+                <a class="nav-item" asp-controller="User" asp-action="Transactions" data-label="Transaction">
+                    <div class="ni-icon"><i class="fas fa-exchange-alt"></i></div>
+                    <span class="ni-label">Transaction</span>
+                </a>
 
-                
-                <div class="sb-item">
-                    <span class="sb-label">
-                        <a class="sb-item" asp-controller="User" asp-action="Notification">
-                            <i class="fas fa-bell"></i>
-                            Notification
-                        </a>
-                    </span>
+                <a class="nav-item" asp-controller="User" asp-action="Recentactivity" data-label="Recent Activity">
+                    <div class="ni-icon"><i class="fas fa-history"></i></div>
+                    <span class="ni-label">Recent Activity</span>
+                </a>
+
+                <a class="nav-item" asp-controller="User" asp-action="TransactionHistroy" data-label="Transaction History">
+                    <div class="ni-icon"><i class="fas fa-list-alt"></i></div>
+                    <span class="ni-label">Transaction History</span>
+                </a>
+
+                <a class="nav-item" asp-controller="User" asp-action="Notification" data-label="Notification">
+                    <div class="ni-icon"><i class="fas fa-bell"></i></div>
+                    <span class="ni-label">Notification</span>
+                </a>
+
+                <a class="nav-item" asp-controller="User" asp-action="Forgetpassword" data-label="Forget Password">
+                    <div class="ni-icon"><i class="fas fa-key"></i></div>
+                    <span class="ni-label">Forget Password</span>
+                </a>
+
+                <div class="nav-item" data-label="Settings">
+                    <div class="ni-icon"><i class="fas fa-cog"></i></div>
+                    <span class="ni-label">Settings</span>
                 </div>
-                <div class="sb-item">
-                    <span class="sb-label">
-                        <a class="sb-item" asp-controller="User" asp-action="Forgetpassword">
-                        <i class="fas fa-key"></i>
-                        Forgetpassword
-                        </a>
-                    </span>
-                </div>
-                <div class="sb-item"><i class="fas fa-cog"></i><span class="sb-label">Settings</span></div>
             </div>
+
+            <!-- Footer / Logout -->
             <div class="sb-footer">
                 <form asp-controller="Login" asp-action="Logout" method="post">
                     @Html.AntiForgeryToken()
-                    <button type="submit" class="sb-logout">
-                        <i class="fas fa-sign-out-alt"></i>
-                        <span class="sb-label">Logout</span>
+                    <button type="submit" class="logout-btn">
+                        <div class="lo-icon"><i class="fas fa-sign-out-alt"></i></div>
+                        <span class="lo-label">Logout</span>
                     </button>
                 </form>
             </div>
@@ -168,7 +168,7 @@
                             <div class="action-icon"><i class="fas fa-exchange-alt"></i></div>
                             <div class="action-label">Transaction</div>
                         </a>
-                        <a href="#" class="action-btn">
+                        <a class="action-btn" asp-controller="User" asp-action="Recentactivity">
                             <div class="action-icon"><i class="fas fa-history"></i></div>
                             <div class="action-label">Recent Activity</div>
                         </a>
@@ -420,7 +420,12 @@
             }
             update();
         }
-
+		//sidebar toggle
+              const sidebar = document.getElementById('sidebar');
+        function toggleSB() {
+            sidebar.classList.toggle('collapsed');
+            document.querySelector('.main-content').classList.toggle('wide');
+        }
         document.addEventListener("DOMContentLoaded", function() {
             animateCounter('totalBalance', 1500);
             animateCounter('totalDeposit', 1500);

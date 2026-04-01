@@ -1,0 +1,348 @@
+﻿@model List<BankingSystemweb.Models.Transaction>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recent Activity — Banking Dashboard</title>
+    <link rel="stylesheet" href="~/css/RecentActivity.css" />
+</head>
+<body>
+    <div class="container">
+
+        <!-- PAGE HEADER -->
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Recent Activity</h1>
+                <p class="page-subtitle">Full overview of deposits, withdrawals, transfers &amp; balances</p>
+            </div>
+            <div class="header-actions">
+                <a class="btn-dashboard" asp-controller="User" asp-action="Index">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                         stroke="currentColor" width="16" height="16">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M3 12h18m-9-9v18" />
+                    </svg>
+                    Dashboard
+                </a>
+                <span class="live-badge"><span class="live-dot"></span> Live Data</span>
+            </div>
+        </div>
+
+        <!-- PERIOD FILTER -->
+        <div class="filter-row">
+            <span class="filter-label">Period:</span>
+            <button class="filter-btn active" onclick="setFilter(this)">Today</button>
+            <button class="filter-btn" onclick="setFilter(this)">7 Days</button>
+            <button class="filter-btn" onclick="setFilter(this)">30 Days</button>
+            <button class="filter-btn" onclick="setFilter(this)">90 Days</button>
+            <button class="filter-btn" onclick="setFilter(this)">All Time</button>
+        </div>
+
+        <!-- 6 SUMMARY CARDS -->
+        <div class="summary-grid">
+            <div class="stat-card">
+                <div class="stat-top">
+                    <div class="stat-icon ic-green">💰</div>
+                    <span class="stat-trend tr-up">↑ 12.4%</span>
+                </div>
+                <div class="stat-label">Total Deposit</div>
+                <div class="stat-value" id="c-deposit">$@ViewData["TodaysDeposits"]</div>
+                <div class="stat-sub">vs previous period</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-top">
+                    <div class="stat-icon ic-red">📤</div>
+                    <span class="stat-trend tr-down">↓ 3.1%</span>
+                </div>
+                <div class="stat-label">Total Withdraw</div>
+                <div class="stat-value" id="c-withdraw">$@ViewData["TodaysWithdrawals"]</div>
+                <div class="stat-sub">vs previous period</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-top">
+                    <div class="stat-icon ic-blue">🔄</div>
+                    <span class="stat-trend tr-flat">→ Stable</span>
+                </div>
+                <div class="stat-label">Total Transfer</div>
+                <div class="stat-value" id="c-transfer">$@ViewData["TotalTransfer"]</div>
+                <div class="stat-sub">vs previous period</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-top">
+                    <div class="stat-icon ic-yellow">📅</div>
+                    <span class="stat-trend tr-up">↑ 8 new</span>
+                </div>
+                <div class="stat-label">Today Transactions</div>
+                <div class="stat-value" id="c-today">@ViewData["Total today Transaction"]</div>
+                <div class="stat-sub">transactions today</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-top">
+                    <div class="stat-icon ic-purple">📊</div>
+                    <span class="stat-trend tr-up">↑ 5.7%</span>
+                </div>
+                <div class="stat-label">Total Transactions</div>
+                <div class="stat-value" id="c-total">@ViewData["Total Transaction"]</div>
+                <div class="stat-sub">all-time records</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-top">
+                    <div class="stat-icon ic-teal">🏦</div>
+                    <span class="stat-trend tr-up">↑ 9.2%</span>
+                </div>
+                <div class="stat-label">Total Balance</div>
+                <div class="stat-value" id="c-balance">$@ViewData["TotalBalance"]</div>
+                <div class="stat-sub">net account value</div>
+            </div>
+        </div>
+
+        <!-- RECENT TRANSACTIONS -->
+        <div class="section-header">
+            <div>
+                <div class="section-title">Recent Transactions</div>
+                <div class="section-sub">Latest activity across all accounts</div>
+            </div>
+            <div class="section-actions">
+                <div class="search-box">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                         stroke="#b0bdd6" width="14" height="14">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M21 21l-4.35-4.35M17 11A6 6 0 115 11a6 6 0 0112 0z" />
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="Search by name, type…" oninput="filterTable()">
+                </div>
+                <button class="btn-export" onclick="exportCSV()">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                         stroke="currentColor" width="14" height="14">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5m0 0l5-5m-5 5V4" />
+                    </svg>
+                    Export
+                </button>
+            </div>
+        </div>
+
+        <div class="table-card">
+            <table id="txTable">
+                <thead>
+                    <tr>
+                        <th>#ID</th>
+                        <th>Sender</th>
+                        <th>Account</th>
+                        <th>Receiver</th>
+                        <th>Amount</th>
+                        <th>Type</th>
+                        <th>Date &amp; Time</th>
+                    </tr>
+                </thead>
+                <tbody id="txBody">
+                    @if (Model != null && Model.Any())
+                    {
+                        @foreach (var item in Model)
+                        {
+                            var searchData = ((item.Account?.User?.FullName ?? "") + " " +
+                            (item.Account?.User?.Email ?? "") + " " +
+                            (item.TransactionType ?? "") + " " +
+                            item.TransactionId).ToLower();
+
+                            var amountClass = item.TransactionType == "Deposit" ? "amount-pos"
+                            : item.TransactionType == "Withdraw" ? "amount-neg"
+                            : "amount-neu";
+
+                            var amountSign = item.TransactionType == "Withdraw" ? "-" : "+";
+
+                            bool showRec = item.TransactionType == "Transfer" || item.TransactionType == "Deposit";
+                            var recName = showRec ? (item.ReceiverName ?? "—") : "—";
+
+                            <tr class="item" data-search="@searchData">
+                                <td><span class="id-cell">#@item.TransactionId</span></td>
+                                <td>
+                                    <div class="user-cell">
+                                        <div class="user-avatar"
+                                             style="background:@GetAvatarColor(item.Account?.User?.FullName ?? "N")">
+                                            @(item.Account?.User?.FullName?[0].ToString().ToUpper() ?? "A")
+                                        </div>
+                                        <div>
+                                            <div class="user-name">@(item.Account?.User?.FullName ?? "Unknown")</div>
+                                            <div class="user-email">@(item.Account?.User?.Email ?? "—")</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td style="font-size:12.5px;font-weight:600;">@item.AccountId</td>
+                                <td style="color:@(recName == "—" ? "#b0bdd6" : "#3a4a6b")">@recName</td>
+                                <td>
+                                    <span class="@amountClass">@amountSign$@item.Amount</span>
+                                </td>
+                                <td>
+                                    <span class="tx-badge tx-@item.TransactionType">
+                                        <span class="tx-dot"></span>
+                                        @item.TransactionType
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="date-primary">@item.TransactionDate.ToString("MMM dd, yyyy")</div>
+                                    <div class="date-time">@item.TransactionDate.ToString("hh:mm tt")</div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7">
+                                <div class="empty-state">
+                                    <div class="empty-icon">📭</div>
+                                    <div class="empty-title">No transactions found</div>
+                                    <div class="empty-sub">There are no recent transactions to display.</div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="table-footer">
+                <div class="table-info" id="tableInfo">
+                    Showing <strong>@(Model?.Count ?? 0)</strong> transactions
+                </div>
+                <div class="pagination">
+                    <button class="page-btn" onclick="changePage(-1)">‹</button>
+                    <button class="page-btn active" id="pageNum">1</button>
+                    <button class="page-btn" onclick="changePage(1)">›</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @functions {
+        private string GetAvatarColor(string name)
+        {
+            var colors = new[] {
+                                "#F87171","#FBBF24","#34D399","#60A5FA",
+                                "#A78BFA","#F472B6","#22D3EE","#FB923C",
+                                "#4ADE80","#C084FC"
+        };
+            if (string.IsNullOrEmpty(name)) return colors[0];
+            int index = name.Sum(c => c) % colors.Length;
+            return colors[index];
+        }
+    }
+
+    <script>
+        /* ---- GLOBAL VARIABLES ---- */
+        let pg = 1;
+        const itemsPerPage = 8;
+
+        /* ---- ANIMATED COUNTERS ---- */
+        function animateCounter(id, target, prefix = '', duration = 1600) {
+            const el = document.getElementById(id);
+            if (!el || isNaN(target)) return;
+            const start = performance.now();
+            (function tick(now) {
+                const p = Math.min((now - start) / duration, 1);
+                const ease = 1 - Math.pow(1 - p, 3);
+                el.textContent = prefix + Math.round(target * ease).toLocaleString();
+                if (p < 1) requestAnimationFrame(tick);
+            })(start);
+        }
+
+        /* ---- FILTER PERIOD BUTTONS ---- */
+        function setFilter(btn) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            // Hook to controller: window.location.href = `/Transaction/Activity?period=${btn.textContent}`;
+        }
+
+        /* ---- SEARCH & PAGINATION ---- */
+        function getItems() {
+            return Array.from(document.querySelectorAll('#txBody .item'));
+        }
+
+        function getVisibleItems() {
+            return getItems().filter(item => item.dataset.visible !== "false");
+        }
+
+        function renderPage() {
+            const items = getVisibleItems();
+            const totalPages = Math.max(1, Math.ceil(items.length / itemsPerPage));
+
+            if (pg > totalPages) pg = totalPages;
+
+            const start = (pg - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+
+            getItems().forEach(item => item.style.display = "none");
+
+            items.forEach((item, index) => {
+                if (index >= start && index < end) item.style.display = "";
+            });
+
+            document.getElementById('pageNum').textContent = pg;
+        }
+
+        function changePage(dir) {
+            const items = getVisibleItems();
+            const totalPages = Math.max(1, Math.ceil(items.length / itemsPerPage));
+
+            pg = Math.max(1, Math.min(pg + dir, totalPages));
+            renderPage();
+        }
+
+        function filterTable() {
+            const q = document.getElementById('searchInput').value.toLowerCase();
+            const rows = getItems();
+            let vis = 0;
+
+            rows.forEach(r => {
+                const match = r.dataset.search.includes(q);
+                r.dataset.visible = match ? "true" : "false";
+                if (match) vis++;
+            });
+
+            document.getElementById('tableInfo').innerHTML =
+                `Showing <strong>${vis}</strong> transaction${vis !== 1 ? 's' : ''}`;
+
+            pg = 1;
+            renderPage();
+        }
+
+        /* ---- EXPORT CSV ---- */
+        function exportCSV() {
+            const rows = getItems();
+            let csv = 'ID,Sender,Account,Amount,Type,Date\n';
+            rows.forEach(r => {
+                if (r.dataset.visible === "false") return;
+                const cells = r.querySelectorAll('td');
+                csv += [
+                    cells[0]?.innerText.trim(),
+                    cells[1]?.querySelector('.user-name')?.innerText.trim(),
+                    cells[2]?.innerText.trim(),
+                    cells[4]?.innerText.trim(),
+                    cells[5]?.innerText.trim(),
+                    cells[6]?.innerText.replace(/\n/g,' ').trim()
+                ].map(v => `"${v}"`).join(',') + '\n';
+            });
+            const a = document.createElement('a');
+            a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+            a.download = 'transactions.csv';
+            a.click();
+        }
+
+        /* ---- INITIALIZATION ---- */
+        document.addEventListener("DOMContentLoaded", () => {
+            // Animate counters
+            animateCounter('c-deposit',  parseInt('@ViewData["TodaysDeposits"]') || 0, '$');
+            animateCounter('c-withdraw', parseInt('@ViewData["TodaysWithdrawals"]') || 0, '$');
+            animateCounter('c-transfer', parseInt('@ViewData["TotalTransfer"]') || 0, '$');
+            animateCounter('c-today',    parseInt('@ViewData["Total today Transaction"]') || 0, '');
+            animateCounter('c-total',    parseInt('@ViewData["Total Transaction"]') || 0, '');
+            animateCounter('c-balance',  parseInt('@ViewData["TotalBalance"]') || 0, '$');
+
+            // Mark all rows visible
+            getItems().forEach(item => item.dataset.visible = "true");
+            renderPage();
+        });
+    </script>
+</body>
+</html>

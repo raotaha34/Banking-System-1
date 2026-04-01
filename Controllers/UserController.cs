@@ -164,5 +164,30 @@ namespace BankingSystemweb.Controllers
 
 
 
+        public async Task<IActionResult> Recentactivity()
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null)
+                return RedirectToAction("Login", "Login");
+
+            var data = await _userService.GetUserDashboardAsync(user.Id);
+
+            if (data == null)
+                return NotFound();
+            ViewData["TotalBalance"] = data.Accounts.Sum(a => a.Balance);
+
+            var (totalDeposit, totalWithdraw, totalTransfer, totalTransactions, todayTotalTransactions) = await _transactionService.GetUserTransactionTotalssAsync(user.Id);
+
+            ViewData["TotalTransfer"] = totalTransfer;
+            ViewData["TodaysDeposits"] = totalDeposit;
+            ViewData["TodaysWithdrawals"] = totalWithdraw;
+            ViewData["Total Transaction"] = totalTransactions;
+            ViewData["Total today Transaction"] = todayTotalTransactions;
+
+
+            var transactions = await _transactionService.GetUserTransactions(user.Id);
+            return View(transactions);        }
+
     }
 }
